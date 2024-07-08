@@ -1,9 +1,9 @@
 "use client";
 
-import type { RouterOutputs } from "@acme/api";
-import { CreatePostSchema } from "@acme/db/schema";
-import { cn } from "@acme/ui";
-import { Button } from "@acme/ui/button";
+import type { RouterOutputs } from "@tribal-cities/api";
+import { CreatePostSchema } from "@tribal-cities/db/schema";
+import { cn } from "@tribal-cities/ui";
+import { Button } from "@tribal-cities/ui/button";
 import {
   Form,
   FormControl,
@@ -11,9 +11,9 @@ import {
   FormItem,
   FormMessage,
   useForm,
-} from "@acme/ui/form";
-import { Input } from "@acme/ui/input";
-import { toast } from "@acme/ui/toast";
+} from "@tribal-cities/ui/form";
+import { Input } from "@tribal-cities/ui/input";
+import { toast } from "@tribal-cities/ui/toast";
 
 import { api } from "~/trpc/react";
 

@@ -1,6 +1,7 @@
 import { relations, sql } from "drizzle-orm";
 import {
   integer,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
@@ -11,17 +12,37 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const Event = pgTable("event", {
+export const campTypeEnum = pgEnum("camp_type", [
+  "Art",
+  "Sound",
+  "Performance",
+  "Dance",
+  "Yoga",
+  "Healing",
+  "Fitness",
+  "Workshop",
+  "Misc",
+  "Food",
+  "Bar",
+  "Tea or Coffee",
+  "Chill",
+  "Lounge",
+  "Networking",
+  "Gifting",
+  "Storytelling",
+  "First Aid",
+]);
+
+export const Camp = pgTable("camp", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
 
-  location: varchar("location", { length: 256 }).notNull(),
+  coordinates: varchar("coordinates"),
 
   name: varchar("name", { length: 256 }).notNull(),
   description: text("description").notNull(),
   image: text("image"),
 
-  startAt: timestamp("start_at").notNull(),
-  endAt: timestamp("end_at").notNull(),
+  type: campTypeEnum("camp_type").notNull().default("Misc"),
 
   createdById: uuid("created_by_id")
     .notNull()
@@ -34,16 +55,81 @@ export const Event = pgTable("event", {
   }).$onUpdateFn(() => sql`now()`),
 });
 
-export const CreateEventSchema = createInsertSchema(Event, {
-  location: z.string().max(256),
-
+export const CreateCampSchema = createInsertSchema(Camp, {
   name: z.string().max(256),
   description: z.string().max(256),
 
   image: z.string().max(256).nullable(),
 
-  startAt: z.date(),
-  endAt: z.date(),
+  type: z.enum(campTypeEnum.enumValues),
+}).omit({
+  id: true,
+  coordinates: true,
+  createdAt: true,
+  updatedAt: true,
+  createdById: true,
+});
+export const eventTypeEnum = pgEnum("event_type", [
+  "Workshop",
+  "Class",
+  "Inclusion",
+  "Fire",
+  "Food",
+  "Kid Friendly",
+  "Games",
+  "Gathering",
+  "Music",
+  "Mature Audiences",
+  "Misc",
+  "Parade",
+  "Ritual",
+  "Self Care",
+  "Sustainability",
+  "Yoga",
+]);
+
+export const Event = pgTable("event", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+
+  location: varchar("location", { length: 256 }).notNull(),
+
+  name: varchar("name", { length: 256 }).notNull(),
+  description: text("description").notNull(),
+  image: text("image"),
+
+  startDate: timestamp("start_date").notNull(),
+  startTime: varchar("start_time", { length: 20 }).notNull(),
+  endDate: timestamp("end_date").notNull(),
+  endTime: varchar("end_time", { length: 20 }).notNull(),
+
+  type: eventTypeEnum("event_type").notNull().default("Misc"),
+
+  createdById: uuid("created_by_id")
+    .notNull()
+    .references(() => User.id, { onDelete: "cascade" }),
+  campId: uuid("camp_id").references(() => Camp.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
+});
+
+export const CreateEventSchema = createInsertSchema(Event, {
+  location: z.string().max(256),
+
+  name: z.string().min(1).max(256),
+  description: z.string().min(1).max(256),
+
+  image: z.string().max(256).nullable(),
+
+  type: z.enum(eventTypeEnum.enumValues),
+
+  startDate: z.date(),
+  startTime: z.string().max(20),
+  endDate: z.date(),
+  endTime: z.string().max(20),
 }).omit({
   id: true,
   createdAt: true,
@@ -53,6 +139,7 @@ export const CreateEventSchema = createInsertSchema(Event, {
 
 export const EventRelations = relations(Event, ({ one }) => ({
   user: one(User, { fields: [Event.createdById], references: [User.id] }),
+  camp: one(Camp, { fields: [Event.campId], references: [Camp.id] }),
 }));
 
 export const User = pgTable("user", {

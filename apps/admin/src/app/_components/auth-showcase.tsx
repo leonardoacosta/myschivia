@@ -14,7 +14,7 @@ export async function AuthShowcase() {
             await signIn("discord");
           }}
         >
-          Sign in with Discord
+          Sign in
         </Button>
       </form>
     );

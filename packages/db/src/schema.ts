@@ -11,10 +11,22 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const Post = pgTable("post", {
+export const Event = pgTable("event", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
-  title: varchar("name", { length: 256 }).notNull(),
-  content: text("content").notNull(),
+
+  location: varchar("location", { length: 256 }).notNull(),
+
+  name: varchar("name", { length: 256 }).notNull(),
+  description: text("description").notNull(),
+  image: text("image"),
+
+  startAt: timestamp("start_at").notNull(),
+  endAt: timestamp("end_at").notNull(),
+
+  createdById: uuid("created_by_id")
+    .notNull()
+    .references(() => User.id, { onDelete: "cascade" }),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", {
     mode: "date",
@@ -22,14 +34,26 @@ export const Post = pgTable("post", {
   }).$onUpdateFn(() => sql`now()`),
 });
 
-export const CreatePostSchema = createInsertSchema(Post, {
-  title: z.string().max(256),
-  content: z.string().max(256),
+export const CreateEventSchema = createInsertSchema(Event, {
+  location: z.string().max(256),
+
+  name: z.string().max(256),
+  description: z.string().max(256),
+
+  image: z.string().max(256).nullable(),
+
+  startAt: z.date(),
+  endAt: z.date(),
 }).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+  createdById: true,
 });
+
+export const EventRelations = relations(Event, ({ one }) => ({
+  user: one(User, { fields: [Event.createdById], references: [User.id] }),
+}));
 
 export const User = pgTable("user", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
@@ -44,6 +68,7 @@ export const User = pgTable("user", {
 
 export const UserRelations = relations(User, ({ many }) => ({
   accounts: many(Account),
+  events: many(Event),
 }));
 
 export const Account = pgTable(

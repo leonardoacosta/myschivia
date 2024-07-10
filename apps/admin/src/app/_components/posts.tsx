@@ -1,7 +1,7 @@
 "use client";
 
 import type { RouterOutputs } from "@tribal-cities/api";
-import { CreatePostSchema } from "@tribal-cities/db/schema";
+import { CreateEventSchema } from "@tribal-cities/db/schema";
 import { cn } from "@tribal-cities/ui";
 import { Button } from "@tribal-cities/ui/button";
 import {
@@ -13,24 +13,26 @@ import {
   useForm,
 } from "@tribal-cities/ui/form";
 import { Input } from "@tribal-cities/ui/input";
+import { Label } from "@tribal-cities/ui/label";
 import { toast } from "@tribal-cities/ui/toast";
 
 import { api } from "~/trpc/react";
 
 export function CreatePostForm() {
   const form = useForm({
-    schema: CreatePostSchema,
+    schema: CreateEventSchema,
     defaultValues: {
-      content: "",
-      title: "",
+      description: "",
+      name: "",
+      location: "",
     },
   });
 
   const utils = api.useUtils();
-  const createPost = api.post.create.useMutation({
+  const createPost = api.event.create.useMutation({
     onSuccess: async () => {
       form.reset();
-      await utils.post.invalidate();
+      await utils.event.invalidate();
     },
     onError: (err) => {
       toast.error(
@@ -51,11 +53,14 @@ export function CreatePostForm() {
       >
         <FormField
           control={form.control}
-          name="title"
+          name="location"
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input {...field} placeholder="Title" />
+                <>
+                  <Label>Location</Label>
+                  <Input {...field} placeholder="location" />
+                </>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -63,11 +68,23 @@ export function CreatePostForm() {
         />
         <FormField
           control={form.control}
-          name="content"
+          name="name"
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input {...field} placeholder="Content" />
+                <Input {...field} placeholder="Name" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input {...field} placeholder="description" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -80,7 +97,7 @@ export function CreatePostForm() {
 }
 
 export function PostList() {
-  const [posts] = api.post.all.useSuspenseQuery();
+  const [posts] = api.event.all.useSuspenseQuery();
 
   if (posts.length === 0) {
     return (
@@ -106,12 +123,12 @@ export function PostList() {
 }
 
 export function PostCard(props: {
-  post: RouterOutputs["post"]["all"][number];
+  post: RouterOutputs["event"]["all"][number];
 }) {
   const utils = api.useUtils();
-  const deletePost = api.post.delete.useMutation({
+  const deletePost = api.event.delete.useMutation({
     onSuccess: async () => {
-      await utils.post.invalidate();
+      await utils.event.invalidate();
     },
     onError: (err) => {
       toast.error(
@@ -125,8 +142,8 @@ export function PostCard(props: {
   return (
     <div className="flex flex-row rounded-lg bg-muted p-4">
       <div className="flex-grow">
-        <h2 className="text-2xl font-bold text-primary">{props.post.title}</h2>
-        <p className="mt-2 text-sm">{props.post.content}</p>
+        <h2 className="text-2xl font-bold text-primary">{props.post.name}</h2>
+        <p className="mt-2 text-sm">{props.post.description}</p>
       </div>
       <div>
         <Button

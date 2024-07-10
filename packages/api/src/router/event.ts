@@ -2,16 +2,15 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
 import { desc, eq } from "@tribal-cities/db";
-import { CreatePostSchema, Post } from "@tribal-cities/db/schema";
+import { CreateEventSchema, Event } from "@tribal-cities/db/schema";
 
 import { protectedProcedure, publicProcedure } from "../trpc";
 
-export const postRouter = {
+export const eventRouter = {
   all: publicProcedure.query(({ ctx }) => {
     // return ctx.db.select().from(schema.post).orderBy(desc(schema.post.id));
-    return ctx.db.query.Post.findMany({
-      orderBy: desc(Post.id),
-      limit: 10,
+    return ctx.db.query.Event.findMany({
+      orderBy: desc(Event.id),
     });
   }),
 
@@ -23,18 +22,20 @@ export const postRouter = {
       //   .from(schema.post)
       //   .where(eq(schema.post.id, input.id));
 
-      return ctx.db.query.Post.findFirst({
-        where: eq(Post.id, input.id),
+      return ctx.db.query.Event.findFirst({
+        where: eq(Event.id, input.id),
       });
     }),
 
   create: protectedProcedure
-    .input(CreatePostSchema)
+    .input(CreateEventSchema)
     .mutation(({ ctx, input }) => {
-      return ctx.db.insert(Post).values(input);
+      return ctx.db
+        .insert(Event)
+        .values({ ...input, createdById: ctx.session.user.id });
     }),
 
   delete: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {
-    return ctx.db.delete(Post).where(eq(Post.id, input));
+    return ctx.db.delete(Event).where(eq(Event.id, input));
   }),
 } satisfies TRPCRouterRecord;

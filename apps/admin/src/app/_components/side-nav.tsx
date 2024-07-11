@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Calendar, ComponentIcon, Hand, Home, Settings } from "lucide-react";
+import { Calendar, ComponentIcon, Hand, Map, Settings } from "lucide-react";
 
 import Logo from "@tribal-cities/ui/logo";
 import {
@@ -19,18 +19,6 @@ export default function SideNav() {
           <Logo className="pt-2 transition-all group-hover:scale-110" />
           <span className="sr-only">Myschivia</span>
         </Link>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              href="/"
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-            >
-              <Home className="h-5 w-5" />
-              <span className="sr-only">Home</span>
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent side="right">Home</TooltipContent>
-        </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
@@ -66,6 +54,18 @@ export default function SideNav() {
             </Link>
           </TooltipTrigger>
           <TooltipContent side="right">Volunteer</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link
+              href="/city-planning"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+            >
+              <Map className="h-5 w-5" />
+              <span className="sr-only">City Planning</span>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent side="right">City Planning</TooltipContent>
         </Tooltip>
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-4">

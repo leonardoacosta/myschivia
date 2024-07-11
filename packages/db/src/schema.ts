@@ -69,6 +69,21 @@ export const CreateCampSchema = createInsertSchema(Camp, {
   updatedAt: true,
   createdById: true,
 });
+export const UpdateCampSchema = createInsertSchema(Camp, {
+  id: z.string().max(256),
+
+  name: z.string().min(1).max(256),
+  description: z.string().min(1).max(256),
+
+  image: z.string().max(256).nullable(),
+
+  type: z.enum(campTypeEnum.enumValues),
+
+  createdAt: z.coerce.date(),
+  createdById: z.string().max(256),
+}).omit({
+  updatedAt: true,
+});
 export const eventTypeEnum = pgEnum("event_type", [
   "Workshop",
   "Class",
@@ -175,9 +190,14 @@ export const User = pgTable("user", {
   image: varchar("image", { length: 255 }),
 });
 
+export const CampRelations = relations(Camp, ({ one }) => ({
+  createdBy: one(User, { fields: [Camp.createdById], references: [User.id] }),
+}));
+
 export const UserRelations = relations(User, ({ many }) => ({
   accounts: many(Account),
   events: many(Event),
+  camps: many(Camp),
 }));
 
 export const Account = pgTable(

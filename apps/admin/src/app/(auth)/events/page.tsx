@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 
 import type { RouterOutputs } from "@tribal-cities/api";
 import { cn } from "@tribal-cities/ui";
@@ -13,17 +13,9 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@tribal-cities/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -46,20 +38,6 @@ export default function Page() {
   const router = useRouter();
   const { data: auth } = api.auth.getSession.useQuery();
   const [events] = api.event.all.useSuspenseQuery();
-
-  // if (events.length === 0) {
-  //   return (
-  //     <div className="relative flex w-full flex-col gap-4">
-  //       <EventCardSkeleton pulse={false} />
-  //       <EventCardSkeleton pulse={true} />
-  //       <EventCardSkeleton pulse={false} />
-
-  //       <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/10">
-  //         <p className="text-2xl font-bold text-white">No Events yet</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
@@ -132,41 +110,10 @@ export default function Page() {
                 </TableBody>
               </Table>
             </CardContent>
-            {/* <CardFooter>
-              <div className="text-xs text-muted-foreground">
-                Showing <strong>1-10</strong> of <strong>32</strong> products
-              </div>
-            </CardFooter> */}
           </Card>
         </TabsContent>
       </Tabs>
     </main>
-  );
-}
-
-function EventCardSkeleton(props: { pulse?: boolean }) {
-  const { pulse = true } = props;
-  return (
-    <div className="flex flex-row rounded-lg bg-muted p-4">
-      <div className="flex-grow">
-        <h2
-          className={cn(
-            "w-1/4 rounded bg-primary text-2xl font-bold",
-            pulse && "animate-pulse",
-          )}
-        >
-          &nbsp;
-        </h2>
-        <p
-          className={cn(
-            "mt-2 w-1/3 rounded bg-current text-sm",
-            pulse && "animate-pulse",
-          )}
-        >
-          &nbsp;
-        </p>
-      </div>
-    </div>
   );
 }
 

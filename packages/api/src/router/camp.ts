@@ -2,7 +2,11 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
 import { desc, eq } from "@tribal-cities/db";
-import { Camp, CreateCampSchema } from "@tribal-cities/db/schema";
+import {
+  Camp,
+  CreateCampSchema,
+  UpdateCampSchema,
+} from "@tribal-cities/db/schema";
 
 import { protectedProcedure, publicProcedure } from "../trpc";
 
@@ -10,6 +14,7 @@ export const campRouter = {
   all: publicProcedure.query(({ ctx }) =>
     ctx.db.query.Camp.findMany({
       orderBy: desc(Camp.id),
+      with: { createdBy: true },
     }),
   ),
 
@@ -29,6 +34,14 @@ export const campRouter = {
         .values({ ...input, createdById: ctx.session.user.id }),
     ),
 
+  update: protectedProcedure
+    .input(UpdateCampSchema)
+    .mutation(({ ctx, input }) =>
+      ctx.db
+        .update(Camp)
+        .set({ ...input, updatedAt: new Date() })
+        .where(eq(Camp.id, input.id!)),
+    ),
   delete: protectedProcedure
     .input(z.string())
     .mutation(({ ctx, input }) =>

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { RouterOutputs } from "@tribal-cities/api";
-import { eventTypeEnum, UpdateEventSchema } from "@tribal-cities/db/schema";
+import { EventType, UpdateEventSchema } from "@tribal-cities/db/schema";
 import { Button } from "@tribal-cities/ui/button";
 import { Calendar } from "@tribal-cities/ui/calendar";
 import {
@@ -129,7 +129,7 @@ export default function EditEventForm({
                           <SelectValue placeholder="Select an event type" />
                         </SelectTrigger>
                         <SelectContent>
-                          {eventTypeEnum.enumValues.map((type) => (
+                          {EventType.enumValues.map((type) => (
                             <SelectItem key={type} value={type}>
                               {type}
                             </SelectItem>

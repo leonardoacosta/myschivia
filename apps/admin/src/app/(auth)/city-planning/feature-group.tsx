@@ -21,8 +21,16 @@ export default function FeatureGroupFC({ geojson, setGeojson }: Props) {
           layer instanceof L.Polygon ||
           layer instanceof L.Marker
         ) {
-          const castLayer = layer as L.Layer;
+          let castLayer = layer as L.Layer;
 
+          if (layer.feature?.properties.radius && ref.current) {
+            castLayer = new L.Circle(
+              layer.feature.geometry.coordinates.slice().reverse(),
+              {
+                radius: layer.feature.properties.radius,
+              },
+            );
+          }
           if (layer.feature?.properties.popupHTML)
             castLayer.bindPopup(layer.feature.properties.popupHTML);
 

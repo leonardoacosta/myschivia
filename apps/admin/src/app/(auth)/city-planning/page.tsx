@@ -33,11 +33,13 @@ export default function Page() {
           .at(0);
       }
 
-      if (zone.camp) {
+      if (zone.radius) (feature.properties as any).radius = zone.radius;
+
+      if (zone.camp)
         feature.properties = {
           popupHTML: `<h3>${zone.camp.name}</h3>`,
         };
-      }
+
       return feature;
     });
     setGeojson({ type: "FeatureCollection", features });

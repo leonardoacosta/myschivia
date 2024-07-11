@@ -1,5 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import {
+  decimal,
   integer,
   pgEnum,
   pgTable,
@@ -13,7 +14,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // * Camps
-export const campTypeEnum = pgEnum("camp_type", [
+export const CampType = pgEnum("camp_type", [
   "Art",
   "Sound",
   "Performance",
@@ -36,13 +37,11 @@ export const campTypeEnum = pgEnum("camp_type", [
 export const Camp = pgTable("camp", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
 
-  coordinates: varchar("coordinates"),
-
   name: varchar("name", { length: 256 }).notNull(),
   description: text("description").notNull(),
   image: text("image"),
 
-  type: campTypeEnum("camp_type").notNull().default("Misc"),
+  type: CampType("camp_type").notNull().default("Misc"),
 
   zoneId: uuid("zone_id").references(() => Zone.id, { onDelete: "no action" }),
 
@@ -63,10 +62,9 @@ export const CreateCampSchema = createInsertSchema(Camp, {
 
   image: z.string().max(256).nullable(),
 
-  type: z.enum(campTypeEnum.enumValues),
+  type: z.enum(CampType.enumValues),
 }).omit({
   id: true,
-  coordinates: true,
   createdAt: true,
   updatedAt: true,
   createdById: true,
@@ -79,7 +77,7 @@ export const UpdateCampSchema = createInsertSchema(Camp, {
 
   image: z.string().max(256).nullable(),
 
-  type: z.enum(campTypeEnum.enumValues),
+  type: z.enum(CampType.enumValues),
 
   createdAt: z.coerce.date(),
   createdById: z.string().max(256),
@@ -88,7 +86,7 @@ export const UpdateCampSchema = createInsertSchema(Camp, {
 });
 
 // * Events
-export const eventTypeEnum = pgEnum("event_type", [
+export const EventType = pgEnum("event_type", [
   "Workshop",
   "Class",
   "Inclusion",
@@ -121,7 +119,7 @@ export const Event = pgTable("event", {
   endDate: timestamp("end_date").notNull(),
   endTime: varchar("end_time", { length: 20 }).notNull(),
 
-  type: eventTypeEnum("event_type").notNull().default("Misc"),
+  type: EventType("event_type").notNull().default("Misc"),
 
   createdById: uuid("created_by_id")
     .notNull()
@@ -143,7 +141,7 @@ export const CreateEventSchema = createInsertSchema(Event, {
 
   image: z.string().max(256).nullable(),
 
-  type: z.enum(eventTypeEnum.enumValues),
+  type: z.enum(EventType.enumValues),
 
   startDate: z.coerce.date(),
   startTime: z.string().max(20),
@@ -165,7 +163,7 @@ export const UpdateEventSchema = createInsertSchema(Event, {
 
   image: z.string().max(256).nullable(),
 
-  type: z.enum(eventTypeEnum.enumValues),
+  type: z.enum(EventType.enumValues),
 
   startDate: z.coerce.date(),
   startTime: z.string().max(20),
@@ -184,9 +182,12 @@ export const EventRelations = relations(Event, ({ one }) => ({
 }));
 
 // * Zones
+export const ZoneType = pgEnum("zone_type", ["Polygon", "Point", "LineString"]);
+
 export const Zone = pgTable("zone", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
-
+  type: ZoneType("type").notNull().default("Point"),
+  radius: decimal("radius", { precision: 10, scale: 6 }),
   updatedAt: timestamp("updatedAt", {
     mode: "date",
     withTimezone: true,
@@ -198,8 +199,8 @@ export const Coordinate = pgTable("coordinate", {
   zoneId: uuid("zoneId")
     .notNull()
     .references(() => Zone.id, { onDelete: "cascade" }),
-  lat: varchar("lat", { length: 256 }).notNull(),
-  lng: varchar("lng", { length: 256 }).notNull(),
+  lat: decimal("lat", { precision: 10, scale: 6 }).notNull(),
+  lng: decimal("lng", { precision: 10, scale: 6 }).notNull(),
   updatedAt: timestamp("updatedAt", {
     mode: "date",
     withTimezone: true,

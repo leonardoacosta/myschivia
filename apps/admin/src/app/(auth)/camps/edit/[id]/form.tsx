@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { RouterOutputs } from "@tribal-cities/api";
-import { campTypeEnum, UpdateCampSchema } from "@tribal-cities/db/schema";
+import { CampType, UpdateCampSchema } from "@tribal-cities/db/schema";
 import { Button } from "@tribal-cities/ui/button";
 import {
   Card,
@@ -126,7 +126,7 @@ export default function EditCampForm({
                           <SelectValue placeholder="Select an event type" />
                         </SelectTrigger>
                         <SelectContent>
-                          {campTypeEnum.enumValues.map((type) => (
+                          {CampType.enumValues.map((type) => (
                             <SelectItem key={type} value={type}>
                               {type}
                             </SelectItem>

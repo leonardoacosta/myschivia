@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 
 import {
-  campTypeEnum,
+  CampType,
   CreateCampSchema,
   CreateEventSchema,
-  eventTypeEnum,
+  EventType,
 } from "@tribal-cities/db/schema";
 import { Button } from "@tribal-cities/ui/button";
 import { Calendar } from "@tribal-cities/ui/calendar";
@@ -131,7 +131,7 @@ export default function CreateCampForm() {
                           <SelectValue placeholder="Select an camp type" />
                         </SelectTrigger>
                         <SelectContent>
-                          {campTypeEnum.enumValues.map((type) => (
+                          {CampType.enumValues.map((type) => (
                             <SelectItem key={type} value={type}>
                               {type}
                             </SelectItem>

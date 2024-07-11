@@ -12,6 +12,7 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// * Camps
 export const campTypeEnum = pgEnum("camp_type", [
   "Art",
   "Sound",
@@ -32,7 +33,6 @@ export const campTypeEnum = pgEnum("camp_type", [
   "Storytelling",
   "First Aid",
 ]);
-
 export const Camp = pgTable("camp", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
 
@@ -43,6 +43,8 @@ export const Camp = pgTable("camp", {
   image: text("image"),
 
   type: campTypeEnum("camp_type").notNull().default("Misc"),
+
+  zoneId: uuid("zone_id").references(() => Zone.id, { onDelete: "no action" }),
 
   createdById: uuid("created_by_id")
     .notNull()
@@ -84,6 +86,8 @@ export const UpdateCampSchema = createInsertSchema(Camp, {
 }).omit({
   updatedAt: true,
 });
+
+// * Events
 export const eventTypeEnum = pgEnum("event_type", [
   "Workshop",
   "Class",
@@ -179,6 +183,39 @@ export const EventRelations = relations(Event, ({ one }) => ({
   camp: one(Camp, { fields: [Event.campId], references: [Camp.id] }),
 }));
 
+// * Zones
+export const Zone = pgTable("zone", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
+});
+
+export const Coordinate = pgTable("coordinate", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  zoneId: uuid("zoneId")
+    .notNull()
+    .references(() => Zone.id, { onDelete: "cascade" }),
+  lat: varchar("lat", { length: 256 }).notNull(),
+  lng: varchar("lng", { length: 256 }).notNull(),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
+});
+
+export const ZoneRelations = relations(Zone, ({ many, one }) => ({
+  coordinates: many(Coordinate),
+  camp: one(Camp),
+}));
+
+export const CoordinateRelations = relations(Coordinate, ({ one }) => ({
+  zone: one(Zone, { fields: [Coordinate.zoneId], references: [Zone.id] }),
+}));
+
+// * Users
 export const User = pgTable("user", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }),
@@ -192,6 +229,7 @@ export const User = pgTable("user", {
 
 export const CampRelations = relations(Camp, ({ one }) => ({
   createdBy: one(User, { fields: [Camp.createdById], references: [User.id] }),
+  zone: one(Zone, { fields: [Camp.zoneId], references: [Zone.id] }),
 }));
 
 export const UserRelations = relations(User, ({ many }) => ({

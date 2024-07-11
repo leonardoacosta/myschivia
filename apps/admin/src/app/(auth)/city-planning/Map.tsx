@@ -14,8 +14,8 @@ export default function EditControl({ geojson, setGeojson }: Props) {
   return (
     <MapContainer
       className="h-full w-full"
-      center={[40.776787, -73.968467]}
-      zoom={14}
+      center={[32.972534, -94.597279]}
+      zoom={18}
       zoomControl={true}
     >
       <TileLayer url={url} />

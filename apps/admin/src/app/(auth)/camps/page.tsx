@@ -21,13 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from "@tribal-cities/ui/table";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@tribal-cities/ui/tabs";
-import { toast } from "@tribal-cities/ui/toast";
 
 import { api } from "~/trpc/react";
 

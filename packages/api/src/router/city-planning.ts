@@ -2,11 +2,7 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
 import { desc, eq } from "@tribal-cities/db";
-import {
-  Camp,
-  CreateCampSchema,
-  UpdateCampSchema,
-} from "@tribal-cities/db/schema";
+import { Coordinate, Zone } from "@tribal-cities/db/schema";
 
 import { publicProcedure } from "../trpc";
 
@@ -29,6 +25,28 @@ export const cityPlanningRouter = {
     );
     const json = await res.json();
     return `https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session=${json.session}&key=${api}`;
+  }),
+  getZones: publicProcedure.query(async ({ ctx }) =>
+    ctx.db.query.Zone.findMany({
+      with: { camp: true, coordinates: true },
+    }),
+  ),
+  // saveZones: publicProcedure.query(async ({ ctx }) =>
+  //   ctx.db.query.Zone.findMany({
+  //     with: { camp: true, coordinates: true },
+  //   }),
+  // ),
+  createPoint: publicProcedure.query(async ({ ctx }) => {
+    // * create zone
+    const zone = await ctx.db.insert(Zone).values({}).returning();
+
+    // * add point to zone
+    const point = await ctx.db.insert(Coordinate).values({
+      zoneId: zone.at(0)?.id!,
+      lat: "32.973456",
+      lng: "-94.597195",
+    });
+    return point;
   }),
   // all: publicProcedure.query(({ ctx }) =>
   //   ctx.db.query.Camp.findMany({

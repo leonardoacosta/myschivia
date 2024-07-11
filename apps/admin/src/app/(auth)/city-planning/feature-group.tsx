@@ -13,6 +13,7 @@ export default function FeatureGroupFC({ geojson, setGeojson }: Props) {
   const ref = useRef<L.FeatureGroup>(null);
 
   useEffect(() => {
+    console.log("geojson", geojson);
     if (ref.current?.getLayers().length === 0 && geojson) {
       L.geoJSON(geojson).eachLayer((layer: any) => {
         if (
@@ -20,10 +21,10 @@ export default function FeatureGroupFC({ geojson, setGeojson }: Props) {
           layer instanceof L.Polygon ||
           layer instanceof L.Marker
         ) {
-          let castLayer = layer as L.Layer;
+          const castLayer = layer as L.Layer;
 
           if (layer.feature?.properties.popupHTML)
-            castLayer.bindPopup(layer.feature?.properties.popupHTML);
+            castLayer.bindPopup(layer.feature.properties.popupHTML);
 
           ref.current?.addLayer(castLayer);
         }
@@ -35,10 +36,10 @@ export default function FeatureGroupFC({ geojson, setGeojson }: Props) {
     <FeatureGroup ref={ref}>
       <EditControl
         position="topright"
-        onEdited={console.log}
-        onCreated={console.log}
-        onDeleted={console.log}
-        onMounted={console.log}
+        // onEdited={console.log}
+        // onCreated={console.log}
+        // onDeleted={console.log}
+        // onMounted={console.log}
         draw={{
           rectangle: false,
         }}

@@ -72,6 +72,7 @@
     }
   },
   "globalEnv": [
+    "GOOGLE_MAPS_API_KEY",
     "POSTGRES_URL",
     "AUTH_DISCORD_ID",
     "AUTH_DISCORD_SECRET",

@@ -1,0 +1,69 @@
+import type { TRPCRouterRecord } from "@trpc/server";
+import { z } from "zod";
+
+import { desc, eq } from "@tribal-cities/db";
+import {
+  Camp,
+  CreateCampSchema,
+  UpdateCampSchema,
+} from "@tribal-cities/db/schema";
+
+import { publicProcedure } from "../trpc";
+
+export const cityPlanningRouter = {
+  getGoogleMaps: publicProcedure.query(async ({ ctx }) => {
+    const api = process.env.GOOGLE_MAPS_API_KEY;
+    const res = await fetch(
+      `https://tile.googleapis.com/v1/createSession?key=${api}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mapType: "satellite",
+          language: "en-US",
+          region: "US",
+        }),
+      },
+    );
+    const json = await res.json();
+    return `https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session=${json.session}&key=${api}`;
+  }),
+  // all: publicProcedure.query(({ ctx }) =>
+  //   ctx.db.query.Camp.findMany({
+  //     orderBy: desc(Camp.id),
+  //     with: { createdBy: true },
+  //   }),
+  // ),
+
+  // byId: publicProcedure
+  //   .input(z.object({ id: z.string() }))
+  //   .query(({ ctx, input }) =>
+  //     ctx.db.query.Camp.findFirst({
+  //       where: eq(Camp.id, input.id),
+  //     }),
+  //   ),
+
+  // create: protectedProcedure
+  //   .input(CreateCampSchema)
+  //   .mutation(({ ctx, input }) =>
+  //     ctx.db
+  //       .insert(Camp)
+  //       .values({ ...input, createdById: ctx.session.user.id }),
+  //   ),
+
+  // update: protectedProcedure
+  //   .input(UpdateCampSchema)
+  //   .mutation(({ ctx, input }) =>
+  //     ctx.db
+  //       .update(Camp)
+  //       .set({ ...input, updatedAt: new Date() })
+  //       .where(eq(Camp.id, input.id!)),
+  //   ),
+  // delete: protectedProcedure
+  //   .input(z.string())
+  //   .mutation(({ ctx, input }) =>
+  //     ctx.db.delete(Camp).where(eq(Camp.id, input)),
+  //   ),
+} satisfies TRPCRouterRecord;

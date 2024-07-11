@@ -126,15 +126,37 @@ export const CreateEventSchema = createInsertSchema(Event, {
 
   type: z.enum(eventTypeEnum.enumValues),
 
-  startDate: z.date(),
+  startDate: z.coerce.date(),
   startTime: z.string().max(20),
-  endDate: z.date(),
+  endDate: z.coerce.date(),
   endTime: z.string().max(20),
 }).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
   createdById: true,
+});
+
+export const UpdateEventSchema = createInsertSchema(Event, {
+  id: z.string().max(256),
+  location: z.string().max(256),
+
+  name: z.string().min(1).max(256),
+  description: z.string().min(1).max(256),
+
+  image: z.string().max(256).nullable(),
+
+  type: z.enum(eventTypeEnum.enumValues),
+
+  startDate: z.coerce.date(),
+  startTime: z.string().max(20),
+  endDate: z.coerce.date(),
+  endTime: z.string().max(20),
+
+  createdAt: z.coerce.date(),
+  createdById: z.string().max(256),
+}).omit({
+  updatedAt: true,
 });
 
 export const EventRelations = relations(Event, ({ one }) => ({

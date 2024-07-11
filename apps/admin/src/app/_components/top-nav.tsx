@@ -1,35 +1,17 @@
-import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ChevronLeft,
-  ChevronRight,
-  Copy,
-  CreditCard,
-  File,
   Home,
   LineChart,
-  ListFilter,
-  MoreVertical,
   Package,
   Package2,
   PanelLeft,
   Search,
-  Settings,
   ShoppingCart,
-  Truck,
   Users2,
 } from "lucide-react";
 
-import { auth, signIn, signOut } from "@tribal-cities/auth";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@tribal-cities/ui/breadcrumb";
+import { auth, signOut } from "@tribal-cities/auth";
 import { Button } from "@tribal-cities/ui/button";
 import {
   DropdownMenu,
@@ -41,6 +23,8 @@ import {
 } from "@tribal-cities/ui/dropdown-menu";
 import { Input } from "@tribal-cities/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@tribal-cities/ui/sheet";
+
+import Breadcrumbs from "./breadcrumbs";
 
 export default async function TopNav() {
   const session = await auth();
@@ -100,25 +84,7 @@ export default async function TopNav() {
           </nav>
         </SheetContent>
       </Sheet>
-      <Breadcrumb className="hidden md:flex">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="#">Dashboard</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="#">Orders</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Recent Orders</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <Breadcrumbs />
       <div className="relative ml-auto flex-1 md:grow-0">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input

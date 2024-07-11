@@ -4,16 +4,21 @@ import * as L from "leaflet";
 import { FeatureGroup } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 
+import { toast } from "@tribal-cities/ui/toast";
+
+import { api } from "~/trpc/react";
+
 interface Props {
   geojson: FeatureCollection;
-  setGeojson: (geojson: FeatureCollection) => void;
 }
 
-export default function FeatureGroupFC({ geojson, setGeojson }: Props) {
+export default function FeatureGroupFC({ geojson }: Props) {
+  const utils = api.useUtils();
+  const { mutate } = api.cityPlanning.saveZones.useMutation();
   const ref = useRef<L.FeatureGroup>(null);
 
   useEffect(() => {
-    console.log("geojson", geojson);
+    ref.current?.clearLayers();
     if (ref.current?.getLayers().length === 0 && geojson) {
       L.geoJSON(geojson).eachLayer((layer: any) => {
         if (
@@ -40,14 +45,38 @@ export default function FeatureGroupFC({ geojson, setGeojson }: Props) {
     }
   }, [geojson]);
 
+  const handleChange = () => {
+    const geo = ref.current?.toGeoJSON();
+    if (geo?.type === "FeatureCollection")
+      mutate(geo, {
+        onSuccess: async () => {
+          await utils.cityPlanning.getZones.refetch();
+          toast.success("Zones saved");
+        },
+        onError: (err) => {
+          console.error(err);
+        },
+      });
+  };
+
   return (
     <FeatureGroup ref={ref}>
       <EditControl
         position="topright"
-        // onEdited={console.log}
-        // onCreated={console.log}
-        // onDeleted={console.log}
-        // onMounted={console.log}
+        onEdited={(e) => {
+          handleChange();
+          console.log("edited", e);
+        }}
+        onCreated={(e) => {
+          handleChange();
+          console.log("onCreated", e);
+        }}
+        onDeleted={(e) => {
+          console.log("onDeleted", e);
+        }}
+        onMounted={() => {
+          console.log("onMounted");
+        }}
         draw={{
           rectangle: false,
         }}

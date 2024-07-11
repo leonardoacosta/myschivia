@@ -1,10 +1,47 @@
 import type { TRPCRouterRecord } from "@trpc/server";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { desc, eq } from "@tribal-cities/db";
+import { desc, eq, notInArray } from "@tribal-cities/db";
 import { Coordinate, Zone } from "@tribal-cities/db/schema";
 
 import { publicProcedure } from "../trpc";
+
+const coordinatesSchema = z.array(z.number()).min(2).max(3);
+const featureCollectionSchema = z.object({
+  type: z.literal("FeatureCollection"),
+  features: z.array(
+    z.object({
+      type: z.literal("Feature"),
+      id: z.union([z.string(), z.number()]).optional(),
+      properties: z
+        .object({
+          radius: z.number().optional(),
+          popupHTML: z.string().optional(),
+        })
+        .nullable(),
+      geometry: z.object({
+        type: z.union([
+          z.literal("Polygon"),
+          z.literal("Point"),
+          z.literal("LineString"),
+          z.literal("MultiPoint"),
+          z.literal("MultiLineString"),
+          z.literal("MultiPolygon"),
+          z.literal("GeometryCollection"),
+        ]),
+        coordinates: z
+          .union([
+            coordinatesSchema,
+            z.array(coordinatesSchema),
+            z.array(z.array(coordinatesSchema)),
+            z.array(z.array(z.array(coordinatesSchema))),
+          ])
+          .optional(),
+      }),
+    }),
+  ),
+});
 
 export const cityPlanningRouter = {
   getGoogleMaps: publicProcedure.query(async ({ ctx }) => {
@@ -31,11 +68,64 @@ export const cityPlanningRouter = {
       with: { camp: true, coordinates: true },
     }),
   ),
-  // saveZones: publicProcedure.query(async ({ ctx }) =>
-  //   ctx.db.query.Zone.findMany({
-  //     with: { camp: true, coordinates: true },
-  //   }),
-  // ),
+  saveZones: publicProcedure
+    .input(featureCollectionSchema)
+    .mutation(async ({ ctx, input }) => {
+      const updates = input.features.filter((feature) => feature.id);
+      const create = input.features.filter((feature) => !feature.id);
+
+      for (const feature of updates) {
+        // * Delete all coordinates for the zone
+        await ctx.db
+          .delete(Coordinate)
+          .where(eq(Coordinate.zoneId, feature.id as any));
+
+        if (feature.geometry.type === "Point" && feature.geometry.coordinates) {
+          await ctx.db.insert(Coordinate).values({
+            zoneId: feature.id as any,
+            lat: feature.geometry.coordinates[1]!.toString(),
+            lng: feature.geometry.coordinates[0]!.toString(),
+          });
+        }
+      }
+      for (const feature of create) {
+        // * create zone
+        const zone = await ctx.db
+          .insert(Zone)
+          .values({
+            radius: feature.properties?.radius
+              ? feature.properties.radius.toString()
+              : null,
+          })
+          .returning();
+
+        // * Create coordinates for a point
+        if (feature.geometry.type === "Point" && feature.geometry.coordinates) {
+          await ctx.db.insert(Coordinate).values({
+            zoneId: zone.at(0)?.id!,
+            lat: feature.geometry.coordinates[1]!.toString(),
+            lng: feature.geometry.coordinates[0]!.toString(),
+          });
+        }
+      }
+    }),
+  deleteZone: publicProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      // * get zone
+      const zone = await ctx.db.query.Zone.findFirst({
+        where: eq(Zone.id, input),
+        with: { camp: true },
+      });
+      if (zone?.camp)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Cannot delete a zone that is associated with a camp",
+        });
+
+      await ctx.db.delete(Zone).where(eq(Zone.id, input));
+    }),
+
   createPoint: publicProcedure.query(async ({ ctx }) => {
     // * create zone
     const zone = await ctx.db.insert(Zone).values({}).returning();
@@ -48,40 +138,4 @@ export const cityPlanningRouter = {
     });
     return point;
   }),
-  // all: publicProcedure.query(({ ctx }) =>
-  //   ctx.db.query.Camp.findMany({
-  //     orderBy: desc(Camp.id),
-  //     with: { createdBy: true },
-  //   }),
-  // ),
-
-  // byId: publicProcedure
-  //   .input(z.object({ id: z.string() }))
-  //   .query(({ ctx, input }) =>
-  //     ctx.db.query.Camp.findFirst({
-  //       where: eq(Camp.id, input.id),
-  //     }),
-  //   ),
-
-  // create: protectedProcedure
-  //   .input(CreateCampSchema)
-  //   .mutation(({ ctx, input }) =>
-  //     ctx.db
-  //       .insert(Camp)
-  //       .values({ ...input, createdById: ctx.session.user.id }),
-  //   ),
-
-  // update: protectedProcedure
-  //   .input(UpdateCampSchema)
-  //   .mutation(({ ctx, input }) =>
-  //     ctx.db
-  //       .update(Camp)
-  //       .set({ ...input, updatedAt: new Date() })
-  //       .where(eq(Camp.id, input.id!)),
-  //   ),
-  // delete: protectedProcedure
-  //   .input(z.string())
-  //   .mutation(({ ctx, input }) =>
-  //     ctx.db.delete(Camp).where(eq(Camp.id, input)),
-  //   ),
 } satisfies TRPCRouterRecord;

@@ -345,6 +345,9 @@ importers:
       '@trpc/server':
         specifier: 11.0.0-rc.441
         version: 11.0.0-rc.441
+      geojson:
+        specifier: ^0.5.0
+        version: 0.5.0
       superjson:
         specifier: 2.2.1
         version: 2.2.1

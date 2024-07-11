@@ -6,10 +6,9 @@ import FeatureGroupFC from "./feature-group";
 
 interface Props {
   geojson: FeatureCollection;
-  setGeojson: (geojson: FeatureCollection) => void;
 }
 
-export default function EditControl({ geojson, setGeojson }: Props) {
+export default function EditControl({ geojson }: Props) {
   const [url] = api.cityPlanning.getGoogleMaps.useSuspenseQuery();
   return (
     <MapContainer
@@ -19,7 +18,7 @@ export default function EditControl({ geojson, setGeojson }: Props) {
       zoomControl={true}
     >
       <TileLayer url={url} />
-      <FeatureGroupFC geojson={geojson} setGeojson={setGeojson} />
+      <FeatureGroupFC geojson={geojson} />
     </MapContainer>
   );
 }

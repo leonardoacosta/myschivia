@@ -5,17 +5,20 @@ import * as React from "react";
 import dynamic from "next/dynamic";
 
 import { api } from "~/trpc/react";
+import ZoneTable from "./zone-table";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
 export default function Page() {
-  const [zones] = api.cityPlanning.getZones.useSuspenseQuery();
+  const { data: zones } = api.cityPlanning.getZones.useQuery();
   const [geojson, setGeojson] = React.useState<FeatureCollection>({
     type: "FeatureCollection",
     features: [],
   });
 
+  // * Convert zones to geojson
   React.useEffect(() => {
+    if (!zones) return;
     const features: Feature[] = zones.map((zone) => {
       const feature: Feature = {
         type: "Feature",
@@ -34,11 +37,11 @@ export default function Page() {
       }
 
       if (zone.radius) (feature.properties as any).radius = zone.radius;
-
       if (zone.camp)
         feature.properties = {
           popupHTML: `<h3>${zone.camp.name}</h3>`,
         };
+      feature.id = zone.id;
 
       return feature;
     });
@@ -47,7 +50,15 @@ export default function Page() {
 
   return (
     <div style={{ display: "flex", height: "90vh" }}>
-      <Map geojson={geojson} setGeojson={setGeojson} />
+      <div
+        className="h-[100%]"
+        style={{ width: "33%", textAlign: "center", overflow: "auto" }}
+      >
+        <ZoneTable zones={zones} />
+      </div>
+      <div className="h-[100%]" style={{ width: "67%" }}>
+        <Map geojson={geojson} />
+      </div>
     </div>
   );
 }

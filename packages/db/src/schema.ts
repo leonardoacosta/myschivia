@@ -181,9 +181,7 @@ export const Event = pgTable("event", {
     .notNull()
     .references(() => User.id, { onDelete: "cascade" }),
   campId: uuid("camp_id").references(() => Camp.id, { onDelete: "cascade" }),
-  burnId: uuid("burn_id")
-    .notNull()
-    .references(() => Camp.id, { onDelete: "cascade" }),
+  // burnId: uuid("burn_id").references(() => Burn.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", {
@@ -195,7 +193,7 @@ export const Event = pgTable("event", {
 export const EventRelations = relations(Event, ({ one }) => ({
   user: one(User, { fields: [Event.createdById], references: [User.id] }),
   camp: one(Camp, { fields: [Event.campId], references: [Camp.id] }),
-  burn: one(Burn, { fields: [Event.burnId], references: [Burn.id] }),
+  // burn: one(Burn, { fields: [Event.burnId], references: [Burn.id] }),
 }));
 
 export const CreateEventSchema = createInsertSchema(Event, {
@@ -207,7 +205,7 @@ export const CreateEventSchema = createInsertSchema(Event, {
   image: z.string().max(256).nullable(),
 
   type: z.enum(EventType.enumValues),
-  burnId: z.string().max(256).nullable(),
+  // burnId: z.string().max(256).nullable(),
 
   startDate: z.coerce.date(),
   startTime: z.string().max(20),
@@ -331,7 +329,7 @@ export const BurnRelations = relations(Burn, ({ many }) => ({
   members: many(UsersToBurns),
   events: many(Event),
   camps: many(Camp),
-  burns: many(Burn),
+  // burns: many(Burn),
 }));
 
 // * Accounts ===

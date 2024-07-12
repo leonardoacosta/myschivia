@@ -44,10 +44,10 @@ export const authConfig = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
-    Discord({
-      clientId: env.AUTH_DISCORD_ID,
-      clientSecret: env.AUTH_DISCORD_SECRET,
-    }),
+    // Discord({
+    //   clientId: env.AUTH_DISCORD_ID,
+    //   clientSecret: env.AUTH_DISCORD_SECRET,
+    // }),
   ],
   callbacks: {
     session: (opts) => {

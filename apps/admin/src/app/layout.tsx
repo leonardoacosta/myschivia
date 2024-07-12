@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 
@@ -9,6 +10,8 @@ import { Toaster } from "@tribal-cities/ui/toast";
 import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/globals.css";
+
+import Script from "next/script";
 
 import { TooltipProvider } from "@tribal-cities/ui/tooltip";
 
@@ -58,6 +61,25 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           rel="stylesheet"
           href="//cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"
         />
+
+        {/* Global Site Tag (gtag.js) - Google Analytics */}
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=G-8CHBB2ESKH`}
+        />
+        <Script
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-8CHBB2ESKH', {
+              page_path: window.location.pathname,
+            });
+          `,
+          }}
+        />
       </head>
       <body
         className={cn(
@@ -73,6 +95,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           <div className="absolute bottom-4 right-4">
             <ThemeToggle />
           </div>
+          <Analytics />
           <Toaster />
         </ThemeProvider>
       </body>

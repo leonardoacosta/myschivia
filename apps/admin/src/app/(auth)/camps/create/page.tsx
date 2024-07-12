@@ -2,14 +2,8 @@
 
 import { useRouter } from "next/navigation";
 
-import {
-  CampType,
-  CreateCampSchema,
-  CreateEventSchema,
-  EventType,
-} from "@tribal-cities/db/schema";
+import { CampType, CreateCampSchema } from "@tribal-cities/db/schema";
 import { Button } from "@tribal-cities/ui/button";
-import { Calendar } from "@tribal-cities/ui/calendar";
 import {
   Card,
   CardContent,
@@ -50,7 +44,25 @@ export default function CreateCampForm() {
   });
 
   const utils = api.useUtils();
+  // const { mutate: presign } = api.camp.presign.useMutation({
+  //   onMutate: async (data) => {},
+  //   onSuccess: async (data) => {
+  //     toast.info("Uploading image...");
+  //   },
+  // });
+
   const createCamp = api.camp.create.useMutation({
+    // onMutate: async (data) => {
+    //   const image = data.image;
+    //   console.log("image", image);
+    //   if (image) {
+    //     // presign({
+    //     //   filename: image,
+    //     //   year: "2024",
+    //     //   burnName: "myschievia",
+    //     // });
+    //   }
+    // },
     onSuccess: async () => {
       form.reset();
       await utils.camp.invalidate();
@@ -111,6 +123,26 @@ export default function CreateCampForm() {
                   </FormItem>
                 )}
               />
+              {/* <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormDescription>
+                      Tell us about your event in a few words
+                    </FormDescription>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              /> */}
               <FormField
                 control={form.control}
                 name="type"

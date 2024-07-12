@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 import { api } from "~/trpc/react";
 import ZoneTable from "./zone-table";
 
-const Map = dynamic(() => import("./map"), { ssr: false });
+const Map = dynamic(() => import("./planning"), { ssr: false });
 
 export default function Page() {
   const { data: zones } = api.cityPlanning.getZones.useQuery();

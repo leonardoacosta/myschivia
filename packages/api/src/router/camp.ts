@@ -8,6 +8,7 @@ import {
   UpdateCampSchema,
 } from "@tribal-cities/db/schema";
 
+import { BlobType, PresignedUrl } from "../service/blob";
 import { protectedProcedure, publicProcedure } from "../trpc";
 
 export const campRouter = {
@@ -43,9 +44,21 @@ export const campRouter = {
         .set({ ...input, updatedAt: new Date() })
         .where(eq(Camp.id, input.id!)),
     ),
+
   delete: protectedProcedure
     .input(z.string())
     .mutation(({ ctx, input }) =>
       ctx.db.delete(Camp).where(eq(Camp.id, input)),
+    ),
+  presign: protectedProcedure
+    .input(
+      z.object({
+        filename: z.string(),
+        year: z.string(),
+        burnName: z.string(),
+      }),
+    )
+    .mutation(({ ctx, input }) =>
+      PresignedUrl(input.year, input.burnName, input.filename, BlobType.camp),
     ),
 } satisfies TRPCRouterRecord;

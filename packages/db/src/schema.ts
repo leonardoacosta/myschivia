@@ -182,7 +182,7 @@ export const Event = pgTable("event", {
     .references(() => User.id, { onDelete: "cascade" }),
   campId: uuid("camp_id").references(() => Camp.id, { onDelete: "cascade" }),
   burnId: uuid("burn_id")
-    // .notNull()
+    .notNull()
     .references(() => Camp.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),

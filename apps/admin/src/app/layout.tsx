@@ -20,21 +20,16 @@ import { env } from "~/env";
 export const metadata: Metadata = {
   metadataBase: new URL(
     env.VERCEL_ENV === "production"
-      ? "https://turbo.t3.gg"
+      ? "https://tribalcities.com"
       : "http://localhost:3000",
   ),
-  title: "Create T3 Turbo",
-  description: "Simple monorepo with shared backend for web & mobile apps",
+  title: "Tribal Cities - Where Burners Organize",
+  description: "Tribal Cities is a platform for organizing burner events",
   openGraph: {
-    title: "Create T3 Turbo",
-    description: "Simple monorepo with shared backend for web & mobile apps",
-    url: "https://create-t3-turbo.vercel.app",
-    siteName: "Create T3 Turbo",
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@jullerino",
-    creator: "@jullerino",
+    title: "Tribal Cities - Where Burners Organize",
+    description: "Tribal Cities is a platform for organizing burner events",
+    url: "https://www.tribalcities.com",
+    siteName: "TribalCities",
   },
 };
 

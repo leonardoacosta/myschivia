@@ -8,39 +8,38 @@ import { Coordinate, Zone } from "@tribal-cities/db/schema";
 import { publicProcedure } from "../trpc";
 
 const coordinatesSchema = z.array(z.number()).min(2).max(3);
+const featureSchema = z.object({
+  type: z.literal("Feature"),
+  id: z.union([z.string(), z.number()]).optional(),
+  properties: z
+    .object({
+      radius: z.number().optional(),
+      popupHTML: z.string().optional(),
+    })
+    .nullable(),
+  geometry: z.object({
+    type: z.union([
+      z.literal("Polygon"),
+      z.literal("Point"),
+      z.literal("LineString"),
+      z.literal("MultiPoint"),
+      z.literal("MultiLineString"),
+      z.literal("MultiPolygon"),
+      z.literal("GeometryCollection"),
+    ]),
+    coordinates: z
+      .union([
+        coordinatesSchema,
+        z.array(coordinatesSchema),
+        z.array(z.array(coordinatesSchema)),
+        z.array(z.array(z.array(coordinatesSchema))),
+      ])
+      .optional(),
+  }),
+});
 const featureCollectionSchema = z.object({
   type: z.literal("FeatureCollection"),
-  features: z.array(
-    z.object({
-      type: z.literal("Feature"),
-      id: z.union([z.string(), z.number()]).optional(),
-      properties: z
-        .object({
-          radius: z.number().optional(),
-          popupHTML: z.string().optional(),
-        })
-        .nullable(),
-      geometry: z.object({
-        type: z.union([
-          z.literal("Polygon"),
-          z.literal("Point"),
-          z.literal("LineString"),
-          z.literal("MultiPoint"),
-          z.literal("MultiLineString"),
-          z.literal("MultiPolygon"),
-          z.literal("GeometryCollection"),
-        ]),
-        coordinates: z
-          .union([
-            coordinatesSchema,
-            z.array(coordinatesSchema),
-            z.array(z.array(coordinatesSchema)),
-            z.array(z.array(z.array(coordinatesSchema))),
-          ])
-          .optional(),
-      }),
-    }),
-  ),
+  features: z.array(featureSchema),
 });
 
 export const cityPlanningRouter = {
@@ -68,6 +67,55 @@ export const cityPlanningRouter = {
       with: { camp: true, coordinates: true },
     }),
   ),
+  addZone: publicProcedure
+    .input(featureSchema)
+    .mutation(async ({ ctx, input }) => {
+      // * create zone
+      const zone = await ctx.db
+        .insert(Zone)
+        .values({
+          type: input.geometry.type,
+          radius: input.properties?.radius
+            ? input.properties.radius.toString()
+            : null,
+        })
+        .returning();
+
+      // * add point to zone
+      if (input.geometry.type === "Point" && input.geometry.coordinates) {
+        await ctx.db.insert(Coordinate).values({
+          zoneId: zone.at(0)?.id!,
+          lat: input.geometry.coordinates[1]!.toString(),
+          lng: input.geometry.coordinates[0]!.toString(),
+        });
+      }
+      if (input.geometry.type === "Polygon" && input.geometry.coordinates) {
+        const baseCoordinates = input.geometry.coordinates[0] as number[][];
+        for (const coordinates of baseCoordinates) {
+          console.log("coordinates", { coordinates });
+          const lat = coordinates[1];
+          const lng = coordinates[0];
+          await ctx.db.insert(Coordinate).values({
+            zoneId: zone.at(0)?.id!,
+            lat: lat!.toString(),
+            lng: lng!.toString(),
+          });
+        }
+      }
+      if (input.geometry.type === "LineString" && input.geometry.coordinates) {
+        const baseCoordinates = input.geometry.coordinates as number[][];
+        for (const coordinates of baseCoordinates) {
+          console.log("coordinates", { coordinates });
+          const lat = coordinates[1];
+          const lng = coordinates[0];
+          await ctx.db.insert(Coordinate).values({
+            zoneId: zone.at(0)?.id!,
+            lat: lat!.toString(),
+            lng: lng!.toString(),
+          });
+        }
+      }
+    }),
   saveZones: publicProcedure
     .input(featureCollectionSchema)
     .mutation(async ({ ctx, input }) => {
@@ -89,6 +137,7 @@ export const cityPlanningRouter = {
         }
       }
       for (const feature of create) {
+        console.log("feature", { feature });
         // * create zone
         const zone = await ctx.db
           .insert(Zone)

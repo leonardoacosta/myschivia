@@ -28,12 +28,27 @@ export default function Page() {
           coordinates: [],
         },
       };
-      if (zone.coordinates.length === 1) {
+      if (zone.type === "Point") {
         feature.geometry.type = "Point";
-
         (feature.geometry as any).coordinates = zone.coordinates
           .map((c) => [parseFloat(c.lng), parseFloat(c.lat)])
           .at(0);
+      }
+
+      if (zone.type === "Polygon") {
+        feature.geometry.type = "Polygon";
+        (feature.geometry as any).coordinates[0] = zone.coordinates.map((c) => [
+          parseFloat(c.lng),
+          parseFloat(c.lat),
+        ]);
+      }
+
+      if (zone.type === "LineString") {
+        feature.geometry.type = "LineString";
+        (feature.geometry as any).coordinates = zone.coordinates.map((c) => [
+          parseFloat(c.lng),
+          parseFloat(c.lat),
+        ]);
       }
 
       if (zone.radius) (feature.properties as any).radius = zone.radius;

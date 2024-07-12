@@ -182,7 +182,15 @@ export const EventRelations = relations(Event, ({ one }) => ({
 }));
 
 // * Zones
-export const ZoneType = pgEnum("zone_type", ["Polygon", "Point", "LineString"]);
+export const ZoneType = pgEnum("zone_type", [
+  "Polygon",
+  "Point",
+  "LineString",
+  "MultiPoint",
+  "MultiLineString",
+  "MultiPolygon",
+  "GeometryCollection",
+]);
 
 export const Zone = pgTable("zone", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),

@@ -27,7 +27,7 @@ export default function SideNav() {
         </Link>
         <NavItem href="/camps" Icon={ComponentIcon} name="Camps" />
         <NavItem href="/events" Icon={Calendar} name="Events" />
-        <NavItem href="/volunteer" Icon={Hand} name="Volunteer" disabled />
+        {/* <NavItem href="/volunteer" Icon={Hand} name="Volunteer" disabled /> */}
         {session?.user.email?.includes("leo") && (
           <NavItem href="/city-planning" Icon={Map} name="City Planning" />
         )}

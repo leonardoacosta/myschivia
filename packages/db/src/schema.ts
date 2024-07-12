@@ -13,7 +13,61 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// * Camps
+// * Roles
+export const Role = pgEnum("role", ["God", "Lead", "Participant"]);
+
+// * Burn ===
+export const Burn = pgTable("burn", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+
+  name: varchar("name", { length: 256 }).notNull(),
+  description: text("description").notNull(),
+  image: text("image"),
+
+  startDate: timestamp("start_date").notNull(),
+  startTime: varchar("start_time", { length: 20 }).notNull(),
+  endDate: timestamp("end_date").notNull(),
+  endTime: varchar("end_time", { length: 20 }).notNull(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
+});
+
+export const CreateBurnSchema = createInsertSchema(Burn, {
+  name: z.string().max(256),
+  description: z.string().max(256),
+
+  image: z.string().max(256).nullable(),
+
+  startDate: z.coerce.date(),
+  startTime: z.string().max(20),
+  endDate: z.coerce.date(),
+  endTime: z.string().max(20),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UpdateBurnSchema = createInsertSchema(Burn, {
+  id: z.string().max(256),
+  name: z.string().max(256),
+  description: z.string().max(256),
+
+  image: z.string().max(256).nullable(),
+
+  startDate: z.coerce.date(),
+  startTime: z.string().max(20),
+  endDate: z.coerce.date(),
+  endTime: z.string().max(20),
+}).omit({
+  updatedAt: true,
+});
+
+// * Camps ===
 export const CampType = pgEnum("camp_type", [
   "Art",
   "Sound",
@@ -34,6 +88,7 @@ export const CampType = pgEnum("camp_type", [
   "Storytelling",
   "First Aid",
 ]);
+
 export const Camp = pgTable("camp", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
 
@@ -69,6 +124,7 @@ export const CreateCampSchema = createInsertSchema(Camp, {
   updatedAt: true,
   createdById: true,
 });
+
 export const UpdateCampSchema = createInsertSchema(Camp, {
   id: z.string().max(256),
 
@@ -85,7 +141,7 @@ export const UpdateCampSchema = createInsertSchema(Camp, {
   updatedAt: true,
 });
 
-// * Events
+// * Events ===
 export const EventType = pgEnum("event_type", [
   "Workshop",
   "Class",
@@ -125,6 +181,9 @@ export const Event = pgTable("event", {
     .notNull()
     .references(() => User.id, { onDelete: "cascade" }),
   campId: uuid("camp_id").references(() => Camp.id, { onDelete: "cascade" }),
+  burnId: uuid("burn_id")
+    // .notNull()
+    .references(() => Camp.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", {
@@ -132,6 +191,12 @@ export const Event = pgTable("event", {
     withTimezone: true,
   }).$onUpdateFn(() => sql`now()`),
 });
+
+export const EventRelations = relations(Event, ({ one }) => ({
+  user: one(User, { fields: [Event.createdById], references: [User.id] }),
+  camp: one(Camp, { fields: [Event.campId], references: [Camp.id] }),
+  burn: one(Burn, { fields: [Event.burnId], references: [Burn.id] }),
+}));
 
 export const CreateEventSchema = createInsertSchema(Event, {
   location: z.string().max(256),
@@ -142,6 +207,7 @@ export const CreateEventSchema = createInsertSchema(Event, {
   image: z.string().max(256).nullable(),
 
   type: z.enum(EventType.enumValues),
+  burnId: z.string().max(256).nullable(),
 
   startDate: z.coerce.date(),
   startTime: z.string().max(20),
@@ -176,12 +242,7 @@ export const UpdateEventSchema = createInsertSchema(Event, {
   updatedAt: true,
 });
 
-export const EventRelations = relations(Event, ({ one }) => ({
-  user: one(User, { fields: [Event.createdById], references: [User.id] }),
-  camp: one(Camp, { fields: [Event.campId], references: [Camp.id] }),
-}));
-
-// * Zones
+// * Zones ===
 export const ZoneType = pgEnum("zone_type", [
   "Polygon",
   "Point",
@@ -224,10 +285,11 @@ export const CoordinateRelations = relations(Coordinate, ({ one }) => ({
   zone: one(Zone, { fields: [Coordinate.zoneId], references: [Zone.id] }),
 }));
 
-// * Users
+// * Users ===
 export const User = pgTable("user", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }),
+  alias: varchar("alias", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull(),
   emailVerified: timestamp("emailVerified", {
     mode: "date",
@@ -236,17 +298,43 @@ export const User = pgTable("user", {
   image: varchar("image", { length: 255 }),
 });
 
-export const CampRelations = relations(Camp, ({ one }) => ({
+export const CampRelations = relations(Camp, ({ one, many }) => ({
   createdBy: one(User, { fields: [Camp.createdById], references: [User.id] }),
   zone: one(Zone, { fields: [Camp.zoneId], references: [Zone.id] }),
+  members: many(User),
 }));
+
+export const UsersToBurns = pgTable(
+  "user_to_burns",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => User.id),
+    burnId: uuid("burn_id")
+      .notNull()
+      .references(() => Burn.id),
+    role: Role("role").notNull().default("Participant"),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.userId, t.burnId] }),
+  }),
+);
 
 export const UserRelations = relations(User, ({ many }) => ({
   accounts: many(Account),
   events: many(Event),
   camps: many(Camp),
+  burns: many(UsersToBurns),
 }));
 
+export const BurnRelations = relations(Burn, ({ many }) => ({
+  members: many(UsersToBurns),
+  events: many(Event),
+  camps: many(Camp),
+  burns: many(Burn),
+}));
+
+// * Accounts ===
 export const Account = pgTable(
   "account",
   {

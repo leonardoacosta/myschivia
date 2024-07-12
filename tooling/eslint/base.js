@@ -71,6 +71,12 @@ export default tseslint.config(
       ],
       "@typescript-eslint/no-non-null-assertion": "error",
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+
+      // * Custom rules
+      // "@typescript-eslint/no-unsafe-return": "off",
+      // "@typescript-eslint/no-unsafe-assignment": "off",
+      // "@typescript-eslint/no-unsafe-member-access": "off",
+      // "@typescript-eslint/no-unsafe-call": "off",
     },
   },
   {

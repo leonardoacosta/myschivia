@@ -43,10 +43,10 @@ export default function Page() {
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <Tabs defaultValue="all">
         <div className="flex items-center">
-          <TabsList>
+          {/* <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="mine">Mine</TabsTrigger>
-          </TabsList>
+          </TabsList> */}
           <div className="ml-auto flex items-center gap-2">
             <Link href="/events/create">
               <Button size="sm" className="h-7 gap-1">
@@ -60,12 +60,20 @@ export default function Page() {
         </div>
         <TabsContent value="all">
           <Card x-chunk="dashboard-06-chunk-0">
-            <CardHeader>
-              <CardTitle>Products</CardTitle>
-              <CardDescription>
-                Manage your products and view their sales performance.
-              </CardDescription>
-            </CardHeader>
+            <div className="flex justify-between">
+              <CardHeader>
+                <CardTitle>📅 Events</CardTitle>
+                <CardDescription>
+                  All events in the system, so far 👀
+                </CardDescription>
+              </CardHeader>
+              {/* <CardHeader>
+                <CardTitle>📅 Events</CardTitle>
+                <CardDescription>
+                  All events in the system, so far 👀
+                </CardDescription>
+              </CardHeader> */}
+            </div>
             <CardContent>
               <Table>
                 <TableHeader>

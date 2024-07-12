@@ -8,7 +8,7 @@ interface Props {
   geojson: FeatureCollection;
 }
 
-export default function EditControl({ geojson }: Props) {
+export default function Map({ geojson }: Props) {
   const [url] = api.cityPlanning.getGoogleMaps.useSuspenseQuery();
   return (
     <MapContainer

@@ -19,18 +19,21 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.23.0",
     "@tribal-cities/auth": "workspace:*",
     "@tribal-cities/db": "workspace:*",
     "@tribal-cities/validators": "workspace:*",
     "@trpc/server": "11.0.0-rc.441",
     "geojson": "^0.5.0",
     "superjson": "2.2.1",
+    "uuid": "^10.0.0",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@tribal-cities/eslint-config": "workspace:*",
     "@tribal-cities/prettier-config": "workspace:*",
     "@tribal-cities/tsconfig": "workspace:*",
+    "@types/uuid": "^10.0.0",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"

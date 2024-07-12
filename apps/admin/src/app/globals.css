@@ -48,3 +48,7 @@
     --ring: 263.4 70% 50.4%;
   }
 }
+
+.leaflet-container {
+  z-index: 10 !important;
+}

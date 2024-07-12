@@ -90,17 +90,16 @@ export default function FeatureGroupFC({ geojson }: Props) {
   };
   const handleEdit = (e: L.DrawEvents.Edited) => {
     const geo = ref.current?.toGeoJSON();
-    console.log("edited", e);
-    // if (geo?.type === "FeatureCollection")
-    //   mutate(geo, {
-    //     onSuccess: async () => {
-    //       await utils.cityPlanning.getZones.refetch();
-    //       toast.success("Zones saved");
-    //     },
-    //     onError: (err) => {
-    //       console.error(err);
-    //     },
-    //   });
+    if (geo?.type === "FeatureCollection")
+      save(geo, {
+        onSuccess: async () => {
+          await utils.cityPlanning.getZones.refetch();
+          toast.success("Zones saved");
+        },
+        onError: (err) => {
+          console.error(err);
+        },
+      });
   };
 
   return (

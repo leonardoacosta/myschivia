@@ -13,6 +13,7 @@ export default async function HomePage() {
   if (!session) return <AuthShowcase />;
 
   // You can await this here if you don't want to show Suspense fallback below
+  void api.burn.all.prefetch();
   void api.event.all.prefetch();
   void api.camp.all.prefetch();
 

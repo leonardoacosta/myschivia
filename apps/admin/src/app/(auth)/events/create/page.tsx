@@ -48,7 +48,11 @@ export default function CreatePostForm() {
   const utils = api.useUtils();
   const { data: camps } = api.camp.all.useQuery();
   const createPost = api.event.create.useMutation({
+    onMutate: (data) => {
+      toast.info("Creating event...");
+    },
     onSuccess: async () => {
+      toast.success("Event Created!");
       form.reset();
       await utils.event.invalidate();
       router.push("/events");
@@ -73,6 +77,7 @@ export default function CreatePostForm() {
             <form
               className="flex w-full max-w-2xl flex-col gap-4"
               onSubmit={form.handleSubmit((data) => {
+                console.log(data);
                 createPost.mutate(data);
               })}
             >

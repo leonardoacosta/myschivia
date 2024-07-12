@@ -2,12 +2,13 @@
 
 import { useRouter } from "next/navigation";
 
-import { RouterOutputs } from "@tribal-cities/api";
+import type { RouterOutputs } from "@tribal-cities/api";
 import { CampType, UpdateCampSchema } from "@tribal-cities/db/schema";
 import { Button } from "@tribal-cities/ui/button";
 import {
   Card,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
@@ -45,8 +46,27 @@ export default function EditCampForm({
   });
 
   const utils = api.useUtils();
-  const updateCamp = api.camp.update.useMutation({
+  const deleteCamp = api.camp.delete.useMutation({
     onSuccess: async () => {
+      toast.success("Camp deleted");
+      await utils.camp.invalidate();
+      form.reset();
+      router.push("/camps");
+    },
+    onError: (err) => {
+      toast.error(
+        err.data?.code === "UNAUTHORIZED"
+          ? "You must be logged in to event"
+          : "Failed to update event",
+      );
+    },
+  });
+  const updateCamp = api.camp.update.useMutation({
+    onMutate: (data) => {
+      toast.info("Updating Camp....");
+    },
+    onSuccess: async () => {
+      toast.success("Camp Updated");
       await utils.camp.invalidate();
       form.reset();
       router.push("/camps");
@@ -145,6 +165,18 @@ export default function EditCampForm({
           </Form>
         </CardContent>
       </Card>
+
+      <CardFooter>
+        <Button
+          variant="destructive"
+          onClick={() => {
+            deleteCamp.mutate(camp!.id);
+          }}
+          disabled={deleteCamp.isPending}
+        >
+          {deleteCamp.isPending ? "Deleting..." : "Delete Camp"}
+        </Button>
+      </CardFooter>
     </main>
   );
 }

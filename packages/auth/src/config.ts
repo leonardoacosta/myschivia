@@ -5,6 +5,7 @@ import type {
 } from "next-auth";
 import { skipCSRFCheck } from "@auth/core";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import Discord from "next-auth/providers/discord";
 import Google from "next-auth/providers/google";
 
 import { db } from "@tribal-cities/db/client";
@@ -42,6 +43,10 @@ export const authConfig = {
     Google({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+    }),
+    Discord({
+      clientId: env.AUTH_DISCORD_ID,
+      clientSecret: env.AUTH_DISCORD_SECRET,
     }),
   ],
   callbacks: {

@@ -2,19 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Calendar,
-  ComponentIcon,
-  Hand,
-  Home,
-  LineChart,
-  Map,
-  Package,
-  Package2,
-  PanelLeft,
-  ShoppingCart,
-  Users2,
-} from "lucide-react";
+import { Calendar, Cog, ComponentIcon, Hand, Home, Map } from "lucide-react";
 
 export default function SheetNavItem({
   href,
@@ -41,7 +29,7 @@ export default function SheetNavItem({
       ) : name === "City Planning" ? (
         <Map className="h-5 w-5" />
       ) : (
-        <Package2 className="h-5 w-5" />
+        <Cog className="h-5 w-5" />
       )}
       {name}
     </Link>

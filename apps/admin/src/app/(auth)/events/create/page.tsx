@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
+import { Checkbox } from "@tribal-cities/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -41,7 +42,8 @@ export default function CreatePostForm() {
       description: "",
       name: "",
       location: "",
-      campId: undefined,
+      campName: "",
+      mature: false,
     },
   });
 
@@ -145,7 +147,39 @@ export default function CreatePostForm() {
                   </FormItem>
                 )}
               />
-              {camps && camps.length > 0 && (
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>18+ Content</FormLabel>
+                    <FormDescription>
+                      Is this event for adults only?
+                    </FormDescription>
+                    <FormControl>
+                      <Checkbox {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="campName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Theme Camp</FormLabel>
+                    <FormDescription>
+                      Are you associated with a theme camp?
+                    </FormDescription>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* {camps && camps.length > 0 && (
                 <FormField
                   control={form.control}
                   name="campId"
@@ -179,7 +213,7 @@ export default function CreatePostForm() {
                     </FormItem>
                   )}
                 />
-              )}
+              )} */}
               <FormField
                 control={form.control}
                 name="location"

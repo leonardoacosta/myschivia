@@ -48,10 +48,13 @@ export default async function TopNav() {
               <span className="sr-only">Acme Inc</span>
             </Link>
             <SheetNavItem href="/" name="Home" />
-            <SheetNavItem href="/camps" name="Camps" />
+            {/* <SheetNavItem href="/camps" name="Camps" /> */}
             <SheetNavItem href="/events" name="Events" />
-            <SheetNavItem href="/volunteer" name="Volunteer" />
-            <SheetNavItem href="/city-planning" name="City Planning" />
+            <SheetNavItem
+              href="https://myschievia.playa.software/"
+              name="Volunteer"
+            />
+            {/* <SheetNavItem href="/city-planning" name="City Planning" /> */}
           </nav>
         </SheetContent>
       </Sheet>

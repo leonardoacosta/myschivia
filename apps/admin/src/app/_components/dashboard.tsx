@@ -19,6 +19,7 @@ import MainMap from "./map";
 export default function Dashboard() {
   const { data: events } = api.event.all.useQuery();
   const { data: camps } = api.camp.all.useQuery();
+  const { data: burners } = api.user.getBurners.useQuery();
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-2">
       <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
@@ -37,21 +38,17 @@ export default function Dashboard() {
                   View Events
                 </Button>
               </Link>
-              <Link href="/camps">
+              <Link href="https://myschievia.playa.software/">
                 <Button>
-                  <Component className="mr-2 h-4 w-4" />
-                  View Camps
+                  <Hand className="mr-2 h-4 w-4" />
+                  Volunteer
                 </Button>
               </Link>
-              <Button disabled>
-                <Hand className="mr-2 h-4 w-4" />
-                Volunteer
-              </Button>
 
-              <Button disabled>
+              {/* <Button disabled>
                 <Map className="mr-2 h-4 w-4" />
                 Edit Map
-              </Button>
+              </Button> */}
             </CardFooter>
           </Card>
           <Card x-chunk="dashboard-05-chunk-1">
@@ -69,14 +66,14 @@ export default function Dashboard() {
           </Card>
           <Card x-chunk="dashboard-05-chunk-2">
             <CardHeader className="pb-2 text-center">
-              <CardDescription className="text-center">Camps</CardDescription>
+              <CardDescription className="text-center">Burners</CardDescription>
               <CardTitle className="text-center text-4xl">
-                {camps?.length}
+                {burners ?? 0}
               </CardTitle>
             </CardHeader>
             <CardDescription className="text-center text-xs text-muted-foreground">
               <span className="ml-2 text-xs text-muted-foreground">
-                Registered
+                In the system
               </span>
             </CardDescription>
             {/* <CardFooter>

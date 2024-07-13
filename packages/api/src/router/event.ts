@@ -16,7 +16,7 @@ export const eventRouter = {
       orderBy: desc(Event.id),
       with: {
         user: true,
-        camp: true,
+        // camp: true,
       },
     }),
   ),
@@ -28,7 +28,7 @@ export const eventRouter = {
         where: eq(Event.id, input.id),
         with: {
           user: true,
-          camp: true,
+          // camp: true,
         },
       }),
     ),

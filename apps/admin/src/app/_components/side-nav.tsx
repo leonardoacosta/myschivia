@@ -25,7 +25,7 @@ export default function SideNav() {
           <Logo className="pt-2 transition-all group-hover:scale-110" />
           <span className="sr-only">Myschievia</span>
         </Link>
-        <NavItem href="/camps" Icon={ComponentIcon} name="Camps" />
+        {/* <NavItem href="/camps" Icon={ComponentIcon} name="Camps" /> */}
         <NavItem href="/events" Icon={Calendar} name="Events" />
         {/* <NavItem href="/volunteer" Icon={Hand} name="Volunteer" disabled /> */}
         {session?.user.email?.includes("leo") && (

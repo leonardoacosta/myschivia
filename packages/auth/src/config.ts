@@ -43,12 +43,20 @@ export const authConfig = {
     Google({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
-    // Discord({
-    //   clientId: env.AUTH_DISCORD_ID,
-    //   clientSecret: env.AUTH_DISCORD_SECRET,
-    // }),
+    Discord({
+      clientId: env.AUTH_DISCORD_ID,
+      clientSecret: env.AUTH_DISCORD_SECRET,
+      allowDangerousEmailAccountLinking: true,
+      authorization: isSecureContext
+        ? "https://discord.com/oauth2/authorize?client_id=1261431448641077318&response_type=code&redirect_uri=https%3A%2F%2Ftribalcities.com%2Fapi%2Fauth%2Fcallback%2Fdiscord&scope=identify+email"
+        : "https://discord.com/oauth2/authorize?client_id=1261431448641077318&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fcallback%2Fdiscord&scope=identify+email",
+    }),
   ],
+  pages: {
+    signIn: "/",
+  },
   callbacks: {
     session: (opts) => {
       if (!("user" in opts))

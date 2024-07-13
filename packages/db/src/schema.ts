@@ -1,5 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import {
+  boolean,
   decimal,
   integer,
   pgEnum,
@@ -168,7 +169,9 @@ export const Event = pgTable("event", {
 
   name: varchar("name", { length: 256 }).notNull(),
   description: text("description").notNull(),
-  image: text("image"),
+  image: text("image").notNull(),
+
+  mature: boolean("mature").default(false),
 
   startDate: timestamp("start_date").notNull(),
   startTime: varchar("start_time", { length: 20 }).notNull(),
@@ -180,7 +183,8 @@ export const Event = pgTable("event", {
   createdById: uuid("created_by_id")
     .notNull()
     .references(() => User.id, { onDelete: "cascade" }),
-  campId: uuid("camp_id").references(() => Camp.id, { onDelete: "cascade" }),
+  campName: varchar("camp_name", { length: 256 }).default("").notNull(),
+  // campId: uuid("camp_id").references(() => Camp.id, { onDelete: "cascade" }),
   // burnId: uuid("burn_id").references(() => Burn.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -192,7 +196,7 @@ export const Event = pgTable("event", {
 
 export const EventRelations = relations(Event, ({ one }) => ({
   user: one(User, { fields: [Event.createdById], references: [User.id] }),
-  camp: one(Camp, { fields: [Event.campId], references: [Camp.id] }),
+  // camp: one(Camp, { fields: [Event.campId], references: [Camp.id] }),
   // burn: one(Burn, { fields: [Event.burnId], references: [Burn.id] }),
 }));
 
@@ -202,10 +206,12 @@ export const CreateEventSchema = createInsertSchema(Event, {
   name: z.string().min(1).max(256),
   description: z.string().min(1).max(256),
 
-  image: z.string().max(256).nullable(),
+  image: z.string().max(256),
 
   type: z.enum(EventType.enumValues),
   // burnId: z.string().max(256).nullable(),
+  campName: z.string().max(256),
+  mature: z.boolean().default(false),
 
   startDate: z.coerce.date(),
   startTime: z.string().max(20),

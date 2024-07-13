@@ -1,7 +1,13 @@
+import { auth } from "@tribal-cities/auth";
+
+import { AuthShowcase } from "./auth-showcase";
 import SideNav from "./side-nav";
 import TopNav from "./top-nav";
 
-export function AuthLayout(props: { children: React.ReactNode }) {
+export async function AuthLayout(props: { children: React.ReactNode }) {
+  const session = await auth();
+
+  if (!session) return <AuthShowcase />;
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <SideNav />

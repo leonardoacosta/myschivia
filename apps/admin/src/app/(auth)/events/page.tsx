@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { PlusCircle } from "lucide-react";
 
-import type { RouterOutputs } from "@tribal-cities/api";
-import { cn } from "@tribal-cities/ui";
 import { Badge } from "@tribal-cities/ui/badge";
 import { Button } from "@tribal-cities/ui/button";
 import {
@@ -24,13 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from "@tribal-cities/ui/table";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@tribal-cities/ui/tabs";
-import { toast } from "@tribal-cities/ui/toast";
+import { Tabs, TabsContent } from "@tribal-cities/ui/tabs";
 
 import { api } from "~/trpc/react";
 
@@ -43,10 +35,6 @@ export default function Page() {
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <Tabs defaultValue="all">
         <div className="flex items-center">
-          {/* <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="mine">Mine</TabsTrigger>
-          </TabsList> */}
           <div className="ml-auto flex items-center gap-2">
             <Link href="/events/create">
               <Button size="sm" className="h-7 gap-1">
@@ -116,39 +104,5 @@ export default function Page() {
         </TabsContent>
       </Tabs>
     </main>
-  );
-}
-
-function EventCard(props: { event: RouterOutputs["event"]["all"][number] }) {
-  const utils = api.useUtils();
-  const deleteEvent = api.event.delete.useMutation({
-    onSuccess: async () => {
-      await utils.event.invalidate();
-    },
-    onError: (err) => {
-      toast.error(
-        err.data?.code === "UNAUTHORIZED"
-          ? "You must be logged in to delete a event"
-          : "Failed to delete event",
-      );
-    },
-  });
-
-  return (
-    <div className="flex flex-row rounded-lg bg-muted p-4">
-      <div className="flex-grow">
-        <h2 className="text-2xl font-bold text-primary">{props.event.name}</h2>
-        <p className="mt-2 text-sm">{props.event.description}</p>
-      </div>
-      <div>
-        <Button
-          variant="ghost"
-          className="cursor-pointer text-sm font-bold uppercase text-primary hover:bg-transparent hover:text-white"
-          onClick={() => deleteEvent.mutate(props.event.id)}
-        >
-          Delete
-        </Button>
-      </div>
-    </div>
   );
 }

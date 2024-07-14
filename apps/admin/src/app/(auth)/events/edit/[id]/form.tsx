@@ -203,7 +203,6 @@ export default function EditEventForm({
                         <FormLabel>Start Date</FormLabel>
                         <FormDescription>When does it start?</FormDescription>
                         <Input
-                          className="block md:hidden"
                           type="date"
                           value={format(field.value, "yyyy-MM-dd")}
                           onChange={(e) =>
@@ -246,7 +245,6 @@ export default function EditEventForm({
                         <FormLabel>End Date</FormLabel>
                         <FormDescription>When does it end?</FormDescription>
                         <Input
-                          className="block md:hidden"
                           type="date"
                           value={format(field.value, "yyyy-MM-dd")}
                           onChange={(e) =>

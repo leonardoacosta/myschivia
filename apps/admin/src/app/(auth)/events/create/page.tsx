@@ -46,13 +46,14 @@ export default function CreatePostForm() {
       image: "",
       campName: "",
       mature: false,
+      startDate: new Date(),
+      startTime: "12:00",
+      endDate: new Date(),
+      endTime: "12:00",
     },
   });
 
-  console.log(form.formState.errors);
-
   const utils = api.useUtils();
-  const { data: camps } = api.camp.all.useQuery();
   const createPost = api.event.create.useMutation({
     onMutate: (data) => {
       toast.info("Creating event...");
@@ -83,7 +84,6 @@ export default function CreatePostForm() {
             <form
               className="flex w-full max-w-2xl flex-col gap-4"
               onSubmit={form.handleSubmit((data) => {
-                console.log(data);
                 createPost.mutate(data);
               })}
             >
@@ -244,7 +244,6 @@ export default function CreatePostForm() {
                         <FormLabel>Start Date</FormLabel>
                         <FormDescription>When does it start?</FormDescription>
                         <Input
-                          className="block md:hidden"
                           type="date"
                           value={format(field.value, "yyyy-MM-dd")}
                           onChange={(e) =>
@@ -288,7 +287,6 @@ export default function CreatePostForm() {
                         <FormLabel>End Date</FormLabel>
                         <FormDescription>When does it end?</FormDescription>
                         <Input
-                          className="block md:hidden"
                           type="date"
                           value={format(field.value, "yyyy-MM-dd")}
                           onChange={(e) =>

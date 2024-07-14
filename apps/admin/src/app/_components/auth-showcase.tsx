@@ -28,7 +28,7 @@ export async function AuthShowcase() {
               >
                 Sign in w/ Google
               </Button>
-              <Button
+              {/* <Button
                 size="lg"
                 formAction={async () => {
                   "use server";
@@ -36,7 +36,7 @@ export async function AuthShowcase() {
                 }}
               >
                 Sign in w/ Discord
-              </Button>
+              </Button> */}
             </form>
           </div>
           <Dialog>

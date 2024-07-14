@@ -242,8 +242,13 @@ export default function CreatePostForm() {
                       <FormItem className="flex flex-col">
                         <FormLabel>Start Date</FormLabel>
                         <FormDescription>When does it start?</FormDescription>
+                        <Input
+                          className="block md:hidden"
+                          {...form.register("startDate", { valueAsDate: true })}
+                        />
                         <Calendar
                           mode="single"
+                          className="hidden md:block"
                           defaultMonth={new Date("10-03-2024")}
                           selected={field.value}
                           onSelect={field.onChange}
@@ -277,7 +282,12 @@ export default function CreatePostForm() {
                       <FormItem className="flex flex-col">
                         <FormLabel>End Date</FormLabel>
                         <FormDescription>When does it end?</FormDescription>
+                        <Input
+                          className="block md:hidden"
+                          {...form.register("endDate", { valueAsDate: true })}
+                        />
                         <Calendar
+                          className="hidden md:block"
                           mode="single"
                           defaultMonth={new Date("10-03-2024")}
                           selected={field.value}

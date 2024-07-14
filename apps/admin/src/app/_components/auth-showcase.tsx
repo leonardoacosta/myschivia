@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@tribal-cities/ui/Dialog";
+} from "@tribal-cities/ui/dialog";
 
 export async function AuthShowcase() {
   return (

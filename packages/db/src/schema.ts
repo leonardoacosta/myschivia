@@ -231,7 +231,7 @@ export const UpdateEventSchema = createInsertSchema(Event, {
   name: z.string().min(1).max(256),
   description: z.string().min(1).max(256),
 
-  image: z.string().max(256).nullable(),
+  image: z.string().max(256),
 
   type: z.enum(EventType.enumValues),
 

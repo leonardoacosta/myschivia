@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { addDays, format } from "date-fns";
 
-import { RouterOutputs } from "@tribal-cities/api";
+import type { RouterOutputs } from "@tribal-cities/api";
 import { EventType, UpdateEventSchema } from "@tribal-cities/db/schema";
 import { Button } from "@tribal-cities/ui/button";
 import { Calendar } from "@tribal-cities/ui/calendar";
@@ -141,7 +142,7 @@ export default function EditEventForm({
                   </FormItem>
                 )}
               />
-              {camps && camps.length > 0 && (
+              {/* {camps && camps.length > 0 && (
                 <FormField
                   control={form.control}
                   name="campId"
@@ -175,7 +176,7 @@ export default function EditEventForm({
                     </FormItem>
                   )}
                 />
-              )}
+              )} */}
               <FormField
                 control={form.control}
                 name="location"
@@ -201,7 +202,15 @@ export default function EditEventForm({
                       <FormItem className="flex flex-col">
                         <FormLabel>Start Date</FormLabel>
                         <FormDescription>When does it start?</FormDescription>
-                        <Calendar
+                        <Input
+                          className="block md:hidden"
+                          type="date"
+                          value={format(field.value, "yyyy-MM-dd")}
+                          onChange={(e) =>
+                            field.onChange(new Date(addDays(e.target.value, 1)))
+                          }
+                        />
+                        {/* <Calendar
                           mode="single"
                           defaultMonth={new Date("10-03-2024")}
                           selected={field.value}
@@ -211,7 +220,7 @@ export default function EditEventForm({
                             date > new Date("10-07-2024")
                           }
                           initialFocus
-                        />
+                        /> */}
                         <FormMessage />
                       </FormItem>
                     )}
@@ -236,7 +245,15 @@ export default function EditEventForm({
                       <FormItem className="flex flex-col">
                         <FormLabel>End Date</FormLabel>
                         <FormDescription>When does it end?</FormDescription>
-                        <Calendar
+                        <Input
+                          className="block md:hidden"
+                          type="date"
+                          value={format(field.value, "yyyy-MM-dd")}
+                          onChange={(e) =>
+                            field.onChange(new Date(addDays(e.target.value, 1)))
+                          }
+                        />
+                        {/* <Calendar
                           mode="single"
                           defaultMonth={new Date("10-03-2024")}
                           selected={field.value}
@@ -246,7 +263,7 @@ export default function EditEventForm({
                             date > new Date("10-07-2024")
                           }
                           initialFocus
-                        />
+                        /> */}
                         <FormMessage />
                       </FormItem>
                     )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { addDays, format } from "date-fns";
 
 import { CreateEventSchema, EventType } from "@tribal-cities/db/schema";
 import { Button } from "@tribal-cities/ui/button";
@@ -244,9 +245,13 @@ export default function CreatePostForm() {
                         <FormDescription>When does it start?</FormDescription>
                         <Input
                           className="block md:hidden"
-                          {...form.register("startDate", { valueAsDate: true })}
+                          type="date"
+                          value={format(field.value, "yyyy-MM-dd")}
+                          onChange={(e) =>
+                            field.onChange(new Date(addDays(e.target.value, 1)))
+                          }
                         />
-                        <Calendar
+                        {/* <Calendar
                           mode="single"
                           className="hidden md:block"
                           defaultMonth={new Date("10-03-2024")}
@@ -257,7 +262,7 @@ export default function CreatePostForm() {
                             date > new Date("10-07-2024")
                           }
                           initialFocus
-                        />
+                        /> */}
                         <FormMessage />
                       </FormItem>
                     )}
@@ -284,9 +289,13 @@ export default function CreatePostForm() {
                         <FormDescription>When does it end?</FormDescription>
                         <Input
                           className="block md:hidden"
-                          {...form.register("endDate", { valueAsDate: true })}
+                          type="date"
+                          value={format(field.value, "yyyy-MM-dd")}
+                          onChange={(e) =>
+                            field.onChange(new Date(addDays(e.target.value, 1)))
+                          }
                         />
-                        <Calendar
+                        {/* <Calendar
                           className="hidden md:block"
                           mode="single"
                           defaultMonth={new Date("10-03-2024")}
@@ -297,7 +306,7 @@ export default function CreatePostForm() {
                             date > new Date("10-07-2024")
                           }
                           initialFocus
-                        />
+                        /> */}
                         <FormMessage />
                       </FormItem>
                     )}

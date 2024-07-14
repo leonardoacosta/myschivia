@@ -8,6 +8,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import Discord from "next-auth/providers/discord";
 import Google from "next-auth/providers/google";
 
+import { eq } from "@tribal-cities/db";
 import { db } from "@tribal-cities/db/client";
 import { Account, Session, User } from "@tribal-cities/db/schema";
 
@@ -17,6 +18,7 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
+      alias: string;
     } & DefaultSession["user"];
   }
 }
@@ -78,9 +80,13 @@ export const validateToken = async (
 ): Promise<NextAuthSession | null> => {
   const sessionToken = token.slice("Bearer ".length);
   const session = await adapter.getSessionAndUser?.(sessionToken);
+  const user = await db.query.User.findFirst({
+    where: eq(User.id, session?.user.id!),
+  });
   return session
     ? {
         user: {
+          alias: user?.alias ?? "",
           ...session.user,
         },
         expires: session.session.expires.toISOString(),

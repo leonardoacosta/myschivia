@@ -42,10 +42,13 @@ export default function CreatePostForm() {
       description: "",
       name: "",
       location: "",
+      image: "",
       campName: "",
       mature: false,
     },
   });
+
+  console.log(form.formState.errors);
 
   const utils = api.useUtils();
   const { data: camps } = api.camp.all.useQuery();

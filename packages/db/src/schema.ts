@@ -211,7 +211,7 @@ export const CreateEventSchema = createInsertSchema(Event, {
   type: z.enum(EventType.enumValues),
   // burnId: z.string().max(256).nullable(),
   campName: z.string().max(256),
-  mature: z.boolean().default(false),
+  mature: z.boolean().default(false).optional(),
 
   startDate: z.coerce.date(),
   startTime: z.string().max(20),
@@ -230,6 +230,8 @@ export const UpdateEventSchema = createInsertSchema(Event, {
 
   name: z.string().min(1).max(256),
   description: z.string().min(1).max(256),
+
+  mature: z.boolean().default(false).optional(),
 
   image: z.string().max(256),
 
@@ -293,7 +295,7 @@ export const CoordinateRelations = relations(Coordinate, ({ one }) => ({
 export const User = pgTable("user", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }),
-  alias: varchar("alias", { length: 255 }),
+  alias: varchar("alias", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   emailVerified: timestamp("emailVerified", {
     mode: "date",
@@ -337,6 +339,16 @@ export const BurnRelations = relations(Burn, ({ many }) => ({
   camps: many(Camp),
   // burns: many(Burn),
 }));
+
+export const UpdateUserSchema = createInsertSchema(User, {
+  id: z.string().max(256),
+
+  name: z.string().min(1).max(256),
+  alias: z.string().min(1).max(256),
+  email: z.string().email().max(256),
+  emailVerified: z.coerce.date(),
+  image: z.string().max(256).nullable(),
+});
 
 // * Accounts ===
 export const Account = pgTable(

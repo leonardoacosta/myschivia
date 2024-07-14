@@ -67,12 +67,6 @@ export default function Page() {
                   All events in the system, so far 👀
                 </CardDescription>
               </CardHeader>
-              {/* <CardHeader>
-                <CardTitle>📅 Events</CardTitle>
-                <CardDescription>
-                  All events in the system, so far 👀
-                </CardDescription>
-              </CardHeader> */}
             </div>
             <CardContent>
               <Table>
@@ -108,10 +102,10 @@ export default function Page() {
                         {format(event.endDate, "EEE")} @ {event.endTime}
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
-                        {event.user.name}
+                        {event.user.alias}
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
-                        {event.camp?.name ?? "N/A"}
+                        {event.campName || "Self"}
                       </TableCell>
                     </TableRow>
                   ))}

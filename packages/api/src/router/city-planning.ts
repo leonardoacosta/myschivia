@@ -2,7 +2,7 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { desc, eq, notInArray } from "@tribal-cities/db";
+import { desc, eq } from "@tribal-cities/db";
 import { Coordinate, Zone } from "@tribal-cities/db/schema";
 
 import { publicProcedure } from "../trpc";
@@ -64,7 +64,12 @@ export const cityPlanningRouter = {
   }),
   getZones: publicProcedure.query(async ({ ctx }) =>
     ctx.db.query.Zone.findMany({
-      with: { camp: true, coordinates: true },
+      with: {
+        camp: true,
+        coordinates: {
+          orderBy: desc(Coordinate.index),
+        },
+      },
     }),
   ),
   addZone: publicProcedure
@@ -92,7 +97,6 @@ export const cityPlanningRouter = {
       if (input.geometry.type === "Polygon" && input.geometry.coordinates) {
         const baseCoordinates = input.geometry.coordinates[0] as number[][];
         for (const coordinates of baseCoordinates) {
-          console.log("coordinates", { coordinates });
           const lat = coordinates[1];
           const lng = coordinates[0];
           await ctx.db.insert(Coordinate).values({
@@ -104,14 +108,15 @@ export const cityPlanningRouter = {
       }
       if (input.geometry.type === "LineString" && input.geometry.coordinates) {
         const baseCoordinates = input.geometry.coordinates as number[][];
-        for (const coordinates of baseCoordinates) {
-          console.log("coordinates", { coordinates });
+        for (let index = 0; index < baseCoordinates.length; index++) {
+          const coordinates = baseCoordinates[index]!;
           const lat = coordinates[1];
           const lng = coordinates[0];
           await ctx.db.insert(Coordinate).values({
             zoneId: zone.at(0)?.id!,
             lat: lat!.toString(),
             lng: lng!.toString(),
+            index,
           });
         }
       }
@@ -119,44 +124,14 @@ export const cityPlanningRouter = {
   saveZones: publicProcedure
     .input(featureCollectionSchema)
     .mutation(async ({ ctx, input }) => {
-      const updates = input.features.filter((feature) => feature.id);
-      const create = input.features.filter((feature) => !feature.id);
-
-      for (const feature of updates) {
-        // * Delete all coordinates for the zone
-        await ctx.db
-          .delete(Coordinate)
-          .where(eq(Coordinate.zoneId, feature.id as any));
-
-        if (feature.geometry.type === "Point" && feature.geometry.coordinates) {
-          await ctx.db.insert(Coordinate).values({
-            zoneId: feature.id as any,
-            lat: feature.geometry.coordinates[1]!.toString(),
-            lng: feature.geometry.coordinates[0]!.toString(),
-          });
-        }
+      const promises: Promise<any>[] = [];
+      for (const feature of input.features) {
+        promises.push(update(ctx, feature));
       }
-      for (const feature of create) {
-        console.log("feature", { feature });
-        // * create zone
-        const zone = await ctx.db
-          .insert(Zone)
-          .values({
-            radius: feature.properties?.radius
-              ? feature.properties.radius.toString()
-              : null,
-          })
-          .returning();
 
-        // * Create coordinates for a point
-        if (feature.geometry.type === "Point" && feature.geometry.coordinates) {
-          await ctx.db.insert(Coordinate).values({
-            zoneId: zone.at(0)?.id!,
-            lat: feature.geometry.coordinates[1]!.toString(),
-            lng: feature.geometry.coordinates[0]!.toString(),
-          });
-        }
-      }
+      await Promise.all(promises).then((values) => {
+        console.log(values);
+      });
     }),
   deleteZone: publicProcedure
     .input(z.string())
@@ -171,7 +146,7 @@ export const cityPlanningRouter = {
           code: "INTERNAL_SERVER_ERROR",
           message: "Cannot delete a zone that is associated with a camp",
         });
-
+      await ctx.db.delete(Coordinate).where(eq(Coordinate.zoneId, input));
       await ctx.db.delete(Zone).where(eq(Zone.id, input));
     }),
 
@@ -188,3 +163,48 @@ export const cityPlanningRouter = {
     return point;
   }),
 } satisfies TRPCRouterRecord;
+
+const update = async (ctx: any, feature: any) => {
+  let zoneId = feature.id;
+
+  if (!zoneId) {
+    // * create zone if needed
+    const zone = await ctx.db
+      .insert(Zone)
+      .values({
+        radius: feature.properties?.radius
+          ? feature.properties.radius.toString()
+          : null,
+        type: feature.geometry.type,
+      })
+      .returning();
+    zoneId = zone.at(0)?.id;
+  }
+
+  // * Delete all coordinates for the zone
+  await ctx.db
+    .delete(Coordinate)
+    .where(eq(Coordinate.zoneId, zoneId as string));
+
+  if (feature.geometry.coordinates) {
+    const baseCoordinates = feature.geometry.coordinates as number[][];
+    for (let index = 0; index < baseCoordinates.length; index++) {
+      const lat = baseCoordinates[index]![0]
+        ? baseCoordinates[index]![1]
+        : baseCoordinates[1];
+      const lng = baseCoordinates[index]![0]
+        ? baseCoordinates[index]![0]
+        : baseCoordinates[0];
+
+      // const lat = coordinates[1];
+      // const lng = coordinates[0];
+
+      await ctx.db.insert(Coordinate).values({
+        zoneId: zoneId as string,
+        lat: lat!.toString(),
+        lng: lng!.toString(),
+        index,
+      });
+    }
+  }
+};

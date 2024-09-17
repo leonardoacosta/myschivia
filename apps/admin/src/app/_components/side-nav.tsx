@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, ComponentIcon, Hand, Map, Settings } from "lucide-react";
+import { Calendar, Map, Settings } from "lucide-react";
 
 import Logo from "@tribal-cities/ui/logo";
 import {

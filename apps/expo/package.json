@@ -4,16 +4,17 @@
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
+    "android": "expo run:android",
     "clean": "git clean -xdf .expo .turbo node_modules",
     "dev": "expo start",
     "dev:android": "expo start --android",
     "dev:ios": "expo start --ios",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
     "format": "prettier --check . --ignore-path ../../.gitignore",
+    "ios": "expo run:ios",
     "lint": "eslint",
     "typecheck": "tsc --noEmit"
   },
+  "prettier": "@tribal-cities/prettier-config",
   "dependencies": {
     "@bacons/text-decoder": "^0.0.0",
     "@expo/metro-config": "^0.18.8",
@@ -43,20 +44,19 @@
     "superjson": "2.2.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
+    "@babel/runtime": "^7.24.7",
     "@tribal-cities/api": "workspace:*",
     "@tribal-cities/eslint-config": "workspace:*",
     "@tribal-cities/prettier-config": "workspace:*",
     "@tribal-cities/tailwind-config": "workspace:*",
     "@tribal-cities/tsconfig": "workspace:*",
-    "@babel/core": "^7.24.7",
-    "@babel/preset-env": "^7.24.7",
-    "@babel/runtime": "^7.24.7",
     "@types/babel__core": "^7.20.5",
     "@types/react": "catalog:react18",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "tailwindcss": "^3.4.4",
     "typescript": "catalog:"
-  },
-  "prettier": "@tribal-cities/prettier-config"
+  }
 }

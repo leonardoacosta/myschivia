@@ -276,6 +276,7 @@ export const Coordinate = pgTable("coordinate", {
     .references(() => Zone.id, { onDelete: "cascade" }),
   lat: decimal("lat", { precision: 10, scale: 6 }).notNull(),
   lng: decimal("lng", { precision: 10, scale: 6 }).notNull(),
+  index: integer("index").default(0).notNull(),
   updatedAt: timestamp("updatedAt", {
     mode: "date",
     withTimezone: true,
@@ -304,10 +305,21 @@ export const User = pgTable("user", {
   image: varchar("image", { length: 255 }),
 });
 
+// * Member ===
+export const Membership = pgTable("membership", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => User.id, { onDelete: "cascade" }),
+  campId: uuid("campId")
+    .notNull()
+    .references(() => Camp.id, { onDelete: "cascade" }),
+});
+
 export const CampRelations = relations(Camp, ({ one, many }) => ({
   createdBy: one(User, { fields: [Camp.createdById], references: [User.id] }),
   zone: one(Zone, { fields: [Camp.zoneId], references: [Zone.id] }),
-  members: many(User),
+  memberships: many(Membership),
 }));
 
 export const UsersToBurns = pgTable(
@@ -331,6 +343,7 @@ export const UserRelations = relations(User, ({ many }) => ({
   events: many(Event),
   camps: many(Camp),
   burns: many(UsersToBurns),
+  memberships: many(Membership),
 }));
 
 export const BurnRelations = relations(Burn, ({ many }) => ({

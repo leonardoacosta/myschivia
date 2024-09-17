@@ -1,6 +1,7 @@
 "use client";
 
-import type { RouterOutputs } from "@tribal-cities/api";
+import { useContext } from "react";
+
 import { Button } from "@tribal-cities/ui/button";
 import {
   Table,
@@ -13,12 +14,10 @@ import {
 import { toast } from "@tribal-cities/ui/toast";
 
 import { api } from "~/trpc/react";
+import { MapContext } from "../../../context/map-context";
 
-export default function ZoneTable({
-  zones,
-}: {
-  zones?: RouterOutputs["cityPlanning"]["getZones"];
-}) {
+export default function ZoneTable() {
+  const { zones, setHoverZone } = useContext(MapContext);
   const utils = api.useUtils();
   const { mutateAsync, isPending } = api.cityPlanning.deleteZone.useMutation();
 
@@ -33,8 +32,21 @@ export default function ZoneTable({
       </TableHeader>
       <TableBody>
         {zones?.map((zone) => (
-          <TableRow key={zone.id}>
-            <TableCell className="text-left">{zone.id.slice(0, 8)}</TableCell>
+          <TableRow
+            key={zone.id}
+            onMouseEnter={() => {
+              console.log("hovering");
+              setHoverZone(zone.id);
+            }}
+            onMouseLeave={() => {
+              console.log("exit");
+              setHoverZone("");
+            }}
+          >
+            <TableCell className="text-left">
+              <p>{zone.type}</p>
+              <label className="text-gray-500">{zone.id.slice(0, 8)}</label>
+            </TableCell>
             <TableCell className="text-left">
               {zone.camp?.name ?? "N/A"}
             </TableCell>

@@ -169,6 +169,7 @@ export const cityPlanningRouter = {
       await ctx.db
         .update(Zone)
         .set({
+          class: input.class,
           campId: input.campId,
           description: input.description,
           updatedAt: new Date(),

@@ -5,6 +5,7 @@ import * as L from "leaflet";
 import type { RouterOutputs } from "@tribal-cities/api";
 
 import { api } from "~/trpc/react";
+import { getClassIcon } from "./icons";
 
 interface MapContextType {
   geojson: FeatureCollection | null;
@@ -82,13 +83,14 @@ export default function Map({ children }: { children: React.ReactNode }) {
       }
 
       if (zone.radius) (feature.properties as any).radius = zone.radius;
+
+      (feature.properties as any).class = zone.class;
+
       if (zone.camp)
-        feature.properties = {
-          popupHTML: `
+        (feature.properties as any).popupHTML = `
             <h3 style="text-decoration: underline;">${zone.camp.name}</h3>
             <p style="margin:0; font-style: italic;">${zone.camp.description}</p>
-          `,
-        };
+          `;
       feature.id = zone.id;
 
       return feature;
@@ -139,9 +141,12 @@ export default function Map({ children }: { children: React.ReactNode }) {
           layer instanceof L.Marker
         ) {
           let castLayer = layer as L.Layer;
+
+          // * Set opacity
           (castLayer.options as any).opacity =
             layer.feature!.properties.opacity;
 
+          // * Create circle if radius exists
           if (layer.feature?.properties.radius && pointsRef.current) {
             castLayer = new L.Circle(
               layer.feature.geometry.coordinates.slice().reverse(),
@@ -151,8 +156,27 @@ export default function Map({ children }: { children: React.ReactNode }) {
               },
             );
           }
-          if (layer.feature?.properties.popupHTML) {
+
+          // * Bind tooltip if popupHTML exists
+          if (layer.feature?.properties.popupHTML)
             castLayer.bindTooltip(layer.feature.properties.popupHTML);
+
+          // * Set path color based on zone class
+          const _class = layer.feature?.properties.class;
+          console.log("Setting icon for", _class);
+          if (_class === "Road" || _class === "Path") {
+            const color =
+              _class === "Road"
+                ? "blue"
+                : _class === "Path"
+                  ? "orange"
+                  : "gray";
+            (castLayer.options as any).color = color;
+          } else {
+            const icon = getClassIcon(_class);
+            if (icon) {
+              (castLayer.options as any).icon = icon;
+            }
           }
 
           pointsRef.current?.addLayer(castLayer);

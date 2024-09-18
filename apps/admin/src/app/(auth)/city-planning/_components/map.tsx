@@ -1,3 +1,5 @@
+"use client";
+
 import type { Feature } from "geojson";
 import { useContext, useRef } from "react";
 import * as L from "leaflet";

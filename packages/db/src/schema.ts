@@ -261,6 +261,12 @@ export const ZoneType = pgEnum("zone_type", [
 ]);
 
 export const ZoneClass = pgEnum("zone_class", ["Camp", "RV", "Road", "Path"]);
+export enum ZoneClassEnum {
+  Camp = "Camp",
+  RV = "RV",
+  Road = "Road",
+  Path = "Path",
+}
 
 export const Zone = pgTable("zone", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),

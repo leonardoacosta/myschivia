@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { desc, eq } from "@tribal-cities/db";
-import { Coordinate, Zone } from "@tribal-cities/db/schema";
+import { Coordinate, UpdateZoneSchema, Zone } from "@tribal-cities/db/schema";
 
 import { publicProcedure } from "../trpc";
 
@@ -62,16 +62,16 @@ export const cityPlanningRouter = {
     const json = await res.json();
     return `https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session=${json.session}&key=${api}`;
   }),
-  getZones: publicProcedure.query(async ({ ctx }) =>
-    ctx.db.query.Zone.findMany({
+  getZones: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.db.query.Zone.findMany({
       with: {
         camp: true,
         coordinates: {
           orderBy: desc(Coordinate.index),
         },
       },
-    }),
-  ),
+    });
+  }),
   addZone: publicProcedure
     .input(featureSchema)
     .mutation(async ({ ctx, input }) => {
@@ -149,7 +149,6 @@ export const cityPlanningRouter = {
       await ctx.db.delete(Coordinate).where(eq(Coordinate.zoneId, input));
       await ctx.db.delete(Zone).where(eq(Zone.id, input));
     }),
-
   createPoint: publicProcedure.query(async ({ ctx }) => {
     // * create zone
     const zone = await ctx.db.insert(Zone).values({}).returning();
@@ -162,6 +161,21 @@ export const cityPlanningRouter = {
     });
     return point;
   }),
+
+  update: publicProcedure
+    .input(UpdateZoneSchema)
+    .mutation(async ({ ctx, input }) => {
+      // * link camp to zone
+      await ctx.db
+        .update(Zone)
+        .set({
+          campId: input.campId,
+          description: input.description,
+          updatedAt: new Date(),
+        })
+        .where(eq(Zone.id, input.id as string))
+        .catch(console.error);
+    }),
 } satisfies TRPCRouterRecord;
 
 const update = async (ctx: any, feature: any) => {

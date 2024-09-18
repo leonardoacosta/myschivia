@@ -81,15 +81,7 @@ export default function Dashboard() {
             </CardFooter> */}
           </Card>
         </div>
-        <Card x-chunk="dashboard-05-chunk-3">
-          <CardHeader className="px-7">
-            <CardTitle>Map</CardTitle>
-            <CardDescription>View the map of Myschievia</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <MainMap />
-          </CardContent>
-        </Card>
+        <MainMap />
       </div>
     </main>
   );

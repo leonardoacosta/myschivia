@@ -10,7 +10,7 @@ import { MapContext } from "~/context/map-context";
 import { api } from "~/trpc/react";
 
 export default function Map() {
-  const { ref, mapUrl } = useContext(MapContext);
+  const { pointsRef, mapUrl, mapRef } = useContext(MapContext);
   const sending = useRef(false);
 
   const utils = api.useUtils();
@@ -62,7 +62,8 @@ export default function Map() {
 
   const handleEdit = (e: L.DrawEvents.Edited) => {
     sending.current = true;
-    const geo = ref.current?.toGeoJSON();
+
+    const geo = pointsRef.current?.toGeoJSON();
     if (geo?.type === "FeatureCollection")
       save(geo, {
         onSuccess: async () => {
@@ -81,13 +82,14 @@ export default function Map() {
 
   return (
     <MapContainer
+      ref={mapRef}
       className="h-full w-full"
-      center={[32.972534, -94.597279]}
+      center={[32.973934, -94.599279]}
       zoom={18}
       zoomControl={true}
     >
       <TileLayer url={mapUrl} />
-      <FeatureGroup ref={ref}>
+      <FeatureGroup ref={pointsRef}>
         <EditControl
           position="topright"
           onEdited={(e) => {

@@ -94,12 +94,12 @@ export const Camp = pgTable("camp", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
 
   name: varchar("name", { length: 256 }).notNull(),
-  description: text("description").notNull(),
+  description: text("description"),
   image: text("image"),
 
   type: CampType("camp_type").notNull().default("Misc"),
 
-  zoneId: uuid("zone_id").references(() => Zone.id, { onDelete: "no action" }),
+  // zoneId: uuid("zone_id").references(() => Zone.id, { onDelete: "no action" }),
 
   createdById: uuid("created_by_id")
     .notNull()
@@ -135,6 +135,7 @@ export const UpdateCampSchema = createInsertSchema(Camp, {
   image: z.string().max(256).nullable(),
 
   type: z.enum(CampType.enumValues),
+  // zoneId: z.string().max(256).nullable(),
 
   createdAt: z.coerce.date(),
   createdById: z.string().max(256),
@@ -259,14 +260,32 @@ export const ZoneType = pgEnum("zone_type", [
   "GeometryCollection",
 ]);
 
+export const ZoneClass = pgEnum("zone_class", ["Camp", "RV", "Road", "Path"]);
+
 export const Zone = pgTable("zone", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   type: ZoneType("type").notNull().default("Point"),
+  class: ZoneClass("class"),
+  color: varchar("color", { length: 7 }),
+
   radius: decimal("radius", { precision: 10, scale: 6 }),
+  description: text("description").default(""),
+  campId: uuid("campId").references(() => Camp.id, { onDelete: "no action" }),
+
   updatedAt: timestamp("updatedAt", {
     mode: "date",
     withTimezone: true,
   }).$onUpdateFn(() => sql`now()`),
+});
+
+export const UpdateZoneSchema = createInsertSchema(Zone, {
+  id: z.string().max(256),
+  type: z.enum(ZoneType.enumValues),
+  radius: z.number().nullable(),
+  description: z.string(),
+  campId: z.string().optional(),
+}).omit({
+  updatedAt: true,
 });
 
 export const Coordinate = pgTable("coordinate", {
@@ -285,7 +304,7 @@ export const Coordinate = pgTable("coordinate", {
 
 export const ZoneRelations = relations(Zone, ({ many, one }) => ({
   coordinates: many(Coordinate),
-  camp: one(Camp),
+  camp: one(Camp, { fields: [Zone.campId], references: [Camp.id] }),
 }));
 
 export const CoordinateRelations = relations(Coordinate, ({ one }) => ({
@@ -318,7 +337,7 @@ export const Membership = pgTable("membership", {
 
 export const CampRelations = relations(Camp, ({ one, many }) => ({
   createdBy: one(User, { fields: [Camp.createdById], references: [User.id] }),
-  zone: one(Zone, { fields: [Camp.zoneId], references: [Zone.id] }),
+  // zone: one(Zone, { fields: [Camp.zoneId], references: [Zone.id] }),
   memberships: many(Membership),
 }));
 

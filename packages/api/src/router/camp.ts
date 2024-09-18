@@ -1,7 +1,7 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import { desc, eq } from "@tribal-cities/db";
+import { asc, eq } from "@tribal-cities/db";
 import {
   Camp,
   CreateCampSchema,
@@ -14,7 +14,7 @@ import { protectedProcedure, publicProcedure } from "../trpc";
 export const campRouter = {
   all: publicProcedure.query(({ ctx }) =>
     ctx.db.query.Camp.findMany({
-      orderBy: desc(Camp.id),
+      orderBy: asc(Camp.name),
       with: { createdBy: true },
     }),
   ),

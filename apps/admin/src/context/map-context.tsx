@@ -11,8 +11,12 @@ interface MapContextType {
   zones: RouterOutputs["cityPlanning"]["getZones"] | undefined;
   hoverZone: string;
   setHoverZone: (zoneId: string) => void;
-  ref: React.RefObject<L.FeatureGroup>;
+  pointsRef: React.RefObject<L.FeatureGroup>;
   mapUrl: string | undefined;
+  mapRef: React.RefObject<L.Map>;
+  pan: boolean;
+  setPan: (pan: boolean) => void;
+  panTo: (lat: number, lng: number) => void;
 }
 
 export const MapContext = createContext<MapContextType>({
@@ -20,12 +24,19 @@ export const MapContext = createContext<MapContextType>({
   zones: [],
   hoverZone: "",
   setHoverZone: (zoneId: string) => {},
-  ref: { current: null },
+  pointsRef: { current: null },
   mapUrl: undefined,
+  mapRef: { current: null },
+  pan: false,
+  setPan: (pan: boolean) => {},
+  panTo: (lat: number, lng: number) => {},
 });
 
 export default function Map({ children }: { children: React.ReactNode }) {
-  const ref = useRef<L.FeatureGroup>(null);
+  const pointsRef = useRef<L.FeatureGroup>(null);
+  const mapRef = useRef<L.Map>(null);
+
+  const [pan, setPan] = useState(false);
 
   const [hoverZone, setHoverZone] = useState<string>("");
   const { data: mapUrl } = api.cityPlanning.getGoogleMaps.useQuery();
@@ -71,58 +82,67 @@ export default function Map({ children }: { children: React.ReactNode }) {
       }
 
       if (zone.radius) (feature.properties as any).radius = zone.radius;
-      // (feature.properties as any).opacity = 0.5;
       if (zone.camp)
         feature.properties = {
-          popupHTML: `<h3>${zone.camp.name}</h3>`,
+          popupHTML: `
+            <h3 style="text-decoration: underline;">${zone.camp.name}</h3>
+            <p style="margin:0; font-style: italic;">${zone.camp.description}</p>
+          `,
         };
       feature.id = zone.id;
 
       return feature;
     });
-    console.log("Set Geojson");
     setGeojson({ type: "FeatureCollection", features });
   }, [zones]);
 
   useEffect(() => {
+    if (!hoverZone) return;
     const update = geojson.features.map((feature) => {
       if (feature.id === hoverZone) {
+        const coordinates = (feature.geometry as any).coordinates;
+        const lat = coordinates[1];
+        const lng = coordinates[0];
+
+        // set focus
+        if (pan) mapRef.current?.panTo(L.latLng(lat, lng));
+
         return {
           ...feature,
           properties: {
             ...feature.properties,
             opacity: 0.5,
-          },
-        };
-      } else {
-        return {
-          ...feature,
-          properties: {
-            ...feature.properties,
-            opacity: 1,
+            popup: true,
           },
         };
       }
+
+      return {
+        ...feature,
+        properties: {
+          ...feature.properties,
+          opacity: 1,
+          popup: false,
+        },
+      };
     });
     setGeojson({ ...geojson, features: update });
   }, [hoverZone]);
 
   useEffect(() => {
-    ref.current?.clearLayers();
-    if (ref.current?.getLayers().length === 0 && geojson) {
+    pointsRef.current?.clearLayers();
+    if (pointsRef.current?.getLayers().length === 0 && geojson) {
       L.geoJSON(geojson).eachLayer((layer: any) => {
         if (
           layer instanceof L.Polyline ||
           layer instanceof L.Polygon ||
           layer instanceof L.Marker
         ) {
-          console.log(layer.feature?.geometry);
-
           let castLayer = layer as L.Layer;
           (castLayer.options as any).opacity =
             layer.feature!.properties.opacity;
 
-          if (layer.feature?.properties.radius && ref.current) {
+          if (layer.feature?.properties.radius && pointsRef.current) {
             castLayer = new L.Circle(
               layer.feature.geometry.coordinates.slice().reverse(),
               {
@@ -131,18 +151,38 @@ export default function Map({ children }: { children: React.ReactNode }) {
               },
             );
           }
-          if (layer.feature?.properties.popupHTML)
-            castLayer.bindPopup(layer.feature.properties.popupHTML);
+          if (layer.feature?.properties.popupHTML) {
+            castLayer.bindTooltip(layer.feature.properties.popupHTML);
+          }
 
-          ref.current?.addLayer(castLayer);
+          pointsRef.current?.addLayer(castLayer);
+
+          if (layer.feature?.properties.popup) {
+            castLayer.toggleTooltip();
+          }
         }
       });
     }
   }, [geojson]);
 
+  const panTo = (lat: number, lng: number) => {
+    mapRef.current?.panTo([lat, lng]);
+  };
+
   return (
     <MapContext.Provider
-      value={{ geojson, zones, hoverZone, setHoverZone, ref, mapUrl }}
+      value={{
+        geojson,
+        zones,
+        hoverZone,
+        setHoverZone,
+        pointsRef,
+        mapUrl,
+        mapRef,
+        pan,
+        setPan,
+        panTo,
+      }}
     >
       {children}
     </MapContext.Provider>

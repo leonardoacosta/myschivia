@@ -321,7 +321,7 @@ export const CoordinateRelations = relations(Coordinate, ({ one }) => ({
 export const User = pgTable("user", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }),
-  alias: varchar("alias", { length: 255 }).notNull(),
+  alias: varchar("alias", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull(),
   emailVerified: timestamp("emailVerified", {
     mode: "date",

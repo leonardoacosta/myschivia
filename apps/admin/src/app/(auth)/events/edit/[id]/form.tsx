@@ -142,6 +142,22 @@ export default function EditEventForm({
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="campName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Theme Camp</FormLabel>
+                    <FormDescription>
+                      Are you associated with a theme camp?
+                    </FormDescription>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               {/* {camps && camps.length > 0 && (
                 <FormField
                   control={form.control}

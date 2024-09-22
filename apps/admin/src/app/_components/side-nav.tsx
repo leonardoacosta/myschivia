@@ -22,8 +22,8 @@ export default function SideNav() {
           href="/"
           className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
         >
-          <Logo className="pt-2 transition-all group-hover:scale-110" />
-          <span className="sr-only">Myschievia</span>
+          <Logo className="h-full transition-all group-hover:scale-110" />
+          <span className="sr-only">Tribal Cities</span>
         </Link>
         {/* <NavItem href="/camps" Icon={ComponentIcon} name="Camps" /> */}
         <NavItem href="/events" Icon={Calendar} name="Events" />

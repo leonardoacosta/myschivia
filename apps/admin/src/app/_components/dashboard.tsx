@@ -12,6 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@tribal-cities/ui/dialog";
 
 import { api } from "~/trpc/react";
 import MainMap from "./map";
@@ -26,9 +34,45 @@ export default function Dashboard() {
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
           <Card className="sm:col-span-2" x-chunk="dashboard-05-chunk-0">
             <CardHeader className="pb-3">
-              <CardTitle>Welcome to Myschievia</CardTitle>
+              <CardTitle>Welcome to Tribal Cities</CardTitle>
               <CardDescription className="max-w-lg text-balance leading-relaxed">
-                Myschievia is a regional burn event in the North Texas area.
+                <Dialog>
+                  <DialogTrigger className="underline">
+                    What is tribal cities?
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>What is this</DialogTitle>
+                      <DialogDescription>
+                        Tribal Cities is a platform for organizing events and
+                        camps for regional burns built by a burner for burners.
+                      </DialogDescription>
+                      <DialogDescription>
+                        We have no affiliation with any specific burn, but I aim
+                        to provide a platform that can be used by any burn.
+                      </DialogDescription>
+                      <DialogTitle>Who am I</DialogTitle>
+                      <DialogDescription>
+                        My burn name is Raptor, I currently reside in the DFW
+                        area. My first and home burn is Myschievia.
+                      </DialogDescription>
+                      <DialogTitle>What do I want</DialogTitle>
+                      <DialogDescription>
+                        I want to be able to provide a platform as a gift to the
+                        community. I want to keep building Tribal Cities with
+                        feedback from the community while adhering to the 10
+                        principles.
+                      </DialogDescription>
+                      <DialogTitle>What do I want in return</DialogTitle>
+                      <DialogDescription>
+                        I want to give Tribal Cities as is with no expectation
+                        of anything in return. I do ask that if you use this
+                        platform, please provide feedback. I want to make this
+                        platform better for the community.
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
               </CardDescription>
             </CardHeader>
             <CardFooter className="flex flex-wrap gap-2">

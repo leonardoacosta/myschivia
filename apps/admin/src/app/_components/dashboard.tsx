@@ -25,7 +25,7 @@ import { api } from "~/trpc/react";
 import MainMap from "./map";
 
 export default function Dashboard() {
-  const { data: events } = api.event.all.useQuery();
+  const { data: events } = api.event.count.useQuery();
   const { data: camps } = api.camp.all.useQuery();
   const { data: burners } = api.user.getBurners.useQuery();
   return (
@@ -98,9 +98,7 @@ export default function Dashboard() {
           <Card x-chunk="dashboard-05-chunk-1">
             <CardHeader className="pb-2">
               <CardDescription className="text-center">Events</CardDescription>
-              <CardTitle className="text-center text-4xl">
-                {events?.length}
-              </CardTitle>
+              <CardTitle className="text-center text-4xl">{events}</CardTitle>
             </CardHeader>
             <CardDescription className="text-center">
               <span className="ml-2 text-xs text-muted-foreground">

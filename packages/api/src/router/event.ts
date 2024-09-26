@@ -45,6 +45,9 @@ export const eventRouter = {
       eventsByDay = eventsByDay.sort(([a], [b]) => (a! < b! ? -1 : 1));
       return eventsByDay;
     }),
+  count: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.query.Event.findMany().then((events) => events.length);
+  }),
   allDates: publicProcedure.query(async ({ ctx }) => {
     const events = await ctx.db.query.Event.findMany();
     const dates = events

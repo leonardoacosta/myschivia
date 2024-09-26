@@ -14,7 +14,7 @@ export default async function HomePage() {
 
   // You can await this here if you don't want to show Suspense fallback below
   void api.burn.all.prefetch();
-  void api.event.all.prefetch();
+  void api.event.all.prefetch({ day: null });
   void api.camp.all.prefetch();
 
   return (

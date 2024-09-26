@@ -37,6 +37,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@tribal-cities/ui/tabs";
+import { TypeBadge } from "@tribal-cities/ui/type-badge";
 
 import { api } from "~/trpc/react";
 
@@ -147,8 +148,9 @@ export default function Page() {
                             {/* <div className="text-xs font-medium">{item.subject}</div> */}
                             <div className="flex space-x-4 text-sm text-muted-foreground">
                               <div className="flex items-center">
-                                <CircleIcon className="mr-1 h-3 w-3 fill-sky-400 text-sky-400" />
-                                {ev.type}
+                                <TypeBadge type={ev.type} />
+                                {/* <CircleIcon className="mr-1 h-3 w-3 fill-sky-400 text-sky-400" />
+                                {ev.type} */}
                               </div>
                               <div className="flex items-center">
                                 <User className="mr-1 h-3 w-3" />

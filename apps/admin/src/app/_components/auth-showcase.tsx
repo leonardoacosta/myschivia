@@ -28,6 +28,31 @@ export async function AuthShowcase() {
               >
                 Sign in w/ Google
               </Button>
+              <Dialog>
+                <DialogTrigger className="underline">
+                  <span className="text-destructive">* </span>You must sign in
+                  with chrome, safari, or firefox
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>What do you mean?</DialogTitle>
+                    <DialogDescription>
+                      Google sign in (Google Oauth2) is not supported in all
+                      browsers. We recommend using Chrome, Safari, or Firefox to
+                      sign in with Google.
+                    </DialogDescription>
+                    <DialogTitle>How do I do that?</DialogTitle>
+                    <DialogDescription>
+                      Open Chrome, Safari, or Firefox and manually navigate to
+                      tribalcities.com and try there
+                    </DialogDescription>
+                    <DialogTitle>Why not edge or internet explore?</DialogTitle>
+                    <DialogDescription>
+                      Because why are you using those still?
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
               {/* <Button
                 size="lg"
                 formAction={async () => {

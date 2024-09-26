@@ -18,6 +18,9 @@ interface MapContextType {
   pan: boolean;
   setPan: (pan: boolean) => void;
   panTo: (lat: number, lng: number) => void;
+  campId: string | null;
+  setCampId: (campId: string | null) => void;
+  center: [number, number];
 }
 
 export const MapContext = createContext<MapContextType>({
@@ -31,6 +34,9 @@ export const MapContext = createContext<MapContextType>({
   pan: false,
   setPan: (pan: boolean) => {},
   panTo: (lat: number, lng: number) => {},
+  campId: null,
+  setCampId: (campId: string | null) => {},
+  center: [32.973934, -94.599279],
 });
 
 export default function Map({ children }: { children: React.ReactNode }) {
@@ -38,6 +44,10 @@ export default function Map({ children }: { children: React.ReactNode }) {
   const mapRef = useRef<L.Map>(null);
 
   const [pan, setPan] = useState(false);
+  const [campId, setCampId] = useState<string | null>(null);
+  const [center, setCenter] = useState<[number, number]>([
+    32.973934, -94.599279,
+  ]);
 
   const [hoverZone, setHoverZone] = useState<string>("");
   const { data: mapUrl } = api.cityPlanning.getGoogleMaps.useQuery();
@@ -85,6 +95,7 @@ export default function Map({ children }: { children: React.ReactNode }) {
       if (zone.radius) (feature.properties as any).radius = zone.radius;
 
       (feature.properties as any).class = zone.class;
+      (feature.properties as any).campId = zone.campId;
 
       if (zone.camp)
         (feature.properties as any).popupHTML = `
@@ -163,7 +174,6 @@ export default function Map({ children }: { children: React.ReactNode }) {
 
           // * Set path color based on zone class
           const _class = layer.feature?.properties.class;
-          console.log("Setting icon for", _class);
           if (_class === "Road" || _class === "Path") {
             const color =
               _class === "Road"
@@ -179,15 +189,26 @@ export default function Map({ children }: { children: React.ReactNode }) {
             }
           }
 
-          pointsRef.current?.addLayer(castLayer);
-
+          // * if campId is set, only show points with that campId, and all roads and paths
+          const roadOrPath = _class === "Road" || _class === "Path";
+          if (
+            (campId && layer.feature?.properties.campId === campId) ||
+            roadOrPath
+          ) {
+            pointsRef.current?.addLayer(castLayer);
+            if (!roadOrPath)
+              setCenter([
+                layer.feature?.geometry.coordinates[1],
+                layer.feature?.geometry.coordinates[0],
+              ]);
+          }
           if (layer.feature?.properties.popup) {
             castLayer.toggleTooltip();
           }
         }
       });
     }
-  }, [geojson]);
+  }, [geojson, campId]);
 
   const panTo = (lat: number, lng: number) => {
     mapRef.current?.panTo([lat, lng]);
@@ -206,6 +227,9 @@ export default function Map({ children }: { children: React.ReactNode }) {
         pan,
         setPan,
         panTo,
+        campId,
+        setCampId,
+        center,
       }}
     >
       {children}

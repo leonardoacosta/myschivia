@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Calendar, Component, Hand, Map } from "lucide-react";
+import { Calendar, Hand } from "lucide-react";
 
 import { Button } from "@tribal-cities/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -88,11 +87,6 @@ export default function Dashboard() {
                   Volunteer
                 </Button>
               </Link>
-
-              {/* <Button disabled>
-                <Map className="mr-2 h-4 w-4" />
-                Edit Map
-              </Button> */}
             </CardFooter>
           </Card>
           <Card x-chunk="dashboard-05-chunk-1">

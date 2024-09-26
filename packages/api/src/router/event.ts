@@ -29,7 +29,7 @@ export const eventRouter = {
         orderBy: [asc(Event.startDate), asc(Event.startTime)], // asc(Event.startTime),
         with: {
           user: true,
-          // camp: true,
+          camp: true,
         },
       });
       // group by date

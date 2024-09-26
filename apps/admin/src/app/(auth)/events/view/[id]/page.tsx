@@ -11,7 +11,9 @@ import {
   CardTitle,
 } from "@tribal-cities/ui/card";
 
+import MapContext, { MapContext as mapContext } from "~/context/map-context";
 import { api } from "~/trpc/react";
+import Map from "../_components/map";
 
 export default function ViewPost() {
   const { id } = useParams();
@@ -42,6 +44,9 @@ export default function ViewPost() {
           <CardDescription>With: {ev.campName}</CardDescription>
         </CardContent>
       </Card>
+      <MapContext>
+        <Map />
+      </MapContext>
     </main>
   );
 }

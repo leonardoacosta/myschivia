@@ -136,6 +136,7 @@ export const UpdateCampSchema = createInsertSchema(Camp, {
 
   type: z.enum(CampType.enumValues),
   // zoneId: z.string().max(256).nullable(),
+  // campId: z.string().optional(),
 
   createdAt: z.coerce.date(),
   createdById: z.string().max(256),
@@ -185,7 +186,7 @@ export const Event = pgTable("event", {
     .notNull()
     .references(() => User.id, { onDelete: "cascade" }),
   campName: varchar("camp_name", { length: 256 }).default("").notNull(),
-  // campId: uuid("camp_id").references(() => Camp.id, { onDelete: "cascade" }),
+  campId: uuid("camp_id").references(() => Camp.id, { onDelete: "no action" }),
   // burnId: uuid("burn_id").references(() => Burn.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -217,7 +218,7 @@ export const FavoriteRelations = relations(Favorite, ({ one }) => ({
 
 export const EventRelations = relations(Event, ({ one }) => ({
   user: one(User, { fields: [Event.createdById], references: [User.id] }),
-  // camp: one(Camp, { fields: [Event.campId], references: [Camp.id] }),
+  camp: one(Camp, { fields: [Event.campId], references: [Camp.id] }),
   // burn: one(Burn, { fields: [Event.burnId], references: [Burn.id] }),
 }));
 
@@ -253,6 +254,7 @@ export const UpdateEventSchema = createInsertSchema(Event, {
   description: z.string().min(1).max(256),
 
   mature: z.boolean().default(false).optional(),
+  campId: z.string().max(256).nullable(),
 
   image: z.string().max(256),
 

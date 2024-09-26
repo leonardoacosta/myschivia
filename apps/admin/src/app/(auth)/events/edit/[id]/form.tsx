@@ -142,23 +142,7 @@ export default function EditEventForm({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="campName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Theme Camp</FormLabel>
-                    <FormDescription>
-                      Are you associated with a theme camp?
-                    </FormDescription>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* {camps && camps.length > 0 && (
+              {camps && camps.length > 0 && (
                 <FormField
                   control={form.control}
                   name="campId"
@@ -192,7 +176,21 @@ export default function EditEventForm({
                     </FormItem>
                   )}
                 />
-              )} */}
+              )}
+              <FormField
+                control={form.control}
+                name="campName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Theme Camp not above?</FormLabel>
+                    <FormDescription>Write it in here</FormDescription>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="location"

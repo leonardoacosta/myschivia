@@ -1,13 +1,12 @@
 import type { TRPCRouterRecord } from "@trpc/server";
-import { format } from "date-fns";
-import { date, z } from "zod";
+import { z } from "zod";
 
-import { and, asc, between, eq, gt, gte, lte, or } from "@tribal-cities/db";
+import { and, asc, eq, gte, lte } from "@tribal-cities/db";
 import {
   CreateEventSchema,
   Event,
+  Favorite,
   UpdateEventSchema,
-  User,
 } from "@tribal-cities/db/schema";
 
 import { protectedProcedure, publicProcedure } from "../trpc";
@@ -20,11 +19,8 @@ export const eventRouter = {
       }),
     )
     .query(async ({ ctx, input }) => {
-      console.log("input", input.day);
-
       // grab just the date
       const day = input.day ? new Date(input.day) : new Date();
-      console.log("day", day);
 
       const events = await ctx.db.query.Event.findMany({
         where: input.day
@@ -36,17 +32,6 @@ export const eventRouter = {
           // camp: true,
         },
       });
-      const sql = ctx.db.query.Event.findMany({
-        where: input.day
-          ? and(gte(Event.startDate, day), lte(Event.endDate, day))
-          : undefined,
-        orderBy: [asc(Event.startTime), asc(Event.startTime)], // asc(Event.startTime),
-        with: {
-          user: true,
-          // camp: true,
-        },
-      }).toSQL();
-      console.log("sql", sql);
       // group by date
       const eventsByDayObject = events.reduce(
         (acc, event) => {
@@ -110,4 +95,35 @@ export const eventRouter = {
     .mutation(({ ctx, input }) =>
       ctx.db.delete(Event).where(eq(Event.id, input)),
     ),
+
+  getFavorites: protectedProcedure
+    .input(
+      z.object({
+        day: z.date().nullable(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      // grab just the date
+      const day = input.day ? new Date(input.day) : new Date();
+      const userId = ctx.session.user.id;
+
+      return await ctx.db.query.Favorite.findMany({
+        where: eq(Favorite.userId, userId),
+      });
+    }),
+
+  toggleFavorite: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+      return await ctx.db.query.Favorite.findFirst({
+        where: and(eq(Favorite.userId, userId), eq(Favorite.eventId, input)),
+      }).then((favorite) => {
+        if (favorite) {
+          return ctx.db.delete(Favorite).where(eq(Favorite.id, favorite.id));
+        } else {
+          return ctx.db.insert(Favorite).values({ userId, eventId: input });
+        }
+      });
+    }),
 } satisfies TRPCRouterRecord;

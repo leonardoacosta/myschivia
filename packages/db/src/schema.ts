@@ -195,6 +195,26 @@ export const Event = pgTable("event", {
   }).$onUpdateFn(() => sql`now()`),
 });
 
+export const Favorite = pgTable("favorite", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => User.id, { onDelete: "cascade" }),
+  eventId: uuid("event_id")
+    .notNull()
+    .references(() => Event.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
+});
+export const FavoriteRelations = relations(Favorite, ({ one }) => ({
+  event: one(Event, { fields: [Favorite.eventId], references: [Event.id] }),
+  user: one(User, { fields: [Favorite.userId], references: [User.id] }),
+}));
+
 export const EventRelations = relations(Event, ({ one }) => ({
   user: one(User, { fields: [Event.createdById], references: [User.id] }),
   // camp: one(Camp, { fields: [Event.campId], references: [Camp.id] }),
@@ -369,6 +389,7 @@ export const UserRelations = relations(User, ({ many }) => ({
   camps: many(Camp),
   burns: many(UsersToBurns),
   memberships: many(Membership),
+  schedule: many(Favorite),
 }));
 
 export const BurnRelations = relations(Burn, ({ many }) => ({

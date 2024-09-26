@@ -98,6 +98,48 @@ export default function Page() {
     e.stopPropagation();
   };
 
+  const exportSchedule = (e: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // export as csv
+    const csv = events.reduce((acc, evs, test) => {
+      const eventsOfDay = evs[1]!;
+      const day = (eventsOfDay as any)?.map((ev: any) => {
+        // export as array of strings
+        return [
+          ev.name.replaceAll(",", "") ?? "",
+          ev.description.replaceAll(",", "") ?? "",
+          ev.location.replaceAll(",", "") ?? "",
+          ev.startDate ? format(ev.startDate, "E LLL dd") : "",
+          ev.startTime ?? "",
+          ev.endDate ? format(ev.endDate, "E LLL dd") : "",
+          ev.endTime ?? "",
+          ev.type.replaceAll(",", "") ?? "",
+          ev.user.alias.replaceAll(",", "") ?? "",
+          ev.campName.replaceAll(",", "") ?? "",
+        ];
+      });
+
+      return [...acc, ...day];
+    }, []);
+    console.log(csv);
+    const csvContent =
+      `data:text/csv;charset=utf-8,Event Name,Description,Location,Start Date,Start Time,End Date,End Time,Type,Host,Camp Name\n` +
+      csv.map((e) => (e as any).join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute(
+      "download",
+      `Myschievia ${date ? format(date, "E LLL dd ") : ""}Events.csv`,
+    );
+    document.body.appendChild(link); // Required for FF
+
+    link.click(); // This will download the data file named "my_data.csv".
+  };
+
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <div className="flex items-center">
@@ -149,6 +191,13 @@ export default function Page() {
                 </DropdownMenu>
               </CardDescription>
             </CardTitle>
+            <Button
+              variant="secondary"
+              className="px-3 shadow-none"
+              onClick={exportSchedule}
+            >
+              Export this schedule
+            </Button>
           </CardHeader>
         </div>
         <CardContent className="p-6">

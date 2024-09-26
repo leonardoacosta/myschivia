@@ -1,5 +1,6 @@
 import type { Feature, FeatureCollection } from "geojson";
 import { createContext, useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import * as L from "leaflet";
 
 import type { RouterOutputs } from "@tribal-cities/api";
@@ -41,6 +42,7 @@ export const MapContext = createContext<MapContextType>({
 
 export default function Map({ children }: { children: React.ReactNode }) {
   const pointsRef = useRef<L.FeatureGroup>(null);
+  const pathname = usePathname();
   const mapRef = useRef<L.Map>(null);
 
   const [pan, setPan] = useState(false);
@@ -191,17 +193,19 @@ export default function Map({ children }: { children: React.ReactNode }) {
 
           // * if campId is set, only show points with that campId, and all roads and paths
           const roadOrPath = _class === "Road" || _class === "Path";
-          if (
-            (campId && layer.feature?.properties.campId === campId) ||
-            roadOrPath
-          ) {
+          const ifCampSelected =
+            (campId && layer.feature?.properties.campId === campId) || !campId;
+          if (ifCampSelected || roadOrPath) {
             pointsRef.current?.addLayer(castLayer);
-            if (!roadOrPath)
+            if (!roadOrPath && campId)
               setCenter([
                 layer.feature?.geometry.coordinates[1],
                 layer.feature?.geometry.coordinates[0],
               ]);
           }
+
+          console.log(layer.feature?.properties);
+          console.log(layer.feature?.properties.popup);
           if (layer.feature?.properties.popup) {
             castLayer.toggleTooltip();
           }
@@ -209,6 +213,11 @@ export default function Map({ children }: { children: React.ReactNode }) {
       });
     }
   }, [geojson, campId]);
+
+  useEffect(() => {
+    setCampId(null);
+    setCenter([32.973934, -94.599279]);
+  }, [pathname]);
 
   const panTo = (lat: number, lng: number) => {
     mapRef.current?.panTo([lat, lng]);

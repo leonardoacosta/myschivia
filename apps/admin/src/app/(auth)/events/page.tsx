@@ -6,8 +6,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import * as ics from "ics";
 import {
   CircleIcon,
+  CloudDownloadIcon,
   Pin,
   PlusCircle,
   PlusIcon,
@@ -47,6 +49,51 @@ export default function Page() {
   const [date, setDate] = useState<Date | null>(null);
   const [events] = api.event.all.useSuspenseQuery({ day: date });
   const [dates] = api.event.allDates.useSuspenseQuery();
+
+  const donwloadIcal = (e: any, event: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const { error, value } = ics.createEvent({
+      start: [
+        event.startDate.getFullYear(),
+        event.startDate.getMonth() + 1,
+        event.startDate.getDate(),
+        event.startDate.getHours(),
+        event.startDate.getMinutes(),
+      ],
+      end: [
+        event.endDate.getFullYear(),
+        event.endDate.getMonth() + 1,
+        event.endDate.getDate(),
+        event.endDate.getHours(),
+        event.endDate.getMinutes(),
+      ],
+      title: event.name,
+      description: event.description,
+      location: event.location,
+      url: `https://tribal.cities/events/view/${event.id}`,
+    });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+    if (value) {
+      const blob = new Blob([value], { type: "text/calendar" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${event.name}.ics`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  const save = (e: any, event: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
@@ -129,20 +176,32 @@ export default function Page() {
                           }}
                           className="hover:cursor-pointer hover:bg-muted/50"
                         >
-                          <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
+                          <CardHeader className="grid grid-cols-[1fr_150px] items-start gap-4 space-y-0">
                             <div className="space-y-1">
                               <CardTitle>{ev.name}</CardTitle>
                               <CardDescription>
                                 {ev.description}
                               </CardDescription>
                             </div>
-                            <Button
-                              variant="secondary"
-                              className="px-3 shadow-none"
-                            >
-                              <StarIcon className="mr-2 h-4 w-4" />
-                              Save
-                            </Button>
+
+                            <div className="grid gap-1">
+                              <Button
+                                variant="secondary"
+                                className="px-3 shadow-none"
+                                onClick={(e) => save(e, ev)}
+                              >
+                                <StarIcon className="mr-2 h-4 w-4" />
+                                Save
+                              </Button>
+                              <Button
+                                variant="secondary"
+                                className="px-3 shadow-none"
+                                onClick={(e) => donwloadIcal(e, ev)}
+                              >
+                                <CloudDownloadIcon className="mr-2 h-4 w-4" />
+                                Download .ics
+                              </Button>
+                            </div>
                           </CardHeader>
                           <CardContent>
                             {/* <div className="text-xs font-medium">{item.subject}</div> */}

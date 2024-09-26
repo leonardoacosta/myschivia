@@ -10,6 +10,7 @@ import * as ics from "ics";
 import {
   CircleIcon,
   CloudDownloadIcon,
+  Eye,
   Pin,
   PlusCircle,
   PlusIcon,
@@ -47,7 +48,9 @@ export default function Page() {
   const router = useRouter();
   const { data: auth } = api.auth.getSession.useQuery();
   const [date, setDate] = useState<Date | null>(null);
-  const [events] = api.event.all.useSuspenseQuery({ day: date });
+  const [events] = api.event.all.useSuspenseQuery({
+    day: date ?? null,
+  });
   const [dates] = api.event.allDates.useSuspenseQuery();
 
   const donwloadIcal = (e: any, event: any) => {
@@ -148,7 +151,7 @@ export default function Page() {
             </CardTitle>
           </CardHeader>
         </div>
-        <CardContent>
+        <CardContent className="p-6">
           <Tabs defaultValue="all">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="all">All</TabsTrigger>
@@ -162,7 +165,7 @@ export default function Page() {
                 const eventsOfDay = evs[1]!;
                 return (
                   <div className="mb-4">
-                    <div>
+                    <div className="mb-4 ml-2">
                       {format((eventsOfDay[0] as any)?.startDate, "E LLL dd")}
                     </div>
 
@@ -176,22 +179,46 @@ export default function Page() {
                           }}
                           className="hover:cursor-pointer hover:bg-muted/50"
                         >
-                          <CardHeader className="grid grid-cols-[1fr_150px] items-start gap-4 space-y-0">
+                          <CardHeader className="grid grid-cols-[1fr_50px] items-start gap-4 space-y-0 sm:grid-cols-[1fr_150px]">
                             <div className="space-y-1">
                               <CardTitle>{ev.name}</CardTitle>
                               <CardDescription>
                                 {ev.description}
                               </CardDescription>
+                              <div className="hidden space-x-4 pt-4 text-sm text-muted-foreground md:flex">
+                                <div className="flex items-center">
+                                  <TypeBadge type={ev.type} />
+                                </div>
+                                <div className="flex items-center">
+                                  <User className="mr-1 h-3 w-3" />
+                                  {ev.user.alias}
+                                </div>
+                                <div className="flex items-center">
+                                  <Tent className="mr-1 h-3 w-3" />
+                                  {ev.campName || "Self"}
+                                </div>
+                                <div className="flex items-center">
+                                  <Pin className="mr-1 h-3 w-3" />
+                                  {ev.location}
+                                </div>
+                              </div>
                             </div>
 
                             <div className="grid gap-1">
                               <Button
                                 variant="secondary"
                                 className="px-3 shadow-none"
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                <span className="hidden sm:block">View</span>
+                              </Button>
+                              <Button
+                                variant="secondary"
+                                className="px-3 shadow-none"
                                 onClick={(e) => save(e, ev)}
                               >
                                 <StarIcon className="mr-2 h-4 w-4" />
-                                Save
+                                <span className="hidden sm:block">Save</span>
                               </Button>
                               <Button
                                 variant="secondary"
@@ -199,17 +226,16 @@ export default function Page() {
                                 onClick={(e) => donwloadIcal(e, ev)}
                               >
                                 <CloudDownloadIcon className="mr-2 h-4 w-4" />
-                                Download .ics
+                                <span className="hidden sm:block">
+                                  Download .ics
+                                </span>
                               </Button>
                             </div>
                           </CardHeader>
                           <CardContent>
-                            {/* <div className="text-xs font-medium">{item.subject}</div> */}
-                            <div className="flex space-x-4 text-sm text-muted-foreground">
+                            <div className="grid grid-cols-2 text-sm text-muted-foreground md:hidden">
                               <div className="flex items-center">
                                 <TypeBadge type={ev.type} />
-                                {/* <CircleIcon className="mr-1 h-3 w-3 fill-sky-400 text-sky-400" />
-                                {ev.type} */}
                               </div>
                               <div className="flex items-center">
                                 <User className="mr-1 h-3 w-3" />
@@ -245,6 +271,111 @@ export default function Page() {
                             </div>
                           </CardContent>
                         </Card>
+
+                        // <Card
+                        //   onClick={() => {
+                        //     if (auth?.user.id === ev.createdById)
+                        //       router.push(`/events/edit/${ev.id}`);
+                        //     else router.push(`/events/view/${ev.id}`);
+                        //   }}
+                        //   className="hover:cursor-pointer hover:bg-muted/50"
+                        // >
+                        //   <CardHeader>
+                        //     <div className="grid grid-cols-[1fr_50px] items-start gap-4 space-y-0 space-y-1 sm:grid-cols-[1fr_150px]">
+                        //       <div className="col-start-1">
+                        //         <CardTitle>{ev.name}</CardTitle>
+                        //         <CardDescription>
+                        //           {ev.description}
+                        //         </CardDescription>
+                        //         <CardContent className="col-start-1 hidden md:col-span-1 md:block">
+                        //           <div className="grid w-full grid-cols-2 gap-2 text-sm text-muted-foreground md:w-fit lg:grid-cols-2">
+                        //             <div className="flex items-center">
+                        //               <TypeBadge type={ev.type} />
+                        //             </div>
+                        //             <div className="flex items-center">
+                        //               <User className="mr-1 h-3 w-3" />
+                        //               {ev.user.alias}
+                        //             </div>
+                        //             <div className="flex items-center">
+                        //               <Tent className="mr-1 h-3 w-3" />
+                        //               {ev.campName || "Self"}
+                        //             </div>
+                        //             <div className="flex items-center">
+                        //               <Pin className="mr-1 h-3 w-3" />
+                        //               {ev.location}
+                        //             </div>
+                        //           </div>
+                        //         </CardContent>
+                        //       </div>
+                        //       <CardContent className="col-span-2 col-start-1 md:col-span-1 md:hidden">
+                        //         <div className="grid w-full grid-cols-2 gap-2 text-sm text-muted-foreground md:w-fit lg:grid-cols-2">
+                        //           <div className="flex items-center">
+                        //             <TypeBadge type={ev.type} />
+                        //           </div>
+                        //           <div className="flex items-center">
+                        //             <User className="mr-1 h-3 w-3" />
+                        //             {ev.user.alias}
+                        //           </div>
+                        //           <div className="flex items-center">
+                        //             <Tent className="mr-1 h-3 w-3" />
+                        //             {ev.campName || "Self"}
+                        //           </div>
+                        //           <div className="flex items-center">
+                        //             <Pin className="mr-1 h-3 w-3" />
+                        //             {ev.location}
+                        //           </div>
+                        //         </div>
+                        //       </CardContent>
+                        //       <div className="col-start-2 row-start-1 grid gap-1">
+                        // <Button
+                        //   variant="secondary"
+                        //   className="px-3 shadow-none"
+                        // >
+                        //   <Eye className="mr-2 h-4 w-4" />
+                        //   <span className="hidden sm:block">View</span>
+                        // </Button>
+                        // <Button
+                        //   variant="secondary"
+                        //   className="px-3 shadow-none"
+                        //   onClick={(e) => save(e, ev)}
+                        // >
+                        //   <StarIcon className="mr-2 h-4 w-4" />
+                        //   <span className="hidden sm:block">Save</span>
+                        // </Button>
+                        //         <Button
+                        //           variant="secondary"
+                        //           className="px-3 shadow-none"
+                        //           onClick={(e) => donwloadIcal(e, ev)}
+                        //         >
+                        //           <CloudDownloadIcon className="mr-2 h-4 w-4" />
+                        //           <span className="hidden sm:block">
+                        //             Download .ics
+                        //           </span>
+                        //         </Button>
+                        //       </div>
+                        //     </div>
+
+                        //     <div className="mt-2 flex space-x-4 text-sm text-muted-foreground">
+                        //       <div className="flex items-center gap-2">
+                        //         <span>
+                        //           From:
+                        //           <span>
+                        //             {" "}
+                        //             {format(ev.startDate, "EEE")} @{" "}
+                        //             {ev.startTime}
+                        //           </span>
+                        //         </span>
+                        //         <span>
+                        //           To:
+                        //           <span>
+                        //             {" "}
+                        //             {format(ev.endDate, "EEE")} @ {ev.endTime}
+                        //           </span>
+                        //         </span>
+                        //       </div>
+                        //     </div>
+                        //   </CardHeader>
+                        // </Card>
                       ))}
                     </div>
                   </div>

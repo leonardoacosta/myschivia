@@ -1,7 +1,8 @@
 import type { TRPCRouterRecord } from "@trpc/server";
-import { z } from "zod";
+import { format } from "date-fns";
+import { date, z } from "zod";
 
-import { asc, desc, eq } from "@tribal-cities/db";
+import { and, asc, between, eq, gt, gte, lte, or } from "@tribal-cities/db";
 import {
   CreateEventSchema,
   Event,
@@ -19,14 +20,33 @@ export const eventRouter = {
       }),
     )
     .query(async ({ ctx, input }) => {
+      console.log("input", input.day);
+
+      // grab just the date
+      const day = input.day ? new Date(input.day) : new Date();
+      console.log("day", day);
+
       const events = await ctx.db.query.Event.findMany({
-        where: input.day ? eq(Event.startDate, input.day) : undefined,
-        orderBy: [asc(Event.startTime), asc(Event.startTime)], // asc(Event.startTime),
+        where: input.day
+          ? and(lte(Event.startDate, day), gte(Event.endDate, day))
+          : undefined,
+        orderBy: [asc(Event.startDate), asc(Event.startTime)], // asc(Event.startTime),
         with: {
           user: true,
           // camp: true,
         },
       });
+      const sql = ctx.db.query.Event.findMany({
+        where: input.day
+          ? and(gte(Event.startDate, day), lte(Event.endDate, day))
+          : undefined,
+        orderBy: [asc(Event.startTime), asc(Event.startTime)], // asc(Event.startTime),
+        with: {
+          user: true,
+          // camp: true,
+        },
+      }).toSQL();
+      console.log("sql", sql);
       // group by date
       const eventsByDayObject = events.reduce(
         (acc, event) => {

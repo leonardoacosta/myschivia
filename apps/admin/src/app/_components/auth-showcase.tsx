@@ -41,7 +41,15 @@ export async function AuthShowcase() {
                       browsers. We recommend using Chrome, Safari, or Firefox to
                       sign in with Google.
                     </DialogDescription>
-                    <DialogTitle>How do I do that?</DialogTitle>
+                    <DialogTitle>
+                      It doesn't seem to work when I open the link from
+                      messenger?
+                    </DialogTitle>
+                    <DialogDescription>
+                      Messenger is an "embedded browser" so google Oauth2
+                      doesn't like it for security reasons.
+                    </DialogDescription>
+                    <DialogTitle>How do I do get around this?</DialogTitle>
                     <DialogDescription>
                       Open Chrome, Safari, or Firefox and manually navigate to
                       tribalcities.com and try there

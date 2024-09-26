@@ -3,9 +3,15 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { PlusCircle } from "lucide-react";
+import {
+  CircleIcon,
+  PlusCircle,
+  PlusIcon,
+  StarIcon,
+  Tent,
+  User,
+} from "lucide-react";
 
-import { Badge } from "@tribal-cities/ui/badge";
 import { Button } from "@tribal-cities/ui/button";
 import {
   Card,
@@ -14,14 +20,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@tribal-cities/ui/table";
 import { Tabs, TabsContent } from "@tribal-cities/ui/tabs";
 
 import { api } from "~/trpc/react";
@@ -57,48 +55,64 @@ export default function Page() {
               </CardHeader>
             </div>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Starts</TableHead>
-                    <TableHead>Ends</TableHead>
-                    <TableHead className="hidden md:table-cell">By</TableHead>
-                    <TableHead className="hidden md:table-cell">With</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {events.map((event) => (
-                    <TableRow
-                      onClick={() => {
-                        if (auth?.user.id === event.user.id)
-                          router.push(`/events/edit/${event.id}`);
-                        else router.push(`/events/view/${event.id}`);
-                      }}
-                    >
-                      <TableCell className="font-medium">
-                        {event.name}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{event.type}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        {format(event.startDate, "EEE")} @ {event.startTime}
-                      </TableCell>
-                      <TableCell>
-                        {format(event.endDate, "EEE")} @ {event.endTime}
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {event.user.alias}
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {event.campName || "Self"}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <div className="grid gap-2">
+                {events.map((event) => (
+                  <Card
+                    onClick={() => {
+                      if (auth?.user.id === event.user.id)
+                        router.push(`/events/edit/${event.id}`);
+                      else router.push(`/events/view/${event.id}`);
+                    }}
+                    className="hover:cursor-pointer hover:bg-muted/50"
+                  >
+                    <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
+                      <div className="space-y-1">
+                        <CardTitle>{event.name}</CardTitle>
+                        <CardDescription>{event.description}</CardDescription>
+                      </div>
+                      {/* <Button variant="secondary" className="px-3 shadow-none">
+                        <StarIcon className="mr-2 h-4 w-4" />
+                        Save
+                      </Button> */}
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex space-x-4 text-sm text-muted-foreground">
+                        <div className="flex items-center">
+                          <CircleIcon className="mr-1 h-3 w-3 fill-sky-400 text-sky-400" />
+                          {event.type}
+                        </div>
+                        <div className="flex items-center">
+                          <User className="mr-1 h-3 w-3" />
+                          {event.user.alias}
+                        </div>
+                        <div className="flex items-center">
+                          <Tent className="mr-1 h-3 w-3" />
+                          {event.campName || "Self"}
+                        </div>
+                      </div>
+                      <div className="mt-2 flex space-x-4 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <span>
+                            From:
+                            <span>
+                              {" "}
+                              {format(event.startDate, "EEE")} @{" "}
+                              {event.startTime}
+                            </span>
+                          </span>
+                          <span>
+                            To:
+                            <span>
+                              {" "}
+                              {format(event.endDate, "EEE")} @ {event.endTime}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

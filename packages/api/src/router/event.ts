@@ -1,7 +1,7 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import { desc, eq } from "@tribal-cities/db";
+import { asc, desc, eq } from "@tribal-cities/db";
 import {
   CreateEventSchema,
   Event,
@@ -13,7 +13,7 @@ import { protectedProcedure, publicProcedure } from "../trpc";
 export const eventRouter = {
   all: publicProcedure.query(({ ctx }) =>
     ctx.db.query.Event.findMany({
-      orderBy: desc(Event.id),
+      orderBy: asc(Event.startDate),
       with: {
         user: true,
         // camp: true,

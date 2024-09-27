@@ -35,8 +35,14 @@ export const Burn = pgTable("burn", {
 export const BurnYear = pgTable("burn_year", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
 
-  name: varchar("name", { length: 256 }).notNull(),
-  description: text("description").notNull(),
+  burnId: uuid("burn_id")
+    .notNull()
+    .references(() => Burn.id, {
+      onDelete: "no action",
+    }),
+
+  name: varchar("name", { length: 256 }),
+  description: text("description"),
   image: text("image"),
 
   startDate: timestamp("start_date").notNull(),
@@ -51,7 +57,12 @@ export const BurnYear = pgTable("burn_year", {
   }).$onUpdateFn(() => sql`now()`),
 });
 
-export type BurnType = typeof Burn.$inferSelect;
+export type BurnType = typeof Burn.$inferSelect & {
+  years: BurnYearType[];
+};
+export type BurnYearType = typeof BurnYear.$inferSelect & {
+  burn: BurnType;
+};
 
 export const CreateBurnSchema = createInsertSchema(Burn, {
   name: z.string().max(256),
@@ -435,10 +446,15 @@ export const UserRelations = relations(User, ({ many }) => ({
   schedule: many(Favorite),
 }));
 
-export const BurnYearRelations = relations(BurnYear, ({ many }) => ({
+export const BurnYearRelations = relations(BurnYear, ({ many, one }) => ({
   members: many(UsersToBurnYear),
   events: many(Event),
   camps: many(Camp),
+  burn: one(Burn, { fields: [BurnYear.burnId], references: [Burn.id] }),
+}));
+
+export const BurnRelations = relations(Burn, ({ many }) => ({
+  years: many(BurnYear),
 }));
 
 export const UpdateUserSchema = createInsertSchema(User, {

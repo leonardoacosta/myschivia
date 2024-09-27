@@ -1,59 +1,102 @@
 import Image from "next/image";
-import { PlusCircledIcon } from "@radix-ui/react-icons";
+import { format } from "date-fns";
 
-import type { BurnType } from "@tribal-cities/db/schema";
+import type { RouterOutputs } from "@tribal-cities/api";
+import type { BurnType, BurnYearType } from "@tribal-cities/db/schema";
 import { cn } from "@tribal-cities/ui";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuTrigger,
-} from "@tribal-cities/ui/context-menu";
+import { Button } from "@tribal-cities/ui/button";
+import { ScrollArea, ScrollBar } from "@tribal-cities/ui/scroll-area";
 
-// import { Album } from "../data/albums"
-// import { playlists } from "../data/playlists"
+import { api } from "~/trpc/react";
 
 interface BurnSelectProps extends React.HTMLAttributes<HTMLDivElement> {
-  album: BurnType;
+  burn: RouterOutputs["burn"]["allYears"][0]["years"][0];
   aspectRatio?: "portrait" | "square";
   width?: number;
   height?: number;
 }
 
 export function BurnCard({
-  album,
+  burn,
   aspectRatio = "portrait",
   width,
   height,
   className,
   ...props
 }: BurnSelectProps) {
+  const old = burn.endDate < new Date();
   return (
-    <div className={cn("space-y-3", className)} {...props}>
-      <div className="overflow-hidden rounded-md">
-        {/* <Image
-              src={album.cover}
-              alt={album.name}
-              width={width}
-              height={height}
-              className={cn(
-                "h-auto w-auto object-cover transition-all hover:scale-105",
-                aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square",
-              )}
-            /> */}
+    <div
+      className={cn(
+        "space-y-3",
+        className,
+        old ? "cursor-not-allowed opacity-50" : "cursor-pointer",
+      )}
+      {...props}
+      onClick={() => {
+        if (old) return;
+        console.log(`Join Burn Year ${burn.name}`);
+      }}
+    >
+      <div className={`relative overflow-hidden rounded-md`}>
+        <Image
+          src={burn.image ?? ""}
+          alt={burn.name ?? ""}
+          width={width}
+          height={height}
+          className={cn(
+            "h-auto w-auto object-cover transition-all hover:scale-105",
+            aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square",
+          )}
+        />
+        {burn.endDate < new Date() && (
+          <div className="absolute bottom-0 left-0 right-0 top-0 w-full flex-row content-center self-center bg-secondary/50 py-3 text-center text-xs font-semibold">
+            <div className="text-accent-background bg-accent-background w-full">
+              Completed
+            </div>
+          </div>
+        )}
       </div>
       <div className="space-y-1 text-sm">
-        <h3 className="font-medium leading-none">{album.name}</h3>
-        {/* <p className="text-xs text-muted-foreground">{album.endTime}</p>Burn.startDate */}
+        <h3 className="font-medium leading-none">
+          {burn?.name} - {format(burn.startDate, "yy")}
+        </h3>
+        <p className="text-xs text-muted-foreground">{burn.description}</p>
       </div>
     </div>
   );
 }
 
 export default function BurnSelect() {
-  return <></>;
+  const { data: burns } = api.burn.allYears.useQuery();
+  if (!burns) return null;
+
+  return (
+    <div className="flex-row justify-center space-y-4 p-5">
+      <h1 className="text-2xl font-semibold">Click on a Burn Year to Join</h1>
+      {burns.map((burn) => (
+        <div>
+          <h2 className="text-lg font-semibold">{burn.name}</h2>
+          <ScrollArea className="w-[90vw] whitespace-nowrap rounded-md border">
+            <div className="flex w-max space-x-4 p-4">
+              {burn.years.map((burnYear) => (
+                <BurnCard
+                  key={burnYear.id}
+                  burn={burnYear}
+                  width={150}
+                  height={150}
+                  aspectRatio="portrait"
+                />
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        </div>
+      ))}
+      <h1 className="pt-6 text-2xl font-semibold">
+        Don't see what you're looking for?
+      </h1>
+      <Button className="w-full">Start a Burn 🔥</Button>
+    </div>
+  );
 }

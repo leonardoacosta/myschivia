@@ -4,6 +4,7 @@ import { z } from "zod";
 import { desc, eq } from "@tribal-cities/db";
 import {
   Burn,
+  BurnYear,
   CreateBurnSchema,
   UpdateBurnSchema,
 } from "@tribal-cities/db/schema";
@@ -11,9 +12,16 @@ import {
 import { protectedProcedure, publicProcedure } from "../trpc";
 
 export const burnRouter = {
-  all: publicProcedure.query(({ ctx }) =>
+  all: publicProcedure.query(({ ctx }) => ctx.db.query.Burn.findMany({})),
+
+  allYears: publicProcedure.query(({ ctx }) =>
     ctx.db.query.Burn.findMany({
-      // orderBy: desc(Burn.startDate),
+      with: {
+        years: {
+          // where: gte(BurnYear.endDate, new Date()),
+          orderBy: desc(BurnYear.startDate),
+        },
+      },
     }),
   ),
 

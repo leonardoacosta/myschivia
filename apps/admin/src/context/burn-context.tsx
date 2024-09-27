@@ -8,7 +8,7 @@ import BurnSelect from "~/app/_components/burn-select/burn-join";
 import { api } from "~/trpc/react";
 
 interface BurnContextType {
-  burns: RouterOutputs["burn"]["all"];
+  burns: RouterOutputs["burn"]["allYears"];
   burnId: string | null;
   setBurnId: (burnId: string | null) => void;
   join: boolean | null;
@@ -24,7 +24,7 @@ export const BurnContext = createContext<BurnContextType>({
 });
 
 export default function Burn({ children }: { children: React.ReactNode }) {
-  const [burns] = api.burn.all.useSuspenseQuery();
+  const [burns] = api.burn.allYears.useSuspenseQuery();
   const [burnId, setBurnId] = useState<string | null>(null);
   const [join, setJoin] = useState<boolean | null>(false);
 

@@ -16,14 +16,15 @@ import {
 import { BurnContext } from "~/context/burn-context";
 
 export function BurnSwitcher() {
-  const { burns, burnId, setBurnId, setJoin } = React.useContext(BurnContext);
+  const { burnYearsJoined, burnYearId, setBurnYearId, setJoin } =
+    React.useContext(BurnContext);
 
   return (
     <Select
-      defaultValue={burnId ?? ""}
+      defaultValue={burnYearId ?? ""}
       onValueChange={(e) => {
         if (e === "create") setJoin(true);
-        else setBurnId(e);
+        else setBurnYearId(e);
       }}
     >
       <SelectTrigger
@@ -36,16 +37,19 @@ export function BurnSwitcher() {
         <SelectValue placeholder="">
           {/* {burns.find((burn) => burn.id === burnId)?.icon} */}
           <span className={cn("ml-2", "hidden")}>
-            {burns.find((burn) => burn.id === burnId)?.name}
+            {
+              burnYearsJoined.find((burn) => burn.burnYearId === burnYearId)
+                ?.burnYear.name
+            }
           </span>
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        {burns.map((burn) => (
-          <SelectItem key={burn.id} value={burn.id}>
+        {burnYearsJoined.map((membership) => (
+          <SelectItem key={membership.burnYearId} value={membership.burnYearId}>
             <div className="flex items-center gap-3 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0 [&_svg]:text-foreground">
-              {/* {account.icon} */}
-              {/* {burn.name} - {format(burn.startDate, "YY")} */}
+              {membership.burnYear.name} -{" "}
+              {format(membership.burnYear.startDate, "yy")}
             </div>
           </SelectItem>
         ))}

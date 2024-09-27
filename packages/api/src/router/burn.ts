@@ -7,6 +7,7 @@ import {
   BurnYear,
   CreateBurnSchema,
   UpdateBurnSchema,
+  UsersToBurnYear,
 } from "@tribal-cities/db/schema";
 
 import { protectedProcedure, publicProcedure } from "../trpc";
@@ -51,4 +52,36 @@ export const burnRouter = {
     .mutation(({ ctx, input }) =>
       ctx.db.delete(Burn).where(eq(Burn.id, input)),
     ),
+
+  join: protectedProcedure.input(z.string()).mutation(({ ctx, input }) =>
+    ctx.db.query.UsersToBurnYear.findFirst({
+      where: eq(UsersToBurnYear.burnYearId, input),
+    }).then((res) => {
+      console.log({ res });
+      console.log(ctx.session.user.id);
+      console.log({ input });
+      if (!res)
+        ctx.db
+          .insert(UsersToBurnYear)
+          .values({
+            userId: ctx.session.user.id,
+            burnYearId: input,
+          })
+          .then((res2) => {
+            console.log({ res2 });
+          });
+    }),
+  ),
+  joined: protectedProcedure.query(({ ctx }) =>
+    ctx.db.query.UsersToBurnYear.findMany({
+      where: eq(UsersToBurnYear.userId, ctx.session.user.id),
+      with: {
+        burnYear: {
+          with: {
+            burn: true,
+          },
+        },
+      },
+    }),
+  ),
 } satisfies TRPCRouterRecord;

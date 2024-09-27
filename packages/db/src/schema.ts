@@ -436,6 +436,19 @@ export const UsersToBurnYear = pgTable(
     pk: primaryKey({ columns: [t.userId, t.burnYearId] }),
   }),
 );
+export const UsersToBurnYearRelations = relations(
+  UsersToBurnYear,
+  ({ one }) => ({
+    user: one(User, {
+      fields: [UsersToBurnYear.userId],
+      references: [User.id],
+    }),
+    burnYear: one(BurnYear, {
+      fields: [UsersToBurnYear.burnYearId],
+      references: [BurnYear.id],
+    }),
+  }),
+);
 
 export const UserRelations = relations(User, ({ many }) => ({
   accounts: many(Account),

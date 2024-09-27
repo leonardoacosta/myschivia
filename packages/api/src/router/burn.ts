@@ -13,7 +13,7 @@ import { protectedProcedure, publicProcedure } from "../trpc";
 export const burnRouter = {
   all: publicProcedure.query(({ ctx }) =>
     ctx.db.query.Burn.findMany({
-      orderBy: desc(Burn.startDate),
+      // orderBy: desc(Burn.startDate),
     }),
   ),
 

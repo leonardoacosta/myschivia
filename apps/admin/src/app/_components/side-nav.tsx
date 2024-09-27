@@ -12,19 +12,14 @@ import {
 } from "@tribal-cities/ui/tooltip";
 
 import { api } from "~/trpc/react";
+import { BurnSwitcher } from "./burn-select/burn-switcher";
 
 export default function SideNav() {
   const { data: session } = api.auth.getSession.useQuery();
   return (
     <aside className="z-100 fixed inset-y-0 left-0 hidden w-14 flex-col border-r bg-background sm:flex">
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-4">
-        <Link
-          href="/"
-          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
-        >
-          <Logo className="h-full transition-all group-hover:scale-110" />
-          <span className="sr-only">Tribal Cities</span>
-        </Link>
+        <BurnSwitcher />
         {/* <NavItem href="/camps" Icon={ComponentIcon} name="Camps" /> */}
         <NavItem href="/events" Icon={Calendar} name="Events" />
         {/* <NavItem href="/volunteer" Icon={Hand} name="Volunteer" disabled /> */}

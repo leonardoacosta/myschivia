@@ -15,6 +15,7 @@ import Script from "next/script";
 
 import { TooltipProvider } from "@tribal-cities/ui/tooltip";
 
+import BurnContext from "~/context/burn-context";
 import { env } from "~/env";
 
 export const metadata: Metadata = {
@@ -87,6 +88,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           <TooltipProvider>
             <TRPCReactProvider>{props.children}</TRPCReactProvider>
           </TooltipProvider>
+          {/* </BurnContext> */}
           <div className="absolute bottom-4 right-4">
             <ThemeToggle />
           </div>

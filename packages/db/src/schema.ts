@@ -25,6 +25,20 @@ export const Burn = pgTable("burn", {
   description: text("description").notNull(),
   image: text("image"),
 
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
+});
+
+export const BurnYear = pgTable("burn_year", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+
+  name: varchar("name", { length: 256 }).notNull(),
+  description: text("description").notNull(),
+  image: text("image"),
+
   startDate: timestamp("start_date").notNull(),
   startTime: varchar("start_time", { length: 20 }).notNull(),
   endDate: timestamp("end_date").notNull(),
@@ -37,16 +51,13 @@ export const Burn = pgTable("burn", {
   }).$onUpdateFn(() => sql`now()`),
 });
 
+export type BurnType = typeof Burn.$inferSelect;
+
 export const CreateBurnSchema = createInsertSchema(Burn, {
   name: z.string().max(256),
   description: z.string().max(256),
 
   image: z.string().max(256).nullable(),
-
-  startDate: z.coerce.date(),
-  startTime: z.string().max(20),
-  endDate: z.coerce.date(),
-  endTime: z.string().max(20),
 }).omit({
   id: true,
   createdAt: true,
@@ -59,11 +70,6 @@ export const UpdateBurnSchema = createInsertSchema(Burn, {
   description: z.string().max(256),
 
   image: z.string().max(256).nullable(),
-
-  startDate: z.coerce.date(),
-  startTime: z.string().max(20),
-  endDate: z.coerce.date(),
-  endTime: z.string().max(20),
 }).omit({
   updatedAt: true,
 });
@@ -99,8 +105,6 @@ export const Camp = pgTable("camp", {
 
   type: CampType("camp_type").notNull().default("Misc"),
 
-  // zoneId: uuid("zone_id").references(() => Zone.id, { onDelete: "no action" }),
-
   createdById: uuid("created_by_id")
     .notNull()
     .references(() => User.id, { onDelete: "cascade" }),
@@ -110,6 +114,17 @@ export const Camp = pgTable("camp", {
     mode: "date",
     withTimezone: true,
   }).$onUpdateFn(() => sql`now()`),
+});
+
+export const CampRegistration = pgTable("camp_registration", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  campId: uuid("camp_id")
+    .notNull()
+    .references(() => Camp.id, { onDelete: "cascade" }),
+  approved: boolean("approved").default(false),
+  burnYearId: uuid("burn_year_id").references(() => BurnYear.id, {
+    onDelete: "no action",
+  }),
 });
 
 export const CreateCampSchema = createInsertSchema(Camp, {
@@ -187,7 +202,9 @@ export const Event = pgTable("event", {
     .references(() => User.id, { onDelete: "cascade" }),
   campName: varchar("camp_name", { length: 256 }).default("").notNull(),
   campId: uuid("camp_id").references(() => Camp.id, { onDelete: "no action" }),
-  // burnId: uuid("burn_id").references(() => Burn.id, { onDelete: "cascade" }),
+  burnYearId: uuid("burn_year_id").references(() => BurnYear.id, {
+    onDelete: "no action",
+  }),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", {
@@ -219,7 +236,10 @@ export const FavoriteRelations = relations(Favorite, ({ one }) => ({
 export const EventRelations = relations(Event, ({ one }) => ({
   user: one(User, { fields: [Event.createdById], references: [User.id] }),
   camp: one(Camp, { fields: [Event.campId], references: [Camp.id] }),
-  // burn: one(Burn, { fields: [Event.burnId], references: [Burn.id] }),
+  burnYear: one(BurnYear, {
+    fields: [Event.burnYearId],
+    references: [BurnYear.id],
+  }),
 }));
 
 export const CreateEventSchema = createInsertSchema(Event, {
@@ -231,9 +251,10 @@ export const CreateEventSchema = createInsertSchema(Event, {
   image: z.string().max(256),
 
   type: z.enum(EventType.enumValues),
-  // burnId: z.string().max(256).nullable(),
+  burnYearId: z.string().max(256).nullable(),
   campName: z.string().max(256),
   mature: z.boolean().default(false).optional(),
+  campId: z.string().max(256).nullable(),
 
   startDate: z.coerce.date(),
   startTime: z.string().max(20),
@@ -253,12 +274,11 @@ export const UpdateEventSchema = createInsertSchema(Event, {
   name: z.string().min(1).max(256),
   description: z.string().min(1).max(256),
 
+  type: z.enum(EventType.enumValues),
+  burnYearId: z.string().max(256).nullable(),
+  campName: z.string().max(256),
   mature: z.boolean().default(false).optional(),
   campId: z.string().max(256).nullable(),
-
-  image: z.string().max(256),
-
-  type: z.enum(EventType.enumValues),
 
   startDate: z.coerce.date(),
   startTime: z.string().max(20),
@@ -299,6 +319,9 @@ export const Zone = pgTable("zone", {
   radius: decimal("radius", { precision: 10, scale: 6 }),
   description: text("description").default(""),
   campId: uuid("campId").references(() => Camp.id, { onDelete: "no action" }),
+  burnYear: uuid("burn_year_id").references(() => BurnYear.id, {
+    onDelete: "no action",
+  }),
 
   updatedAt: timestamp("updatedAt", {
     mode: "date",
@@ -312,6 +335,7 @@ export const UpdateZoneSchema = createInsertSchema(Zone, {
   radius: z.number().nullable(),
   description: z.string(),
   campId: z.string().optional(),
+  burnYear: z.string().optional(),
 }).omit({
   updatedAt: true,
 });
@@ -330,13 +354,17 @@ export const Coordinate = pgTable("coordinate", {
   }).$onUpdateFn(() => sql`now()`),
 });
 
+export const CoordinateRelations = relations(Coordinate, ({ one }) => ({
+  zone: one(Zone, { fields: [Coordinate.zoneId], references: [Zone.id] }),
+}));
+
 export const ZoneRelations = relations(Zone, ({ many, one }) => ({
   coordinates: many(Coordinate),
   camp: one(Camp, { fields: [Zone.campId], references: [Camp.id] }),
-}));
-
-export const CoordinateRelations = relations(Coordinate, ({ one }) => ({
-  zone: one(Zone, { fields: [Coordinate.zoneId], references: [Zone.id] }),
+  burnYear: one(BurnYear, {
+    fields: [Zone.burnYear],
+    references: [BurnYear.id],
+  }),
 }));
 
 // * Users ===
@@ -353,7 +381,7 @@ export const User = pgTable("user", {
 });
 
 // * Member ===
-export const Membership = pgTable("membership", {
+export const CampMembership = pgTable("camp_membership", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   userId: uuid("userId")
     .notNull()
@@ -365,23 +393,36 @@ export const Membership = pgTable("membership", {
 
 export const CampRelations = relations(Camp, ({ one, many }) => ({
   createdBy: one(User, { fields: [Camp.createdById], references: [User.id] }),
-  // zone: one(Zone, { fields: [Camp.zoneId], references: [Zone.id] }),
-  memberships: many(Membership),
+  campMembership: many(CampMembership),
 }));
 
-export const UsersToBurns = pgTable(
-  "user_to_burns",
+export const CampRegistrationRelations = relations(
+  CampRegistration,
+  ({ one, many }) => ({
+    camp: one(Camp, {
+      fields: [CampRegistration.campId],
+      references: [Camp.id],
+    }),
+    burnYear: one(BurnYear, {
+      fields: [CampRegistration.burnYearId],
+      references: [BurnYear.id],
+    }),
+  }),
+);
+
+export const UsersToBurnYear = pgTable(
+  "user_to_burn_year",
   {
     userId: uuid("user_id")
       .notNull()
       .references(() => User.id),
-    burnId: uuid("burn_id")
+    burnYearId: uuid("burn_year_id")
       .notNull()
-      .references(() => Burn.id),
+      .references(() => BurnYear.id),
     role: Role("role").notNull().default("Participant"),
   },
   (t) => ({
-    pk: primaryKey({ columns: [t.userId, t.burnId] }),
+    pk: primaryKey({ columns: [t.userId, t.burnYearId] }),
   }),
 );
 
@@ -389,16 +430,15 @@ export const UserRelations = relations(User, ({ many }) => ({
   accounts: many(Account),
   events: many(Event),
   camps: many(Camp),
-  burns: many(UsersToBurns),
-  memberships: many(Membership),
+  burns: many(UsersToBurnYear),
+  campMemberships: many(CampMembership),
   schedule: many(Favorite),
 }));
 
-export const BurnRelations = relations(Burn, ({ many }) => ({
-  members: many(UsersToBurns),
+export const BurnYearRelations = relations(BurnYear, ({ many }) => ({
+  members: many(UsersToBurnYear),
   events: many(Event),
   camps: many(Camp),
-  // burns: many(Burn),
 }));
 
 export const UpdateUserSchema = createInsertSchema(User, {

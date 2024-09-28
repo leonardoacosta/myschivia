@@ -204,8 +204,6 @@ export default function Map({ children }: { children: React.ReactNode }) {
               ]);
           }
 
-          console.log(layer.feature?.properties);
-          console.log(layer.feature?.properties.popup);
           if (layer.feature?.properties.popup) {
             castLayer.toggleTooltip();
           }

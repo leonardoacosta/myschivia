@@ -117,7 +117,10 @@ export default function CreateCampForm() {
                       Tell us about your event in a few words
                     </FormDescription>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        onChange={field.onChange}
+                        value={field.value ?? ""}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

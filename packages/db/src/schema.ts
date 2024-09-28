@@ -25,6 +25,8 @@ export const Burn = pgTable("burn", {
   description: text("description").notNull(),
   image: text("image"),
 
+  approved: boolean("approved").default(false),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", {
     mode: "date",
@@ -44,6 +46,8 @@ export const BurnYear = pgTable("burn_year", {
   name: varchar("name", { length: 256 }),
   description: text("description"),
   image: text("image"),
+
+  coordinates: text("coordinates"),
 
   startDate: timestamp("start_date").notNull(),
   startTime: varchar("start_time", { length: 20 }).notNull(),
@@ -71,8 +75,52 @@ export const CreateBurnSchema = createInsertSchema(Burn, {
   image: z.string().max(256).nullable(),
 }).omit({
   id: true,
+  approved: true,
   createdAt: true,
   updatedAt: true,
+});
+
+export const CreateBurnYearSchema = createInsertSchema(BurnYear, {
+  name: z.string().max(256),
+  description: z.string().max(256),
+
+  image: z.string().max(256).nullable(),
+
+  coordinates: z
+    .string()
+    .max(256)
+    .nullable()
+    .refine(
+      (value) => {
+        if (!value) return true;
+        value.split(",").map((coord) => {
+          const [lat, lng] = coord.split(" ");
+          // * Check if lat and lng exist
+          if (!lat || !lng) return false;
+
+          // * Check if lat and lng are numbers
+          if (isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) return false;
+          return true;
+        });
+      },
+      {
+        message: "Invalid coordinates",
+      },
+    ),
+
+  startDate: z.coerce.date(),
+  startTime: z.string().max(20),
+  endDate: z.coerce.date(),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  burnId: true,
+});
+
+export const CreateBurnWithYearSchema = z.object({
+  burn: CreateBurnSchema,
+  burnYear: CreateBurnYearSchema,
 });
 
 export const UpdateBurnSchema = createInsertSchema(Burn, {

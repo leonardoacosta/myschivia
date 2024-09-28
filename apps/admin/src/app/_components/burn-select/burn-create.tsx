@@ -1,12 +1,11 @@
-"use client";
-
 import { useRouter } from "next/navigation";
 
-import { CampType, CreateCampSchema } from "@tribal-cities/db/schema";
+import { CreateBurnWithYearSchema } from "@tribal-cities/db/schema";
 import { Button } from "@tribal-cities/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
@@ -21,25 +20,33 @@ import {
   useForm,
 } from "@tribal-cities/ui/form";
 import { Input } from "@tribal-cities/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@tribal-cities/ui/select";
+import { Separator } from "@tribal-cities/ui/separator";
 import { toast } from "@tribal-cities/ui/toast";
 
 import { api } from "~/trpc/react";
 
-export default function CreateCampForm() {
+export default function BurnCreate() {
   const router = useRouter();
+
   const form = useForm({
-    schema: CreateCampSchema,
+    schema: CreateBurnWithYearSchema,
     defaultValues: {
-      description: "",
-      name: "",
-      type: "Misc",
+      burn: {
+        name: "",
+        description: "",
+        image: "",
+      },
+      burnYear: {
+        name: "",
+        description: "",
+
+        coordinates: "",
+
+        startDate: new Date(),
+        startTime: "",
+        endDate: new Date(),
+        endTime: "",
+      },
     },
   });
 
@@ -51,7 +58,7 @@ export default function CreateCampForm() {
   //   },
   // });
 
-  const createCamp = api.camp.create.useMutation({
+  const createBurn = api.burn.create.useMutation({
     // onMutate: async (data) => {
     //   const image = data.image;
     //   console.log("image", image);
@@ -78,27 +85,29 @@ export default function CreateCampForm() {
   });
 
   return (
-    <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+    <div className="flex-row justify-center space-y-4 p-5">
+      <h1 className="text-2xl font-semibold">Create your very own burn</h1>
+
       <Card>
-        <CardHeader>
-          <CardTitle>Create a New Camp</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form
-              className="flex w-full max-w-2xl flex-col gap-4"
-              onSubmit={form.handleSubmit((data) => {
-                createCamp.mutate(data);
-              })}
-            >
+        <Form {...form}>
+          <form
+            className="flex w-full flex-col gap-4"
+            onSubmit={form.handleSubmit((data) => {
+              createBurn.mutate(data);
+            })}
+          >
+            <CardHeader>
+              <CardTitle>Create a New Burn</CardTitle>
+            </CardHeader>
+            <CardContent>
               <FormField
                 control={form.control}
-                name="name"
+                name="burn.name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormDescription>
-                      What is the name of your camp?
+                      What is the name of your burn?
                     </FormDescription>
                     <FormControl>
                       <Input {...field} />
@@ -109,12 +118,12 @@ export default function CreateCampForm() {
               />
               <FormField
                 control={form.control}
-                name="description"
+                name="burn.description"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormDescription>
-                      Tell us about your event in a few words
+                      Tell us about your burn in a few words
                     </FormDescription>
                     <FormControl>
                       <Input
@@ -126,65 +135,82 @@ export default function CreateCampForm() {
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="image"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormDescription>
-                      Tell us about your event in a few words
-                    </FormDescription>
-                    <FormControl>
-                      <Input
-                        type="file"
-                        value={field.value ?? ""}
-                        onChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
+            </CardContent>
+            <Separator />
+            <CardHeader>
+              <CardTitle>This years info</CardTitle>
+              <CardDescription>
+                This is the information is more for the specific year you are
+                creating the burn for.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
               <FormField
                 control={form.control}
-                name="type"
+                name="burnYear.name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Camp Type</FormLabel>
+                    <FormLabel>Title of this years event</FormLabel>
                     <FormDescription>
-                      What type of camp are you creating?
+                      This is typically the same as the name of the burn it's
+                      self
                     </FormDescription>
                     <FormControl>
-                      <Select
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                        }}
-                        value={field.value ?? undefined}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select an camp type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {CampType.enumValues.map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {type}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Input
+                        onChange={field.onChange}
+                        value={field.value ?? ""}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button disabled={createCamp.isPending}>
-                {createCamp.isPending ? "Creating..." : "Create"}
+              <FormField
+                control={form.control}
+                name="burnYear.description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Describe this year</FormLabel>
+                    <FormDescription>
+                      This is typically the theme of the burn
+                    </FormDescription>
+                    <FormControl>
+                      <Input
+                        onChange={field.onChange}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="burnYear.coordinates"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Coordinates</FormLabel>
+                    <FormDescription>
+                      If you have the coordinates of the event, please enter
+                      them in the format of "lat, long"
+                    </FormDescription>
+                    <FormControl>
+                      <Input
+                        onChange={field.onChange}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button className="w-full" disabled={createBurn.isPending}>
+                {createBurn.isPending ? "Creating..." : "Create"}
               </Button>
-            </form>
-          </Form>
-        </CardContent>
+            </CardContent>
+          </form>
+        </Form>
       </Card>
-    </main>
+    </div>
   );
 }

@@ -37,6 +37,8 @@ export function BurnCard({
   const old = burn.endDate < new Date();
   const { setJoin } = useContext(BurnContext);
   const { mutate, isPending } = api.burn.join.useMutation();
+  const utils = api.useUtils();
+
   return (
     <Dialog>
       <DialogTrigger asChild disabled={old}>
@@ -94,7 +96,9 @@ export function BurnCard({
               onClick={() => {
                 mutate(burn.id, {
                   onSuccess: () => {
-                    setJoin(null);
+                    utils.burn.joined.refetch().then(() => {
+                      setJoin(null);
+                    });
                   },
                 });
               }}
@@ -109,6 +113,7 @@ export function BurnCard({
 }
 
 export default function BurnSelect() {
+  const { setCreate } = useContext(BurnContext);
   const { data: burns } = api.burn.allYears.useQuery();
   if (!burns) return null;
 
@@ -137,7 +142,9 @@ export default function BurnSelect() {
       <h1 className="pt-6 text-2xl font-semibold">
         Don't see what you're looking for?
       </h1>
-      <Button className="w-full">Start a Burn 🔥</Button>
+      <Button className="w-full" onClick={() => setCreate(true)}>
+        Start a Burn 🔥
+      </Button>
     </div>
   );
 }

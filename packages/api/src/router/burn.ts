@@ -49,9 +49,20 @@ export const burnRouter = {
         .then(async (burn) => {
           if (!burn[0]) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
-          await ctx.db.insert(BurnYear).values({
-            ...input.burnYear,
-            burnId: burn[0].id,
+          const year = await ctx.db
+            .insert(BurnYear)
+            .values({
+              ...input.burnYear,
+              burnId: burn[0].id,
+            })
+            .returning();
+
+          if (!year[0]) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+          await ctx.db.insert(UsersToBurnYear).values({
+            userId: ctx.session.user.id,
+            burnYearId: year[0].id,
+            role: "God",
           });
         });
     }),
@@ -78,7 +89,6 @@ export const burnRouter = {
         eq(UsersToBurnYear.userId, ctx.session.user.id),
       ),
     }).then(async (res) => {
-      console.log({ res });
       if (!res)
         await ctx.db
           .insert(UsersToBurnYear)

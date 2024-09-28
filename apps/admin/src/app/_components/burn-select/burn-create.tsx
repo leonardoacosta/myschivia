@@ -1,3 +1,4 @@
+import { useContext, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import { CreateBurnWithYearSchema } from "@tribal-cities/db/schema";
@@ -9,6 +10,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@tribal-cities/ui/dialog";
 import {
   Form,
   FormControl,
@@ -23,9 +33,12 @@ import { Input } from "@tribal-cities/ui/input";
 import { Separator } from "@tribal-cities/ui/separator";
 import { toast } from "@tribal-cities/ui/toast";
 
+import { BurnContext } from "~/context/burn-context";
 import { api } from "~/trpc/react";
 
 export default function BurnCreate() {
+  const ref = useRef<HTMLButtonElement>(null);
+  const { setCreate } = useContext(BurnContext);
   const router = useRouter();
 
   const form = useForm({
@@ -102,7 +115,14 @@ export default function BurnCreate() {
           <form
             className="flex w-full flex-col gap-4"
             onSubmit={form.handleSubmit((data) => {
-              createBurn.mutate(data);
+              createBurn.mutate(data, {
+                onSuccess: () => {
+                  ref.current?.click();
+                },
+                onError: (err) => {
+                  toast.error("Failed to create burn");
+                },
+              });
             })}
           >
             <CardHeader>
@@ -220,6 +240,31 @@ export default function BurnCreate() {
           </form>
         </Form>
       </Card>
+
+      <Dialog>
+        <DialogTrigger ref={ref} />
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Your burn has been submitted for approval!
+            </DialogTitle>
+            <DialogDescription>
+              Once approved, you will get an email and then you will be able to
+              create events and invite others to your burn. For now, sit tight
+              and maybe join one of the other burns to see what it's all about.
+            </DialogDescription>
+            <DialogFooter>
+              <Button
+                onClick={() => {
+                  setCreate(false);
+                }}
+              >
+                Join a burn
+              </Button>
+            </DialogFooter>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

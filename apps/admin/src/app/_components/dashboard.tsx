@@ -92,7 +92,9 @@ export default function Dashboard() {
           <Card x-chunk="dashboard-05-chunk-1">
             <CardHeader className="pb-2">
               <CardDescription className="text-center">Events</CardDescription>
-              <CardTitle className="text-center text-4xl">{events}</CardTitle>
+              <CardTitle className="text-center text-4xl">
+                {events ?? 0}
+              </CardTitle>
             </CardHeader>
             <CardDescription className="text-center">
               <span className="ml-2 text-xs text-muted-foreground">

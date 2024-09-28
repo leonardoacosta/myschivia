@@ -46,7 +46,7 @@ export default function Burn({ children }: { children: React.ReactNode }) {
         setCreate,
       }}
     >
-      {true ? <BurnCreate /> : join ? <BurnSelect /> : children}
+      {create ? <BurnCreate /> : join ? <BurnSelect /> : children}
     </BurnContext.Provider>
   );
 }

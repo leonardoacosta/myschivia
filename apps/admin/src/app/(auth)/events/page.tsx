@@ -181,36 +181,34 @@ export default function Page() {
               <TabsTrigger value="schedule">My Schedule</TabsTrigger>
             </TabsList>
             <TabsContent value="schedule" ref={ref}>
-              <CardHeader>
-                {events.map((evs) => {
-                  const eventsOfDay = evs[1]!;
+              {events.map((evs) => {
+                const eventsOfDay = evs[1]!;
 
-                  if (
-                    !(eventsOfDay as any).find((e: any) =>
-                      favorites.find((f) => f.eventId === e.id),
-                    )
-                  ) {
-                    return null;
-                  }
+                if (
+                  !(eventsOfDay as any).find((e: any) =>
+                    favorites.find((f) => f.eventId === e.id),
+                  )
+                ) {
+                  return null;
+                }
 
-                  return (
-                    <div className="mb-4">
-                      <div className="mb-4 ml-2">
-                        {format((eventsOfDay[0] as any)?.startDate, "E LLL dd")}
-                      </div>
-
-                      <div className="grid gap-2">
-                        {(eventsOfDay as any)
-                          ?.filter(
-                            (e: any) =>
-                              !!favorites.find((f) => f.eventId === e.id),
-                          )
-                          .map((ev: any) => <EventCard ev={ev} />)}
-                      </div>
+                return (
+                  <div className="mb-4">
+                    <div className="mb-4 ml-2">
+                      {format((eventsOfDay[0] as any)?.startDate, "E LLL dd")}
                     </div>
-                  );
-                })}
-              </CardHeader>
+
+                    <div className="grid gap-2">
+                      {(eventsOfDay as any)
+                        ?.filter(
+                          (e: any) =>
+                            !!favorites.find((f) => f.eventId === e.id),
+                        )
+                        .map((ev: any) => <EventCard ev={ev} />)}
+                    </div>
+                  </div>
+                );
+              })}
             </TabsContent>
             <TabsContent value="all">
               {events.map((evs) => {

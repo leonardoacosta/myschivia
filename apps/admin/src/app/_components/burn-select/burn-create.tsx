@@ -87,6 +87,15 @@ export default function BurnCreate() {
   return (
     <div className="flex-row justify-center space-y-4 p-5">
       <h1 className="text-2xl font-semibold">Create your very own burn</h1>
+      <p className="text-gray-500">
+        Create a burn to host your own event. This will allow you to create
+        events and invite others.
+      </p>
+
+      <sup className="text-gray-500">
+        <span className="text-destructive">*</span> Subject to approval by the
+        Tribal Cities team
+      </sup>
 
       <Card>
         <Form {...form}>

@@ -12,25 +12,51 @@ export default function SheetNavItem({
   name: string;
 }) {
   const pathname = usePathname();
-  const isActive = pathname.startsWith(href);
+
+  // Function to check if the link is external
+  const isExternalLink =
+    href.startsWith("http://") || href.startsWith("https://");
+
+  // Determine if the current route matches the link's href
+  const isActive = !isExternalLink && pathname === href;
+
+  // Choose the appropriate icon based on the name
+  const IconComponent =
+    name === "Home"
+      ? Home
+      : name === "Camps"
+        ? ComponentIcon
+        : name === "Events"
+          ? Calendar
+          : name === "Volunteer"
+            ? Hand
+            : name === "City Planning"
+              ? Map
+              : Cog;
+
+  const className = `flex items-center gap-4 px-2.5 ${
+    isActive ? "text-foreground" : "text-muted-foreground"
+  } hover:text-foreground`;
+
+  // If it's an external link, use <a> tag
+  if (isExternalLink) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+      >
+        <IconComponent className="h-5 w-5" />
+        {name}
+      </a>
+    );
+  }
+
+  // For internal links, use Next.js Link component
   return (
-    <Link
-      href={isActive ? "#" : href}
-      className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-    >
-      {name === "Home" ? (
-        <Home className="h-5 w-5" />
-      ) : name === "Camps" ? (
-        <ComponentIcon className="h-5 w-5" />
-      ) : name === "Events" ? (
-        <Calendar className="h-5 w-5" />
-      ) : name === "Volunteer" ? (
-        <Hand className="h-5 w-5" />
-      ) : name === "City Planning" ? (
-        <Map className="h-5 w-5" />
-      ) : (
-        <Cog className="h-5 w-5" />
-      )}
+    <Link href={href} className={className}>
+      <IconComponent className="h-5 w-5" />
       {name}
     </Link>
   );

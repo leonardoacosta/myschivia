@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Map, Settings } from "lucide-react";
+import {
+  Calendar,
+  ComponentIcon,
+  Hand,
+  Home,
+  Map,
+  Settings,
+} from "lucide-react";
 
 import Logo from "@tribal-cities/ui/logo";
 import {
@@ -13,6 +20,7 @@ import {
 
 import { api } from "~/trpc/react";
 import { BurnSwitcher } from "./burn-select/burn-switcher";
+import NavItem from "./nav-item";
 
 export default function SideNav() {
   const { data: session } = api.auth.getSession.useQuery();
@@ -20,9 +28,16 @@ export default function SideNav() {
     <aside className="z-100 fixed inset-y-0 left-0 hidden w-14 flex-col border-r bg-background sm:flex">
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-4">
         <BurnSwitcher />
+        <NavItem href="/" Icon={Home} name="Home" />
         {/* <NavItem href="/camps" Icon={ComponentIcon} name="Camps" /> */}
         <NavItem href="/events" Icon={Calendar} name="Events" />
+        <NavItem
+          href="https://myschievia.playa.software/"
+          Icon={Hand}
+          name="Volunteer"
+        />
         {/* <NavItem href="/volunteer" Icon={Hand} name="Volunteer" disabled /> */}
+
         {session?.user.email?.includes("leo") && (
           <NavItem href="/city-planning" Icon={Map} name="City Planning" />
         )}
@@ -31,41 +46,5 @@ export default function SideNav() {
         <NavItem href="/settings" Icon={Settings} name="Settings" />
       </nav>
     </aside>
-  );
-}
-
-function NavItem({
-  href,
-  Icon,
-  name,
-  disabled,
-}: {
-  href: string;
-  Icon: any;
-  name: string;
-  disabled?: boolean;
-}) {
-  const pathname = usePathname();
-  const isActive = pathname.startsWith(href);
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Link
-          href={disabled ? "#" : href}
-          className={
-            isActive
-              ? "flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-              : "flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-          }
-        >
-          <Icon className="h-5 w-5" />
-          <span className="sr-only">{name}</span>
-        </Link>
-      </TooltipTrigger>
-      <TooltipContent side="right">
-        {name}
-        {disabled && "- Coming Soon..."}
-      </TooltipContent>
-    </Tooltip>
   );
 }

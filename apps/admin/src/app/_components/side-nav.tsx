@@ -29,7 +29,7 @@ export default function SideNav() {
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-4">
         <BurnSwitcher />
         <NavItem href="/" Icon={Home} name="Home" />
-        {/* <NavItem href="/camps" Icon={ComponentIcon} name="Camps" /> */}
+        <NavItem href="/camps" Icon={ComponentIcon} name="Camps" />
         <NavItem href="/events" Icon={Calendar} name="Events" />
         <NavItem
           href="https://myschievia.playa.software/"

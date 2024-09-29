@@ -54,6 +54,20 @@ export const BurnYear = pgTable("burn_year", {
   endDate: timestamp("end_date").notNull(),
   endTime: varchar("end_time", { length: 20 }).notNull(),
 
+  // * Settings
+  campRegistration: boolean("camp_registration").default(false),
+  campRegistrationDeadline: timestamp("camp_registration_deadline"),
+
+  campRegistrationEditing: boolean("camp_registration_editing").default(false),
+
+  volunteerManagement: boolean("volunteer_registration").default(false),
+  volunteerManagementEditing: boolean("volunteer_registration_editing").default(
+    false,
+  ),
+
+  eventRegistration: boolean("event_registration").default(false),
+  eventEditing: boolean("event_editing").default(false),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", {
     mode: "date",

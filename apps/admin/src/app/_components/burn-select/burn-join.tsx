@@ -15,6 +15,11 @@ import {
   DialogTrigger,
 } from "@tribal-cities/ui/dialog";
 import { ScrollArea, ScrollBar } from "@tribal-cities/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@tribal-cities/ui/tooltip";
 
 import { BurnContext } from "~/context/burn-context";
 import { api } from "~/trpc/react";
@@ -142,9 +147,36 @@ export default function BurnSelect() {
       <h1 className="pt-6 text-2xl font-semibold">
         Don't see what you're looking for?
       </h1>
-      <Button className="w-full" onClick={() => setCreate(true)}>
-        Start a Burn 🔥
-      </Button>
+
+      <Dialog>
+        <DialogTrigger>
+          <Button className="w-full" onClick={() => setCreate(true)} disabled>
+            Start a Burn 🔥
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              This feature is currently under development.
+            </DialogTitle>
+            <DialogDescription>
+              If you would like to create a burn, please contact the Tribal
+              Cities team.
+            </DialogDescription>
+            <DialogFooter>
+              <a
+                href={`
+                mailto:leo@leonardoacosta.dev?
+                subject=Create a Burn
+                &body=Hello!%0D%0A%0D%0A I love the idea of creating a burn and would like to learn more about how I can get started!%0D%0A%0D%0A Thank you!%0D%0A%0D%0A- [Your Name should go here]
+                `}
+              >
+                <Button>Contact us</Button>
+              </a>
+            </DialogFooter>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

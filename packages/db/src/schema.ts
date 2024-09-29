@@ -469,24 +469,27 @@ export const CampRegistrationRelations = relations(
   }),
 );
 
-export const UsersToBurnYear = pgTable(
-  "user_to_burn_year",
-  {
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => User.id),
-    burnYearId: uuid("burn_year_id")
-      .notNull()
-      .references(() => BurnYear.id),
-    role: Role("role").notNull().default("Participant"),
-  },
-  (t) => ({
-    pk: primaryKey({ columns: [t.userId, t.burnYearId] }),
-  }),
-);
+export const UsersToBurnYear = pgTable("user_to_burn_year", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => User.id),
+  burnYearId: uuid("burn_year_id")
+    .notNull()
+    .references(() => BurnYear.id),
+});
+
+export const UserBurnYearRoles = pgTable("user_burn_year_roles", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  userBurnYear: uuid("user_burn_year")
+    .notNull()
+    .references(() => UsersToBurnYear.id, { onDelete: "cascade" }),
+  role: Role("role").notNull().default("Participant"),
+});
+
 export const UsersToBurnYearRelations = relations(
   UsersToBurnYear,
-  ({ one }) => ({
+  ({ one, many }) => ({
     user: one(User, {
       fields: [UsersToBurnYear.userId],
       references: [User.id],
@@ -495,6 +498,7 @@ export const UsersToBurnYearRelations = relations(
       fields: [UsersToBurnYear.burnYearId],
       references: [BurnYear.id],
     }),
+    roles: many(UserBurnYearRoles),
   }),
 );
 

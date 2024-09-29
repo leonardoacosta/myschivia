@@ -8,6 +8,7 @@ import {
   BurnYear,
   CreateBurnWithYearSchema,
   UpdateBurnSchema,
+  UserBurnYearRoles,
   UsersToBurnYear,
 } from "@tribal-cities/db/schema";
 
@@ -59,11 +60,25 @@ export const burnRouter = {
 
           if (!year[0]) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
-          await ctx.db.insert(UsersToBurnYear).values({
-            userId: ctx.session.user.id,
-            burnYearId: year[0].id,
-            role: "God",
-          });
+          const burnYear = await ctx.db
+            .insert(UsersToBurnYear)
+            .values({
+              userId: ctx.session.user.id,
+              burnYearId: year[0].id,
+              // role: "God",
+            })
+            .returning();
+
+          if (!burnYear[0])
+            throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+          await ctx.db
+            .insert(UserBurnYearRoles)
+            .values({
+              userBurnYear: year[0].id,
+              role: "God",
+            })
+            .returning();
         });
     }),
 
@@ -95,7 +110,6 @@ export const burnRouter = {
           .values({
             userId: ctx.session.user.id,
             burnYearId: input,
-            role: "Participant",
           })
           .then((res2) => {
             console.log({ res2 });

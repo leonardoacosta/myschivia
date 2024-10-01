@@ -31,7 +31,10 @@ export async function AuthShowcase() {
                 Sign in w/ Google
               </Button>
 
-              <Link href={`/view/events/`} className="block text-center">
+              <Link
+                href={`/view/events/myschievia`}
+                className="block text-center"
+              >
                 <Button size="lg" variant="secondary">
                   View Myschievia '24 Events
                 </Button>

@@ -96,7 +96,7 @@ export default function EventCard({ ev }: EventCardProps) {
     });
   };
 
-  const favorite = !!favorites.find((f) => f.eventId === ev.id);
+  const favorite = !!favorites?.find((f) => f.eventId === ev.id);
 
   return (
     <Card

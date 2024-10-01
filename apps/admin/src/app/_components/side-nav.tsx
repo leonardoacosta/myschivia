@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Calendar,
+  Cog,
   ComponentIcon,
   Hand,
   Home,
@@ -11,7 +12,7 @@ import {
   Settings,
 } from "lucide-react";
 
-import Logo from "@tribal-cities/ui/logo";
+import { Separator } from "@tribal-cities/ui/separator";
 import {
   Tooltip,
   TooltipContent,
@@ -37,9 +38,14 @@ export default function SideNav() {
           name="Volunteer"
         />
         {/* <NavItem href="/volunteer" Icon={Hand} name="Volunteer" disabled /> */}
+        <Separator />
 
-        {session?.user.email?.includes("leo") && (
-          <NavItem href="/city-planning" Icon={Map} name="City Planning" />
+        {session?.user.email?.includes("leo@leonardoacosta.dev") && (
+          <>
+            <NavItem href="/volunteer" Icon={Hand} name="Volunteer" />
+            <NavItem href="/city-planning" Icon={Map} name="City Planning" />
+            <NavItem href="/burn-settings" Icon={Cog} name="Settings" />
+          </>
         )}
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-4">

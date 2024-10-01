@@ -15,7 +15,6 @@ import Script from "next/script";
 
 import { TooltipProvider } from "@tribal-cities/ui/tooltip";
 
-import BurnContext from "~/context/burn-context";
 import { env } from "~/env";
 
 export const metadata: Metadata = {

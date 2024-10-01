@@ -130,4 +130,12 @@ export const burnRouter = {
       },
     }),
   ),
+
+  burnYearById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) =>
+      ctx.db.query.BurnYear.findFirst({
+        where: eq(BurnYear.id, input.id),
+      }),
+    ),
 } satisfies TRPCRouterRecord;

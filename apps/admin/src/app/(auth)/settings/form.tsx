@@ -23,6 +23,7 @@ import {
   useForm,
 } from "@tribal-cities/ui/form";
 import { Input } from "@tribal-cities/ui/input";
+import { ThemeToggle } from "@tribal-cities/ui/theme";
 import { toast } from "@tribal-cities/ui/toast";
 
 import { api } from "~/trpc/react";
@@ -93,6 +94,7 @@ export default function EditUserForm({
                   )}
                 />
               </CardContent>
+              <ThemeToggle />
               <CardFooter className="border-t px-6 py-4">
                 <Button disabled={updateUser.isPending}>
                   {updateUser.isPending ? "Saving..." : "Save"}

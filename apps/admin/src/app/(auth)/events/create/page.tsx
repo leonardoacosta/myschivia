@@ -31,11 +31,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@tribal-cities/ui/select";
+import { Separator } from "@tribal-cities/ui/separator";
 import { toast } from "@tribal-cities/ui/toast";
 
 import { api } from "~/trpc/react";
 
 export default function CreatePostForm() {
+  const { data: camps } = api.camp.all.useQuery();
+  const { data: session } = api.auth.getSession.useQuery();
   const router = useRouter();
   const form = useForm({
     schema: CreateEventSchema,
@@ -167,15 +170,48 @@ export default function CreatePostForm() {
                   </FormItem>
                 )}
               />
+              {camps && camps.length > 0 && (
+                <FormField
+                  control={form.control}
+                  name="campId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Is this associated with a camp?</FormLabel>
+                      <FormDescription>
+                        * Your camp must be registered to associate it with an
+                        event
+                      </FormDescription>
+                      <FormControl>
+                        <Select
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                          }}
+                          value={field.value ?? undefined}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select an existing camp" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {camps.map((type) => (
+                              <SelectItem key={type.id} value={type.id}>
+                                {type.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="campName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Theme Camp</FormLabel>
-                    <FormDescription>
-                      Are you associated with a theme camp?
-                    </FormDescription>
+                    <FormLabel>Theme Camp not above?</FormLabel>
+                    <FormDescription>Write it in here</FormDescription>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -321,6 +357,26 @@ export default function CreatePostForm() {
                     )}
                   />
                 </div>
+                <Separator />
+
+                {session?.user.email?.includes("leo@leonardoacosta.dev") && (
+                  <FormField
+                    control={form.control}
+                    name="hostName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Host Name</FormLabel>
+                        <FormDescription>
+                          Are you filling this out on behalf of someone else?
+                        </FormDescription>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
               <Button disabled={createPost.isPending}>
                 {createPost.isPending ? "Creating..." : "Create"}

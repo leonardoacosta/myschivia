@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";
+import { ChevronLeft } from "lucide-react";
 
 import {
   Card,
@@ -51,7 +53,13 @@ export default function ViewPost() {
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <Card>
         <CardHeader>
-          <CardTitle>{ev.name}</CardTitle>
+          <CardTitle>
+            <Link href={`/events`}>
+              <ChevronLeft className="mr-2 inline-block h-6 w-6" />
+            </Link>
+
+            {ev.name}
+          </CardTitle>
           <CardDescription>
             {ev.location} - {ev.type}
           </CardDescription>
@@ -67,7 +75,7 @@ export default function ViewPost() {
           <CardDescription>
             To: {format(ev.endDate, "EEE")} @ {format(endWithTime(), "h:mm a")}
           </CardDescription>
-          <CardDescription>By: {ev.user.alias}</CardDescription>
+          <CardDescription>By: {ev.hostName ?? ev.user?.alias}</CardDescription>
           <CardDescription>Part of Camp: {ev.campName}</CardDescription>
         </CardContent>
       </Card>

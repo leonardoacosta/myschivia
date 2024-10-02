@@ -250,6 +250,7 @@ export const UpdateCampSchema = createInsertSchema(Camp, {
 
 // * Events ===
 export const EventType = pgEnum("event_type", [
+  "Interactive",
   "Workshop",
   "Class",
   "Inclusion",
@@ -286,9 +287,10 @@ export const Event = pgTable("event", {
 
   type: EventType("event_type").notNull().default("Misc"),
 
-  createdById: uuid("created_by_id")
-    .notNull()
-    .references(() => User.id, { onDelete: "cascade" }),
+  createdById: uuid("created_by_id").references(() => User.id, {
+    onDelete: "cascade",
+  }),
+  hostName: varchar("host_name", { length: 256 }).default("").notNull(),
   campName: varchar("camp_name", { length: 256 }).default("").notNull(),
   campId: uuid("camp_id").references(() => Camp.id, { onDelete: "no action" }),
   burnYearId: uuid("burn_year_id").references(() => BurnYear.id, {
@@ -335,7 +337,7 @@ export const CreateEventSchema = createInsertSchema(Event, {
   location: z.string().max(256),
 
   name: z.string().min(1).max(256),
-  description: z.string().min(1).max(256),
+  description: z.string(),
 
   image: z.string().max(256),
 
@@ -344,6 +346,8 @@ export const CreateEventSchema = createInsertSchema(Event, {
   campName: z.string().max(256),
   mature: z.boolean().default(false).optional(),
   campId: z.string().max(256).nullable(),
+
+  hostName: z.string().max(256).optional(),
 
   startDate: z.coerce.date(),
   startTime: z.string().max(20),

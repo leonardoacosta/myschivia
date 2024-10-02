@@ -58,9 +58,11 @@ export const eventRouter = {
       eventsByDay = eventsByDay.sort(([a], [b]) => (a! < b! ? -1 : 1));
       return eventsByDay;
     }),
+
   count: publicProcedure.query(async ({ ctx }) => {
     return ctx.db.query.Event.findMany().then((events) => events.length);
   }),
+
   allDates: publicProcedure.query(async ({ ctx }) => {
     const events = await ctx.db.query.Event.findMany();
     const dates = events
@@ -84,9 +86,10 @@ export const eventRouter = {
   create: protectedProcedure
     .input(CreateEventSchema)
     .mutation(({ ctx, input }) =>
-      ctx.db
-        .insert(Event)
-        .values({ ...input, createdById: ctx.session.user.id }),
+      ctx.db.insert(Event).values({
+        ...input,
+        createdById: input.hostName ? undefined : ctx.session.user.id,
+      }),
     ),
 
   update: protectedProcedure

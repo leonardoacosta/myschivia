@@ -138,7 +138,7 @@ export default function EventCard({ ev }: EventCardProps) {
             </div>
             <div className="flex items-center">
               <User className="mr-1 h-3 w-3" />
-              {ev.user.alias}
+              {ev.hostName ?? ev.user.alias}
             </div>
             <div className="flex items-center">
               <Tent className="mr-1 h-3 w-3" />
@@ -190,7 +190,7 @@ export default function EventCard({ ev }: EventCardProps) {
           </div>
           <div className="flex items-center">
             <User className="mr-1 h-3 w-3" />
-            {ev.user.alias}
+            {ev.hostName ?? ev.user.alias}
           </div>
           <div className="flex items-center">
             <Tent className="mr-1 h-3 w-3" />

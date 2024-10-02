@@ -83,7 +83,9 @@ export default function Page() {
             ev.endDate ? format(ev.endDate, "E LLL dd") : "",
             ev.endTime ?? "",
             ev.type.replaceAll(",", "") ?? "",
-            ev.user.alias.replaceAll(",", "") ?? "",
+            ev.hostName.replaceAll(",", "") ??
+              ev.user?.alias.replaceAll(",", "") ??
+              "",
             ev.campName.replaceAll(",", "") ?? "",
           ];
         });

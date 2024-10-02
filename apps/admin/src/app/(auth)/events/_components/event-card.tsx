@@ -93,6 +93,32 @@ export default function EventCard({ ev }: EventCardProps) {
 
   const favorite = !!favorites?.find((f) => f.eventId === ev.id);
 
+  const startWithTime = () => {
+    const date = ev.startDate as Date; // Example date
+    const timeString = ev.startTime; // Time in "HH:MM" format
+
+    // Split the time string into hours and minutes
+    const [hours, minutes] = timeString.split(":").map(Number);
+
+    // Set the hours and minutes on the date object
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    return date;
+  };
+
+  const endWithTime = () => {
+    const date = ev.endDate as Date; // Example date
+    const timeString = ev.endTime; // Time in "HH:MM" format
+
+    // Split the time string into hours and minutes
+    const [hours, minutes] = timeString.split(":").map(Number);
+
+    // Set the hours and minutes on the date object
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    return date;
+  };
+
   return (
     <Card
       onClick={() => {
@@ -181,14 +207,15 @@ export default function EventCard({ ev }: EventCardProps) {
               From:
               <span>
                 {" "}
-                {format(ev.startDate, "EEE")} @ {ev.startTime}
+                {format(ev.startDate, "EEE")} @{" "}
+                {format(startWithTime(), "h:mm a")}
               </span>
             </span>
             <span>
               To:
               <span>
                 {" "}
-                {format(ev.endDate, "EEE")} @ {ev.endTime}
+                {format(ev.endDate, "EEE")} @ {format(endWithTime(), "h:mm a")}
               </span>
             </span>
           </div>

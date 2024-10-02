@@ -57,7 +57,7 @@ export default function Page() {
 
     // export as csv
     const csv = events
-      .filter((eventsDays) => {
+      ?.filter((eventsDays) => {
         // if we're filtering by favorites, only include days that have events in favorites
         if (inFavorites) {
           return (eventsDays[1] as any).find((e: any) =>
@@ -94,7 +94,7 @@ export default function Page() {
 
     const csvContent =
       `data:text/csv;charset=utf-8,Event Name,Description,Location,Start Date,Start Time,End Date,End Time,Type,Host,Camp Name\n` +
-      csv.map((e) => (e as any).join(",")).join("\n");
+      csv?.map((e) => (e as any).join(",")).join("\n");
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");

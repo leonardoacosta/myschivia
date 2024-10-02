@@ -21,6 +21,32 @@ export default function ViewPost() {
 
   if (!ev) return <p>Loading...</p>;
 
+  const startWithTime = () => {
+    const date = ev.startDate; // Example date
+    const timeString = ev.startTime; // Time in "HH:MM" format
+
+    // Split the time string into hours and minutes
+    const [hours, minutes] = timeString.split(":").map(Number);
+
+    // Set the hours and minutes on the date object
+    date.setHours(hours ?? 0);
+    date.setMinutes(minutes ?? 0);
+    return date;
+  };
+
+  const endWithTime = () => {
+    const date = ev.endDate; // Example date
+    const timeString = ev.endTime; // Time in "HH:MM" format
+
+    // Split the time string into hours and minutes
+    const [hours, minutes] = timeString.split(":").map(Number);
+
+    // Set the hours and minutes on the date object
+    date.setHours(hours ?? 0);
+    date.setMinutes(minutes ?? 0);
+    return date;
+  };
+
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <Card>
@@ -35,13 +61,14 @@ export default function ViewPost() {
         </CardContent>
         <CardContent>
           <CardDescription>
-            From: {format(ev.startDate, "EEE")} @ {ev.startTime}
+            From: {format(ev.startDate, "EEE")} @{" "}
+            {format(startWithTime(), "h:mm a")}
           </CardDescription>
           <CardDescription>
-            To: {format(ev.endDate, "EEE")} @ {ev.endTime}
+            To: {format(ev.endDate, "EEE")} @ {format(endWithTime(), "h:mm a")}
           </CardDescription>
           <CardDescription>By: {ev.user.alias}</CardDescription>
-          <CardDescription>With: {ev.campName}</CardDescription>
+          <CardDescription>Part of Camp: {ev.campName}</CardDescription>
         </CardContent>
       </Card>
       <MapContext>

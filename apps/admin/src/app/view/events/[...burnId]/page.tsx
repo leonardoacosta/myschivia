@@ -17,7 +17,11 @@ import { TypeBadge } from "@tribal-cities/ui/type-badge";
 import { api } from "~/trpc/react";
 
 export default function AuthShowcase() {
-  const [events] = api.event.all.useSuspenseQuery({ day: null });
+  const [events] = api.event.all.useSuspenseQuery({
+    day: null,
+    campId: null,
+    type: null,
+  });
   return (
     <div className="h-screen w-full lg:grid lg:grid-cols-2">
       <div className="flex justify-center overflow-scroll py-8">

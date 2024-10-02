@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 import type { RouterOutputs } from "@tribal-cities/api";
 
@@ -33,6 +33,15 @@ export default function Burn({ children }: { children: React.ReactNode }) {
   const [burnYearId, setBurnYearId] = useState<string | null>(null);
   const [join, setJoin] = useState<boolean | null>(false);
   const [create, setCreate] = useState<boolean | null>(false);
+
+  useEffect(() => {
+    if (burnYearId) localStorage.setItem("burnYearId", burnYearId);
+  }, [burnYearId]);
+
+  useEffect(() => {
+    const burnYearId = localStorage.getItem("burnYearId");
+    if (burnYearId) setBurnYearId(burnYearId);
+  }, []);
 
   return (
     <BurnContext.Provider

@@ -107,15 +107,31 @@ export const CreateBurnYearSchema = createInsertSchema(BurnYear, {
     .refine(
       (value) => {
         if (!value) return true;
-        value.split(",").map((coord) => {
-          const [lat, lng] = coord.split(" ");
-          // * Check if lat and lng exist
-          if (!lat || !lng) return false;
 
-          // * Check if lat and lng are numbers
-          if (isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) return false;
-          return true;
-        });
+        const [lat, lng] = value.split(",");
+
+        // * Check if lat and lng exist
+        if (!lat) {
+          console.log("lat missing");
+          return false;
+        } else if (!lng) {
+          console.log("lng missing");
+          return false;
+        }
+
+        console.log(lat, parseFloat(lat), isNaN(parseFloat(lat)));
+
+        console.log(lng, parseFloat(lng), isNaN(parseFloat(lng)));
+
+        // * Check if lat and lng are numbers
+        if (isNaN(parseFloat(lat))) {
+          console.log("lat not a number");
+          return false;
+        } else if (isNaN(parseFloat(lng))) {
+          console.log("lng not a number");
+          return false;
+        }
+        return true;
       },
       {
         message: "Invalid coordinates",
@@ -531,6 +547,71 @@ export const BurnYearRelations = relations(BurnYear, ({ many, one }) => ({
   camps: many(Camp),
   burn: one(Burn, { fields: [BurnYear.burnId], references: [Burn.id] }),
 }));
+
+export const UpdateBurnYearSchema = createInsertSchema(BurnYear, {
+  id: z.string().max(256),
+
+  name: z.string().min(1).max(256),
+  description: z.string().min(1).max(256),
+  image: z.string().max(256).nullable(),
+
+  coordinates: z
+    .string()
+    .max(256)
+    .nullable()
+    .refine(
+      (value) => {
+        if (!value) return true;
+
+        const [lat, lng] = value.split(",");
+
+        // * Check if lat and lng exist
+        if (!lat) {
+          console.log("lat missing");
+          return false;
+        } else if (!lng) {
+          console.log("lng missing");
+          return false;
+        }
+
+        console.log(lat, parseFloat(lat), isNaN(parseFloat(lat)));
+
+        console.log(lng, parseFloat(lng), isNaN(parseFloat(lng)));
+
+        // * Check if lat and lng are numbers
+        if (isNaN(parseFloat(lat))) {
+          console.log("lat not a number");
+          return false;
+        } else if (isNaN(parseFloat(lng))) {
+          console.log("lng not a number");
+          return false;
+        }
+        return true;
+      },
+      {
+        message: "Invalid coordinates",
+      },
+    ),
+
+  startDate: z.coerce.date(),
+  startTime: z.string().max(20),
+  endDate: z.coerce.date(),
+  endTime: z.string().max(20),
+
+  campRegistration: z.boolean().default(false),
+  campRegistrationDeadline: z.coerce.date().nullable(),
+  campRegistrationEditing: z.boolean().default(false),
+
+  volunteerManagement: z.boolean().default(false),
+  volunteerManagementEditing: z.boolean().default(false),
+
+  eventRegistration: z.boolean().default(false),
+  eventEditing: z.boolean().default(false),
+}).omit({
+  burnId: true,
+  createdAt: true,
+  updatedAt: true,
+});
 
 export const BurnRelations = relations(Burn, ({ many }) => ({
   years: many(BurnYear),

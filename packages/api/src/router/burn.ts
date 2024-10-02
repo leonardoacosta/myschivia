@@ -8,6 +8,7 @@ import {
   BurnYear,
   CreateBurnWithYearSchema,
   UpdateBurnSchema,
+  UpdateBurnYearSchema,
   UserBurnYearRoles,
   UsersToBurnYear,
 } from "@tribal-cities/db/schema";
@@ -137,5 +138,14 @@ export const burnRouter = {
       ctx.db.query.BurnYear.findFirst({
         where: eq(BurnYear.id, input.id),
       }),
+    ),
+
+  updateBurnYear: publicProcedure
+    .input(UpdateBurnYearSchema)
+    .mutation(({ ctx, input }) =>
+      ctx.db
+        .update(BurnYear)
+        .set({ ...input, updatedAt: new Date() })
+        .where(eq(BurnYear.id, input.id!)),
     ),
 } satisfies TRPCRouterRecord;

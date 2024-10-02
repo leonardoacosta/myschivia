@@ -14,6 +14,7 @@ export default async function HomePage() {
 
   // You can await this here if you don't want to show Suspense fallback below
   api.camp.all.prefetch();
+  api.event.eventsForTv.prefetch();
   api.burn.joined.prefetch();
   api.user.getBurners.prefetch();
   api.event.getFavorites.prefetch();

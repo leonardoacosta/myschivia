@@ -1,7 +1,8 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import { and, asc, eq, gte, lte } from "@tribal-cities/db";
+import type { Camp } from "@tribal-cities/db/schema";
+import { and, asc, desc, eq, gte, lte } from "@tribal-cities/db";
 import {
   CreateEventSchema,
   Event,
@@ -129,4 +130,63 @@ export const eventRouter = {
         }
       });
     }),
+
+  eventsForTv: protectedProcedure.query(async ({ ctx }) => {
+    const events = await ctx.db.query.Event.findMany({
+      with: {
+        camp: true,
+      },
+    });
+    const programming = events.map((event) => {
+      // Add time to the date
+      const startDate = new Date(event.startDate);
+      const [startHours, startMinutes] = event.startTime.split(":");
+      startDate.setHours(parseInt(startHours ?? "0"));
+      startDate.setMinutes(parseInt(startMinutes ?? "0"));
+
+      const endDate = new Date(event.endDate);
+      const [endHours, endMinutes] = event.endTime.split(":");
+      endDate.setHours(parseInt(endHours ?? "0"));
+      endDate.setMinutes(parseInt(endMinutes ?? "0"));
+
+      return {
+        title: event.name,
+        description: event.description,
+        uuid: event.id,
+        logo: "https://www.themoviedb.org/t/p/w1066_and_h600_bestv2/6Ys6koNajP5ld9EIMfOSQrRquki.jpg", //event.image ?? "",
+        channelUuid: event.campId ?? "",
+        since: startDate.toISOString(),
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        till: endDate.toISOString(),
+      };
+    });
+    const camps = events
+      .reduce((acc: any, event: any) => {
+        // return only distinct camps
+        if (acc.find((c: any) => c.campId === event.campId)) {
+          return acc;
+        }
+        return [...acc, event];
+      }, [])
+      .map((event: any) => event.camp) as (typeof Camp)[];
+
+    const channels = camps
+      .map((channel) => {
+        return {
+          uuid: channel ? channel.id : "",
+          title: channel ? channel.name : "self",
+          type: "channel",
+          logo: channel ? channel.image : "",
+        };
+      })
+      .sort((a, b) => (a.title < b.title ? -1 : 1));
+
+    const result = {
+      channels,
+      programming,
+    };
+
+    return result;
+  }),
 } satisfies TRPCRouterRecord;

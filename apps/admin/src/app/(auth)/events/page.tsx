@@ -31,6 +31,7 @@ import {
 
 import { api } from "~/trpc/react";
 import EventCard from "./_components/event-card";
+import Tv from "./_components/tv";
 
 export default function Page() {
   const [date, setDate] = useState<Date | null>(null);
@@ -224,9 +225,10 @@ export default function Page() {
         </div>
         <CardContent className="p-6">
           <Tabs defaultValue="all">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="schedule">My Schedule</TabsTrigger>
+              <TabsTrigger value="tv">TV</TabsTrigger>
             </TabsList>
             <div>
               {isPending && (
@@ -283,6 +285,7 @@ export default function Page() {
                 );
               })}
             </TabsContent>
+            <Tv />
           </Tabs>
         </CardContent>
       </Card>

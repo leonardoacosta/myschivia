@@ -24,6 +24,10 @@
       "persistent": true,
       "cache": false
     },
+    "admin": {
+      "persistent": true,
+      "cache": false
+    },
     "dev:next": {
       "persistent": true,
       "cache": false

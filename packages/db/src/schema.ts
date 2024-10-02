@@ -204,6 +204,7 @@ export const Camp = pgTable("camp", {
     withTimezone: true,
   }).$onUpdateFn(() => sql`now()`),
 });
+export type Camp = typeof Camp.$inferSelect;
 
 export const CampRegistration = pgTable("camp_registration", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),

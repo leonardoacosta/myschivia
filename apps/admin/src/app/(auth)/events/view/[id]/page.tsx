@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, User } from "lucide-react";
 
 import {
   Card,
@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
+import { TypeBadge } from "@tribal-cities/ui/type-badge";
 
 import MapContext, { MapContext as mapContext } from "~/context/map-context";
 import { api } from "~/trpc/react";
@@ -53,16 +54,24 @@ export default function ViewPost() {
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <Card>
         <CardHeader>
-          <CardTitle>
-            <Link href={`/events`}>
+          <CardTitle className="flex flex-wrap items-center">
+            <Link href={`/events`} className="block">
               <ChevronLeft className="mr-2 inline-block h-6 w-6" />
             </Link>
-
-            {ev.name}
+            <div className="flex-row space-y-2">
+              <div>
+                <span>{ev.name}</span>
+              </div>
+              <div className="flex gap-2">
+                <TypeBadge type={ev.type as any} className="flex-none" />
+                <div className="flex items-center">
+                  <User className="mr-1 h-3 w-3" />
+                  {ev.hostName || ev.user?.alias}
+                </div>
+              </div>
+            </div>
           </CardTitle>
-          <CardDescription>
-            {ev.location} - {ev.type}
-          </CardDescription>
+          <CardDescription className="flex gap-2"></CardDescription>
         </CardHeader>
         <CardContent>
           <CardDescription>{ev.description}</CardDescription>
@@ -75,7 +84,7 @@ export default function ViewPost() {
           <CardDescription>
             To: {format(ev.endDate, "EEE")} @ {format(endWithTime(), "h:mm a")}
           </CardDescription>
-          <CardDescription>By: {ev.hostName ?? ev.user?.alias}</CardDescription>
+          <CardDescription>By: {ev.hostName || ev.user?.alias}</CardDescription>
           <CardDescription>Part of Camp: {ev.campName}</CardDescription>
         </CardContent>
       </Card>

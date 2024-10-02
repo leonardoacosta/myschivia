@@ -58,6 +58,8 @@ export default function Page() {
     // export as csv
     const csv = events
       ?.filter((eventsDays) => {
+        console.log(eventsDays);
+        console.log(inFavorites);
         // if we're filtering by favorites, only include days that have events in favorites
         if (inFavorites) {
           return (eventsDays[1] as any).find((e: any) =>
@@ -66,7 +68,7 @@ export default function Page() {
         }
         return eventsDays;
       })
-      .reduce((acc, evs) => {
+      ?.reduce((acc, evs) => {
         const eventsOfDay = evs[1]!;
         const day = (eventsOfDay as any)?.map((ev: any) => {
           // if we're filtering by favorites, only include events that are in favorites
@@ -83,10 +85,10 @@ export default function Page() {
             ev.endDate ? format(ev.endDate, "E LLL dd") : "",
             ev.endTime ?? "",
             ev.type.replaceAll(",", "") ?? "",
-            ev.hostName.replaceAll(",", "") ??
-              ev.user?.alias.replaceAll(",", "") ??
+            ev.user?.alias.replaceAll(",", "") ??
+              ev.hostName?.replaceAll(",", "") ??
               "",
-            ev.campName.replaceAll(",", "") ?? "",
+            ev.campName?.replaceAll(",", "") ?? "",
           ];
         });
 

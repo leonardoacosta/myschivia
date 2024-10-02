@@ -138,16 +138,20 @@ export default function EventCard({ ev }: EventCardProps) {
             </div>
             <div className="flex items-center">
               <User className="mr-1 h-3 w-3" />
-              {ev.hostName ?? ev.user.alias}
+              {ev.hostName || ev.user.alias}
             </div>
-            <div className="flex items-center">
-              <Tent className="mr-1 h-3 w-3" />
-              {ev.campName || "Self"}
-            </div>
-            <div className="flex items-center">
-              <Pin className="mr-1 h-3 w-3" />
-              {ev.location}
-            </div>
+            {ev.camp && (
+              <div className="flex items-center">
+                <Tent className="mr-1 h-3 w-3" />
+                {ev.camp.name}
+              </div>
+            )}
+            {ev.location && (
+              <div className="flex items-center">
+                <Pin className="mr-1 h-3 w-3" />
+                {ev.location}
+              </div>
+            )}
           </div>
         </div>
 
@@ -184,22 +188,22 @@ export default function EventCard({ ev }: EventCardProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 text-sm text-muted-foreground md:hidden">
+        <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground md:hidden">
           <div className="flex items-center">
             <TypeBadge type={ev.type} />
           </div>
           <div className="flex items-center">
             <User className="mr-1 h-3 w-3" />
-            {ev.hostName ?? ev.user.alias}
+            {ev.hostName || ev.user.alias}
           </div>
           <div className="flex items-center">
             <Tent className="mr-1 h-3 w-3" />
             {ev.campName || "Self"}
           </div>
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <Pin className="mr-1 h-3 w-3" />
             {ev.location}
-          </div>
+          </div> */}
         </div>
         <div className="mt-2 flex space-x-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">

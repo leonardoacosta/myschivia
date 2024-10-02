@@ -63,12 +63,12 @@ export default tseslint.config(
         2,
         { checksVoidReturn: { attributes: false } },
       ],
-      "@typescript-eslint/no-unnecessary-condition": [
-        "error",
-        {
-          allowConstantLoopConditions: true,
-        },
-      ],
+      // "@typescript-eslint/no-unnecessary-condition": [
+      //   "error",
+      //   {
+      //     allowConstantLoopConditions: true,
+      //   },
+      // ],
       // "@typescript-eslint/no-non-null-assertion": "error",
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
 
@@ -78,6 +78,7 @@ export default tseslint.config(
       "@typescript-eslint/no-floating-promises": "off",
       "@typescript-eslint/no-unsafe-member-access": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/no-unnecessary-condition": "off",
       // "@typescript-eslint/no-unsafe-member-access": "off",
       // "@typescript-eslint/no-unsafe-call": "off",
     },

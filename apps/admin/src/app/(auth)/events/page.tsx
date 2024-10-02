@@ -1,24 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 "use client";
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import * as ics from "ics";
-import {
-  CircleIcon,
-  CloudDownloadIcon,
-  Eye,
-  Pin,
-  PlusCircle,
-  PlusIcon,
-  StarIcon,
-  Tent,
-  User,
-} from "lucide-react";
+import { PlusCircle } from "lucide-react";
 
+import { EventType } from "@tribal-cities/db/schema";
 import { Button } from "@tribal-cities/ui/button";
 import {
   Card,
@@ -46,9 +34,15 @@ import EventCard from "./_components/event-card";
 
 export default function Page() {
   const [date, setDate] = useState<Date | null>(null);
+  const [campId, setCampId] = useState<string | null>(null);
+  const [type, setType] = useState<string | null>(null);
+
   const ref = useRef<HTMLDivElement>(null);
-  const [favorites] = api.event.getFavorites.useSuspenseQuery({ day: date });
-  const [events] = api.event.all.useSuspenseQuery({
+  const [camps] = api.camp.all.useSuspenseQuery();
+  const [favorites] = api.event.getFavorites.useSuspenseQuery();
+  const { data: events, isPending } = api.event.all.useQuery({
+    type: type,
+    campId: campId,
     day: date,
   });
 
@@ -138,32 +132,82 @@ export default function Page() {
           </CardHeader>
           <CardHeader>
             <CardTitle className="flex items-center justify-center gap-2">
-              <Label>Filter by date</Label>
-              <CardDescription>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="secondary" className="px-3 shadow-none">
-                      {date ? format(date, "E LLL dd") : "All"}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
+              <Label>Filter by</Label>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="secondary" className="px-3 shadow-none">
+                    {date ? format(date, "E LLL dd") : "Day"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    onClick={() => setDate(null)}
+                    className="hover:bg-muted/50"
+                  >
+                    All
+                  </DropdownMenuItem>
+                  {dates.map((d) => (
                     <DropdownMenuItem
-                      onClick={() => setDate(null)}
+                      onClick={() => setDate(new Date(d))}
                       className="hover:bg-muted/50"
                     >
-                      All
+                      {format(d, "E LLL dd")}
                     </DropdownMenuItem>
-                    {dates.map((d) => (
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="secondary" className="px-3 shadow-none">
+                    {campId
+                      ? camps.find((c) => c.id === campId)?.name ?? "???"
+                      : "Camp"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    onClick={() => setCampId(null)}
+                    className="hover:bg-muted/50"
+                  >
+                    All
+                  </DropdownMenuItem>
+                  {camps.map((d) => {
+                    return (
                       <DropdownMenuItem
-                        onClick={() => setDate(new Date(d))}
+                        onClick={() => setCampId(d.id)}
                         className="hover:bg-muted/50"
                       >
-                        {format(d, "E LLL dd")}
+                        {d.name}
                       </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </CardDescription>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="secondary" className="px-3 shadow-none">
+                    {type ?? "Type"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    onClick={() => setType(null)}
+                    className="hover:bg-muted/50"
+                  >
+                    All
+                  </DropdownMenuItem>
+                  {Object.values(EventType.enumValues).map((d) => {
+                    return (
+                      <DropdownMenuItem
+                        onClick={() => setType(d)}
+                        className="hover:bg-muted/50"
+                      >
+                        {d}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </CardTitle>
             <Button
               variant="secondary"
@@ -180,8 +224,15 @@ export default function Page() {
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="schedule">My Schedule</TabsTrigger>
             </TabsList>
+            <div>
+              {isPending && (
+                <div className="flex justify-center pt-2">
+                  <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-gray-200"></div>
+                </div>
+              )}
+            </div>
             <TabsContent value="schedule" ref={ref}>
-              {events.map((evs) => {
+              {events?.map((evs) => {
                 const eventsOfDay = evs[1]!;
 
                 if (
@@ -211,7 +262,7 @@ export default function Page() {
               })}
             </TabsContent>
             <TabsContent value="all">
-              {events.map((evs) => {
+              {events?.map((evs) => {
                 const eventsOfDay = evs[1]!;
                 return (
                   <div className="mb-4">

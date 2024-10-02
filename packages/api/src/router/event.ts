@@ -16,16 +16,24 @@ export const eventRouter = {
     .input(
       z.object({
         day: z.date().nullable(),
+        campId: z.string().nullable(),
+        type: z.string().nullable(),
       }),
     )
     .query(async ({ ctx, input }) => {
       // grab just the date
       const day = input.day ? new Date(input.day) : new Date();
 
-      const events = await ctx.db.query.Event.findMany({
-        where: input.day
+      const whereFilter = and(
+        input.day
           ? and(lte(Event.startDate, day), gte(Event.endDate, day))
           : undefined,
+        input.campId ? eq(Event.campId, input.campId) : undefined,
+        input.type ? eq(Event.type, input.type as any) : undefined,
+      );
+
+      const events = await ctx.db.query.Event.findMany({
+        where: whereFilter,
         orderBy: [asc(Event.startDate), asc(Event.startTime)], // asc(Event.startTime),
         with: {
           user: true,
@@ -96,21 +104,13 @@ export const eventRouter = {
       ctx.db.delete(Event).where(eq(Event.id, input)),
     ),
 
-  getFavorites: protectedProcedure
-    .input(
-      z.object({
-        day: z.date().nullable(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      // grab just the date
-      const day = input.day ? new Date(input.day) : new Date();
-      const userId = ctx.session.user.id;
+  getFavorites: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
 
-      return await ctx.db.query.Favorite.findMany({
-        where: eq(Favorite.userId, userId),
-      });
-    }),
+    return await ctx.db.query.Favorite.findMany({
+      where: eq(Favorite.userId, userId),
+    });
+  }),
 
   toggleFavorite: protectedProcedure
     .input(z.string())

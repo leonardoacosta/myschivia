@@ -13,11 +13,12 @@ export default async function HomePage() {
   if (!session) return <AuthShowcase />;
 
   // You can await this here if you don't want to show Suspense fallback below
+  api.camp.all.prefetch();
   api.burn.joined.prefetch();
   api.user.getBurners.prefetch();
-  api.event.getFavorites.prefetch({ day: null });
+  api.event.getFavorites.prefetch();
   api.event.count.prefetch();
-  api.event.all.prefetch({ day: null });
+  api.event.all.prefetch({ day: null, campId: null, type: null });
   api.camp.all.prefetch();
   api.cityPlanning.getGoogleMaps.prefetch();
   api.cityPlanning.getZones.prefetch();

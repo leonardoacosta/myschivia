@@ -1,18 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import * as ics from "ics";
 import {
-  CircleIcon,
   CloudDownloadIcon,
   Eye,
   Loader2,
   Pin,
-  PlusCircle,
-  PlusIcon,
   StarIcon,
   Tent,
   User,
@@ -42,7 +37,7 @@ export default function EventCard({ ev }: EventCardProps) {
     data: favorites,
     refetch,
     isPending: fetching,
-  } = api.event.getFavorites.useQuery({ day: null });
+  } = api.event.getFavorites.useQuery();
   const { mutate, isPending: favoritesPending } =
     api.event.toggleFavorite.useMutation();
 
@@ -148,7 +143,9 @@ export default function EventCard({ ev }: EventCardProps) {
                 className={`${favorite ? "fill-white" : ""} mr-2 h-4 w-4`}
               />
             )}
-            {fetching ? "" : favorite ? "Unsave" : "Save"}
+            <span className="hidden sm:block">
+              {fetching ? "" : favorite ? "Unsave" : "Save"}
+            </span>
           </Button>
           <Button
             variant="secondary"

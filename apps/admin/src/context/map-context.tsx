@@ -113,7 +113,7 @@ export default function Map({ children }: { children: React.ReactNode }) {
       if (zone.camp)
         (feature.properties as any).popupHTML = `
             <h3 style="text-decoration: underline;">${zone.camp.name}</h3>
-            <p style="margin:0; font-style: italic;">${zone.camp.description}</p>
+            <p style="margin:0; font-style: italic;">${zone.camp.slogan}</p>
           `;
       feature.id = zone.id;
 

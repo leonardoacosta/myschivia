@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
-import { TypeBadge } from "@tribal-cities/ui/type-badge";
+import { TypeBadge } from "@tribal-cities/ui/event-type-badge";
 
 import MapContext, { MapContext as mapContext } from "~/context/map-context";
 import { api } from "~/trpc/react";

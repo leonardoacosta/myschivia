@@ -164,25 +164,32 @@ export const UpdateBurnSchema = createInsertSchema(Burn, {
 });
 
 // * Camps ===
-export const CampType = pgEnum("camp_type", [
-  "Art",
+export const Tag = pgEnum("camp_tag", [
+  "Food",
+  "Games",
+  "Bar",
+  "Tea or Coffee (non-alcoholic)",
   "Sound",
-  "Performance",
   "Dance",
+  "Chill",
+  "Lounge",
+  "Interactive",
+  "Performance",
+  "Screening",
+  "Transport",
+  "Storytelling",
+  "Service",
+  "Self Expression",
+  "Art",
   "Yoga",
   "Healing",
   "Fitness",
   "Workshop",
   "Misc",
-  "Food",
-  "Bar",
-  "Tea or Coffee",
-  "Chill",
-  "Lounge",
   "Networking",
   "Gifting",
-  "Storytelling",
   "First Aid",
+  "Kink",
 ]);
 
 export const Camp = pgTable("camp", {
@@ -192,8 +199,6 @@ export const Camp = pgTable("camp", {
   slogan: varchar("slogan", { length: 256 }).default(""),
   description: text("description"),
   image: text("image"),
-
-  type: CampType("camp_type").notNull().default("Misc"),
 
   createdById: uuid("created_by_id")
     .notNull()
@@ -206,6 +211,19 @@ export const Camp = pgTable("camp", {
   }).$onUpdateFn(() => sql`now()`),
 });
 export type Camp = typeof Camp.$inferSelect;
+
+export const Camp_Tag = pgTable("camp_tags", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  campId: uuid("camp_id")
+    .notNull()
+    .references(() => Camp.id, { onDelete: "cascade" }),
+  tag: Tag("tag").notNull().default("Misc"),
+});
+
+// one-to-many relation Camp -> CampTags
+export const CampTagRelations = relations(Camp, ({ many }) => ({
+  tags: many(Camp_Tag),
+}));
 
 export const CampRegistration = pgTable("camp_registration", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
@@ -224,8 +242,6 @@ export const CreateCampSchema = createInsertSchema(Camp, {
   description: z.string().max(256),
 
   image: z.string().max(256).nullable(),
-
-  type: z.enum(CampType.enumValues),
 }).omit({
   id: true,
   createdAt: true,
@@ -242,10 +258,6 @@ export const UpdateCampSchema = createInsertSchema(Camp, {
 
   image: z.string().max(256).nullable(),
 
-  type: z.enum(CampType.enumValues),
-  // zoneId: z.string().max(256).nullable(),
-  // campId: z.string().optional(),
-
   createdAt: z.coerce.date(),
   createdById: z.string().max(256),
 }).omit({
@@ -254,7 +266,7 @@ export const UpdateCampSchema = createInsertSchema(Camp, {
 
 // * Events ===
 export const EventType = pgEnum("event_type", [
-  "Interactive",
+  // "Interactive",
   "Workshop",
   "Class",
   "Inclusion",

@@ -33,11 +33,11 @@ const typeBadgeVariants = cva(
   },
 );
 
-export interface TypeBadgeProps
+export interface EventTypeBadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof typeBadgeVariants> {}
 
-function TypeBadge({ className, type, ...props }: TypeBadgeProps) {
+function EventTypeBadge({ className, type, ...props }: EventTypeBadgeProps) {
   return (
     <div className={cn(typeBadgeVariants({ type }), className)} {...props}>
       {type}
@@ -45,4 +45,4 @@ function TypeBadge({ className, type, ...props }: TypeBadgeProps) {
   );
 }
 
-export { TypeBadge, typeBadgeVariants };
+export { EventTypeBadge, typeBadgeVariants };

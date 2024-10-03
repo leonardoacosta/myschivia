@@ -16,7 +16,7 @@ export const campRouter = {
   all: publicProcedure.query(({ ctx }) =>
     ctx.db.query.Camp.findMany({
       orderBy: asc(Camp.name),
-      with: { createdBy: true },
+      with: { createdBy: true, tags: true },
     }),
   ),
 

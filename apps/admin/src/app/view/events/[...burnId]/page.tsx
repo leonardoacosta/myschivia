@@ -11,8 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
+import { TypeBadge } from "@tribal-cities/ui/event-type-badge";
 import { Separator } from "@tribal-cities/ui/separator";
-import { TypeBadge } from "@tribal-cities/ui/type-badge";
 
 import { api } from "~/trpc/react";
 

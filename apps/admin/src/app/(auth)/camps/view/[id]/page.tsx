@@ -1,7 +1,6 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { format } from "date-fns";
 
 import {
   Card,
@@ -29,7 +28,7 @@ export default function ViewPost() {
         <CardContent>
           <CardDescription>{ev.description}</CardDescription>
           <Separator />
-          <CardDescription>Managed by: {ev.createdBy.email}</CardDescription>
+          <CardDescription>Managed by: {ev.createdBy?.email}</CardDescription>
         </CardContent>
       </Card>
     </main>

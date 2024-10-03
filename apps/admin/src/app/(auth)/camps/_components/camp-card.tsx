@@ -13,8 +13,9 @@ import {
   User,
 } from "lucide-react";
 
-import { RouterOutputs } from "@tribal-cities/api";
+import type { RouterOutputs } from "@tribal-cities/api";
 import { Button } from "@tribal-cities/ui/button";
+import { CampTypeBadge } from "@tribal-cities/ui/camp-type-badge";
 import {
   Card,
   CardContent,
@@ -22,12 +23,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
-import { TypeBadge } from "@tribal-cities/ui/type-badge";
 
 import { api } from "~/trpc/react";
 
 interface CampCardProps {
-  camp: RouterOutputs["camp"]["all"][number];
+  camp: RouterOutputs["camp"]["all"][0];
 }
 
 export default function CampCard({ camp }: CampCardProps) {
@@ -47,26 +47,13 @@ export default function CampCard({ camp }: CampCardProps) {
         <div className="space-y-1">
           <CardTitle>{camp.name}</CardTitle>
           <CardDescription>{camp.description}</CardDescription>
+          <CardContent>{camp.slogan}</CardContent>
           <div className="hidden space-x-4 pt-4 text-sm text-muted-foreground md:flex">
             <div className="flex items-center">
-              {/* <TypeBadge type={camp.type} /> */}
+              {camp.tags.map((tag) => (
+                <CampTypeBadge type={tag} />
+              ))}
             </div>
-            {/* <div className="flex items-center">
-              <User className="mr-1 h-3 w-3" />
-              {ev.hostName || ev.user.alias}
-            </div>
-            {ev.camp && (
-              <div className="flex items-center">
-                <Tent className="mr-1 h-3 w-3" />
-                {ev.camp.name}
-              </div>
-            )}
-            {ev.location && (
-              <div className="flex items-center">
-                <Pin className="mr-1 h-3 w-3" />
-                {ev.location}
-              </div>
-            )} */}
           </div>
         </div>
       </CardHeader>

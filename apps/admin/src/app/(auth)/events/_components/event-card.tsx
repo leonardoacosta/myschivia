@@ -21,7 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
-import { TypeBadge } from "@tribal-cities/ui/type-badge";
+import { EventTypeBadge } from "@tribal-cities/ui/event-type-badge";
 
 import { api } from "~/trpc/react";
 
@@ -134,7 +134,7 @@ export default function EventCard({ ev }: EventCardProps) {
           <CardDescription>{ev.description}</CardDescription>
           <div className="hidden space-x-4 pt-4 text-sm text-muted-foreground md:flex">
             <div className="flex items-center">
-              <TypeBadge type={ev.type} />
+              <EventTypeBadge type={ev.type} />
             </div>
             <div className="flex items-center">
               <User className="mr-1 h-3 w-3" />
@@ -190,7 +190,7 @@ export default function EventCard({ ev }: EventCardProps) {
       <CardContent>
         <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground md:hidden">
           <div className="flex items-center">
-            <TypeBadge type={ev.type} />
+            <EventTypeBadge type={ev.type} />
           </div>
           <div className="flex items-center">
             <User className="mr-1 h-3 w-3" />

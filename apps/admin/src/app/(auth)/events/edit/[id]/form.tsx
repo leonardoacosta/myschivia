@@ -14,6 +14,14 @@ import {
   CardTitle,
 } from "@tribal-cities/ui/card";
 import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from "@tribal-cities/ui/dialog";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -49,6 +57,9 @@ export default function EditEventForm({
   const utils = api.useUtils();
   const { data: camps } = api.camp.all.useQuery();
 
+  const { mutate: deleteEvent, isPending: isDeleting } =
+    api.event.delete.useMutation();
+  // const reset = utils.event.all.fetch({day: null, type: null, campId: null});
   const updatePost = api.event.update.useMutation({
     onSuccess: async () => {
       await utils.event.invalidate();
@@ -265,17 +276,6 @@ export default function EditEventForm({
                             field.onChange(new Date(addDays(e.target.value, 1)))
                           }
                         />
-                        {/* <Calendar
-                          mode="single"
-                          defaultMonth={new Date("10-03-2024")}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < new Date("10-03-2024") ||
-                            date > new Date("10-07-2024")
-                          }
-                          initialFocus
-                        /> */}
                         <FormMessage />
                       </FormItem>
                     )}
@@ -293,9 +293,51 @@ export default function EditEventForm({
                   />
                 </div>
               </div>
-              <Button disabled={updatePost.isPending}>
-                {updatePost.isPending ? "Saving..." : "Save"}
-              </Button>
+              <div className="grid grid-cols-2 gap-4">
+                <Button disabled={updatePost.isPending}>
+                  {updatePost.isPending ? "Saving..." : "Save"}
+                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="destructive">Delete</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <CardTitle>Are you sure?</CardTitle>
+                      <CardContent>
+                        <p>Are you sure you want to delete this event?</p>
+                      </CardContent>
+                      <DialogFooter>
+                        <Button
+                          variant="destructive"
+                          disabled={isDeleting}
+                          onClick={() => {
+                            deleteEvent(ev?.id!, {
+                              onSuccess: async () => {
+                                await utils.event.invalidate();
+                                form.reset();
+                                router.push("/events");
+                              },
+                              onError: (err) => {
+                                toast.error(
+                                  err.data?.code === "UNAUTHORIZED"
+                                    ? "You must be logged in to event"
+                                    : "Failed to delete event",
+                                );
+                              },
+                            });
+                          }}
+                        >
+                          {isDeleting ? "Deleting..." : "Yes, delete"}
+                        </Button>
+                        <DialogClose>
+                          <Button>Cancel</Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </form>
           </Form>
         </CardContent>

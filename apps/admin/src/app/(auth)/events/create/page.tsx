@@ -53,6 +53,7 @@ export default function CreatePostForm() {
       startTime: "12:00",
       endDate: new Date(),
       endTime: "12:00",
+      hostName: "",
     },
   });
 

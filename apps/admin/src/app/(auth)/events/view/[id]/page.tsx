@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
-import { TypeBadge } from "@tribal-cities/ui/event-type-badge";
+import { EventTypeBadge } from "@tribal-cities/ui/event-type-badge";
 
 import MapContext, { MapContext as mapContext } from "~/context/map-context";
 import { api } from "~/trpc/react";
@@ -63,7 +63,7 @@ export default function ViewPost() {
                 <span>{ev.name}</span>
               </div>
               <div className="flex gap-2">
-                <TypeBadge type={ev.type as any} className="flex-none" />
+                <EventTypeBadge type={ev.type} className="flex-none" />
                 <div className="flex items-center">
                   <User className="mr-1 h-3 w-3" />
                   {ev.hostName || ev.user?.alias}

@@ -29,11 +29,12 @@ const typeBadgeVariants = cva(
         Yoga: "bg-[#d82bff] text-white hover:bg-opacity-80",
         Healing: "bg-[#5B85AA] text-white hover:bg-opacity-80",
         Fitness: "bg-[#414770] text-white hover:bg-opacity-80",
+        Workshop: "bg-[#fff15c] text-white hover:bg-opacity-80",
+        Misc: "bg-[#d82bff] text-white hover:bg-opacity-80",
         Networking: "bg-[#fff15c] text-white hover:bg-opacity-80",
         Gifting: "bg-[#586340] text-white hover:bg-opacity-80",
         "First Aid": "bg-[#475029] text-white hover:bg-opacity-80",
         Kink: "bg-[#9E9DAB] text-white hover:bg-opacity-80",
-        Misc: "bg-[#d82bff] text-white hover:bg-opacity-80",
       },
     },
     defaultVariants: {

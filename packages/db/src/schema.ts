@@ -220,9 +220,8 @@ export const Camp_Tag = pgTable("camp_tags", {
   tag: Tag("tag").notNull().default("Misc"),
 });
 
-// one-to-many relation Camp -> CampTags
-export const CampTagRelations = relations(Camp, ({ many }) => ({
-  tags: many(Camp_Tag),
+export const CampTagRelations = relations(Camp_Tag, ({ one }) => ({
+  camps: one(Camp, { fields: [Camp_Tag.campId], references: [Camp.id] }),
 }));
 
 export const CampRegistration = pgTable("camp_registration", {
@@ -503,6 +502,7 @@ export const CampMembership = pgTable("camp_membership", {
 export const CampRelations = relations(Camp, ({ one, many }) => ({
   createdBy: one(User, { fields: [Camp.createdById], references: [User.id] }),
   campMembership: many(CampMembership),
+  tags: many(Camp_Tag),
 }));
 
 export const CampRegistrationRelations = relations(

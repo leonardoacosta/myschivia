@@ -1,10 +1,12 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import { asc, eq } from "@tribal-cities/db";
+import { and, asc, eq } from "@tribal-cities/db";
 import {
   Camp,
+  Camp_Tag,
   CreateCampSchema,
+  Tag,
   UpdateCampSchema,
   Zone,
 } from "@tribal-cities/db/schema";
@@ -25,7 +27,7 @@ export const campRouter = {
     .query(({ ctx, input }) =>
       ctx.db.query.Camp.findFirst({
         where: eq(Camp.id, input.id),
-        with: { createdBy: true },
+        with: { createdBy: true, tags: true },
       }),
     ),
 
@@ -63,4 +65,27 @@ export const campRouter = {
     .mutation(({ ctx, input }) =>
       PresignedUrl(input.year, input.burnName, input.filename, BlobType.camp),
     ),
+  toggleTag: protectedProcedure
+    .input(z.object({ campId: z.string(), tag: z.enum([...Tag.enumValues]) }))
+    .mutation(({ ctx, input }) => {
+      ctx.db.query.Camp_Tag.findFirst({
+        where: and(
+          eq(Camp_Tag.campId, input.campId),
+          eq(Camp_Tag.tag, input.tag),
+        ),
+      }).then(async (tag) => {
+        console.log("tag", tag);
+
+        if (tag) {
+          console.log("deleting tag");
+          await ctx.db.delete(Camp_Tag).where(eq(Camp_Tag.id, tag.id));
+        } else {
+          console.log("inserting tag");
+          await ctx.db.insert(Camp_Tag).values({
+            campId: input.campId,
+            tag: input.tag,
+          });
+        }
+      });
+    }),
 } satisfies TRPCRouterRecord;

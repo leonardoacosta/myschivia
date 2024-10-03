@@ -51,7 +51,7 @@ export default function CampCard({ camp }: CampCardProps) {
           <div className="hidden space-x-4 pt-4 text-sm text-muted-foreground md:flex">
             <div className="flex items-center">
               {camp.tags.map((tag) => (
-                <CampTypeBadge type={tag} />
+                <CampTypeBadge type={tag.tag} />
               ))}
             </div>
           </div>

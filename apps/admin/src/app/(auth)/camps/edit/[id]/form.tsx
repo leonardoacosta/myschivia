@@ -1,9 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
+import { Check, ChevronsUpDown } from "lucide-react";
 
 import type { RouterOutputs } from "@tribal-cities/api";
-import { CampType, UpdateCampSchema } from "@tribal-cities/db/schema";
+import { Tag, UpdateCampSchema } from "@tribal-cities/db/schema";
+import { cn } from "@tribal-cities/ui";
 import { Button } from "@tribal-cities/ui/button";
 import {
   Card,
@@ -12,6 +15,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@tribal-cities/ui/command";
 import {
   Form,
   FormControl,
@@ -24,9 +35,16 @@ import {
 } from "@tribal-cities/ui/form";
 import { Input } from "@tribal-cities/ui/input";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@tribal-cities/ui/popover";
+import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@tribal-cities/ui/select";
@@ -46,6 +64,8 @@ export default function EditCampForm({
   });
 
   const utils = api.useUtils();
+  const { mutate: toggleTag, isPending: toggling } =
+    api.camp.toggleTag.useMutation();
   const deleteCamp = api.camp.delete.useMutation({
     onSuccess: async () => {
       toast.success("Camp deleted");
@@ -126,38 +146,70 @@ export default function EditCampForm({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Event Type</FormLabel>
-                    <FormDescription>
-                      What type of event are you creating?
-                    </FormDescription>
-                    <FormControl>
-                      <Select
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                        }}
-                        value={field.value ?? undefined}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select an event type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {CampType.enumValues.map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {type}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    // role="combobox"
+                    // disabled={toggling}
+                    className={cn(
+                      "w-[200px] justify-between",
+                      // camp?.tags.length === 0 && "text-muted-foreground",
+                    )}
+                  >
+                    {toggling
+                      ? "Updating..."
+                      : camp?.tags
+                        ? camp.tags.map((tag) => tag.tag).join(", ")
+                        : "Select language"}
+                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput
+                      placeholder="Search Tags..."
+                      // className="h-9"
+                    />
+                    <CommandList>
+                      <CommandEmpty>No framework found.</CommandEmpty>
+                      {Tag.enumValues.map((tag) => (
+                        <CommandItem
+                          value={tag}
+                          key={tag}
+                          onSelect={() => {
+                            console.log("tag", tag);
+                            toggleTag(
+                              {
+                                campId: camp!.id,
+                                tag,
+                              },
+                              {
+                                onSuccess: () => {
+                                  toast.success("Tag updated");
+                                  utils.camp.byId.refetch();
+                                },
+                              },
+                            );
+                          }}
+                        >
+                          {tag}
+                          <CheckIcon
+                            className={cn(
+                              "ml-auto h-4 w-4",
+                              camp?.tags.find((field) => field.tag === tag)
+                                ? "opacity-100"
+                                : "opacity-0",
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+
               <Button disabled={updateCamp.isPending}>
                 {updateCamp.isPending ? "Saving..." : "Save"}
               </Button>

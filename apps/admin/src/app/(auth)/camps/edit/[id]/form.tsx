@@ -74,8 +74,8 @@ export default function EditCampForm({
     onError: (err) => {
       toast.error(
         err.data?.code === "UNAUTHORIZED"
-          ? "You must be logged in to event"
-          : "Failed to update event",
+          ? "You must be logged in to camp"
+          : "Failed to update camp",
       );
     },
   });

@@ -48,92 +48,94 @@ export default function ZoneTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {zones?.map((zone) => (
-          <TableRow
-            key={zone.id}
-            onMouseEnter={() => {
-              zone.type === "Point" && setHoverZone(zone.id);
-            }}
-            onMouseLeave={() => {
-              zone.type === "Point" && setHoverZone("");
-            }}
-          >
-            <TableCell className="text-left">
-              <p>{zone.type === "LineString" ? "Path" : "Camp"}</p>
-              <Select
-                onValueChange={(value) => {
-                  toast.success("Zone Updating...");
-                  link({ id: zone.id, class: value as any });
-                }}
-                value={zone.class ?? ""}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="No class" />
-                </SelectTrigger>
-                <SelectContent>
-                  {zone.type === "Point" ? (
-                    <>
-                      <SelectItem value={"Camp"}>Camp</SelectItem>
-                      <SelectItem value={"RV"}>RV</SelectItem>
-                    </>
-                  ) : (
-                    <>
-                      <SelectItem value={"Road"}>Road</SelectItem>
-                      <SelectItem value={"Path"}>Path</SelectItem>
-                    </>
-                  )}
-                </SelectContent>
-              </Select>
-            </TableCell>
-            <TableCell className="text-left">
-              {zone.type === "Point" ? (
+        {zones
+          // ?.filter((z) => z.type !== "Point")
+          ?.map((zone) => (
+            <TableRow
+              key={zone.id}
+              onMouseEnter={() => {
+                zone.type === "Point" && setHoverZone(zone.id);
+              }}
+              onMouseLeave={() => {
+                zone.type === "Point" && setHoverZone("");
+              }}
+            >
+              <TableCell className="text-left">
+                <p>{zone.type === "LineString" ? "Path" : "Camp"}</p>
                 <Select
                   onValueChange={(value) => {
-                    link({ id: zone.id, campId: value });
+                    toast.success("Zone Updating...");
+                    link({ id: zone.id, class: value as any });
                   }}
-                  value={zone.campId ?? ""}
+                  value={zone.class ?? ""}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Unclaimed" />
+                    <SelectValue placeholder="No class" />
                   </SelectTrigger>
                   <SelectContent>
-                    {camps?.map((camp) => (
-                      <SelectItem key={camp.id} value={camp.id}>
-                        {camp.name}
-                      </SelectItem>
-                    ))}
+                    {zone.type === "Point" ? (
+                      <>
+                        <SelectItem value={"Camp"}>Camp</SelectItem>
+                        <SelectItem value={"RV"}>RV</SelectItem>
+                      </>
+                    ) : (
+                      <>
+                        <SelectItem value={"Road"}>Road</SelectItem>
+                        <SelectItem value={"Path"}>Path</SelectItem>
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
-              ) : (
-                <Input
-                  defaultValue={zone.description ?? ""}
-                  onChange={(e) => {
-                    link({ id: zone.id, description: e.target.value });
-                  }}
-                />
-              )}
-            </TableCell>
-            <TableCell className="text-left">
-              <form>
-                <Button
-                  size="lg"
-                  variant="destructive"
-                  disabled={isPending}
-                  formAction={() => {
-                    mutate(zone.id, {
-                      onSuccess: async () => {
-                        await utils.cityPlanning.getZones.refetch();
-                        toast.success("Zones Deleted");
-                      },
-                    });
-                  }}
-                >
-                  Delete
-                </Button>
-              </form>
-            </TableCell>
-          </TableRow>
-        ))}
+              </TableCell>
+              <TableCell className="text-left">
+                {zone.type === "Point" ? (
+                  <Select
+                    onValueChange={(value) => {
+                      link({ id: zone.id, campId: value });
+                    }}
+                    value={zone.campId ?? ""}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Unclaimed" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {camps?.map((camp) => (
+                        <SelectItem key={camp.id} value={camp.id}>
+                          {camp.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    defaultValue={zone.description ?? ""}
+                    onChange={(e) => {
+                      link({ id: zone.id, description: e.target.value });
+                    }}
+                  />
+                )}
+              </TableCell>
+              <TableCell className="text-left">
+                <form>
+                  <Button
+                    size="lg"
+                    variant="destructive"
+                    disabled={isPending}
+                    formAction={() => {
+                      mutate(zone.id, {
+                        onSuccess: async () => {
+                          await utils.cityPlanning.getZones.refetch();
+                          toast.success("Zones Deleted");
+                        },
+                      });
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </form>
+              </TableCell>
+            </TableRow>
+          ))}
       </TableBody>
     </Table>
   );

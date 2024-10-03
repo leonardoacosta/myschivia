@@ -6,6 +6,7 @@ import {
   Camp,
   CreateCampSchema,
   UpdateCampSchema,
+  Zone,
 } from "@tribal-cities/db/schema";
 
 import { BlobType, PresignedUrl } from "../service/blob";
@@ -47,9 +48,10 @@ export const campRouter = {
 
   delete: protectedProcedure
     .input(z.string())
-    .mutation(({ ctx, input }) =>
-      ctx.db.delete(Camp).where(eq(Camp.id, input)),
-    ),
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.delete(Zone).where(eq(Zone.campId, input));
+      await ctx.db.delete(Camp).where(eq(Camp.id, input));
+    }),
   presign: protectedProcedure
     .input(
       z.object({

@@ -59,6 +59,17 @@ export default function Map({ children }: { children: React.ReactNode }) {
     features: [],
   });
 
+  // * debounce setHoverZone
+  const timeoutRef = useRef<number | null>(null);
+  const debouncedSetHoverZone = (zoneId: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = window.setTimeout(() => {
+      setHoverZone(zoneId);
+    }, 300);
+  };
+
   // * Convert zones to geojson
   useEffect(() => {
     if (!zones) return;
@@ -227,7 +238,7 @@ export default function Map({ children }: { children: React.ReactNode }) {
         geojson,
         zones,
         hoverZone,
-        setHoverZone,
+        setHoverZone: debouncedSetHoverZone,
         pointsRef,
         mapUrl,
         mapRef,

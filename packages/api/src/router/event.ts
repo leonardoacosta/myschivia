@@ -60,11 +60,11 @@ export const eventRouter = {
       return eventsByDay;
     }),
 
-  count: publicProcedure.query(async ({ ctx }) => {
+  count: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.query.Event.findMany().then((events) => events.length);
   }),
 
-  allDates: publicProcedure.query(async ({ ctx }) => {
+  allDates: protectedProcedure.query(async ({ ctx }) => {
     const events = await ctx.db.query.Event.findMany();
     const dates = events
       .sort((a, b) => a.startDate.getDate() - b.startDate.getDate())
@@ -72,7 +72,7 @@ export const eventRouter = {
     return Array.from(new Set(dates));
   }),
 
-  byId: publicProcedure
+  byId: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) =>
       ctx.db.query.Event.findFirst({

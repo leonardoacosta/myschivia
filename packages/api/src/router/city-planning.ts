@@ -3,7 +3,12 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { desc, eq } from "@tribal-cities/db";
-import { Coordinate, UpdateZoneSchema, Zone } from "@tribal-cities/db/schema";
+import {
+  Camp,
+  Coordinate,
+  UpdateZoneSchema,
+  Zone,
+} from "@tribal-cities/db/schema";
 
 import { publicProcedure } from "../trpc";
 
@@ -174,7 +179,7 @@ export const cityPlanningRouter = {
           description: input.description,
           updatedAt: new Date(),
         })
-        .where(eq(Zone.id, input.id as string))
+        .where(eq(Zone.id, input.id!))
         .catch(console.error);
     }),
 } satisfies TRPCRouterRecord;

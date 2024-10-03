@@ -23,6 +23,7 @@ import {
 } from "@tribal-cities/ui/table";
 
 import { api } from "~/trpc/react";
+import CampCard from "./_components/camp-card";
 
 export default function Page() {
   const router = useRouter();
@@ -48,31 +49,10 @@ export default function Page() {
           <CardTitle>Camps</CardTitle>
           <CardDescription>All the camps that are registered</CardDescription>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Type</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {camps.map((camp) => (
-                <TableRow
-                  onClick={() => {
-                    if (auth?.user.id === camp.createdById)
-                      router.push(`/camps/edit/${camp.id}`);
-                    else router.push(`/camps/view/${camp.id}`);
-                  }}
-                >
-                  <TableCell className="font-medium">{camp.name}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{camp.type}</Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <CardContent className="flex-row space-y-4">
+          {camps.map((camp) => (
+            <CampCard camp={camp} />
+          ))}
         </CardContent>
       </Card>
     </main>

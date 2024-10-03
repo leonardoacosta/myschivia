@@ -189,6 +189,7 @@ export const Camp = pgTable("camp", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
 
   name: varchar("name", { length: 256 }).notNull(),
+  slogan: varchar("slogan", { length: 256 }).default(""),
   description: text("description"),
   image: text("image"),
 
@@ -219,6 +220,7 @@ export const CampRegistration = pgTable("camp_registration", {
 
 export const CreateCampSchema = createInsertSchema(Camp, {
   name: z.string().max(256),
+  slogan: z.string().max(256),
   description: z.string().max(256),
 
   image: z.string().max(256).nullable(),
@@ -235,7 +237,8 @@ export const UpdateCampSchema = createInsertSchema(Camp, {
   id: z.string().max(256),
 
   name: z.string().min(1).max(256),
-  description: z.string().min(1).max(256),
+  slogan: z.string().max(256),
+  description: z.string(),
 
   image: z.string().max(256).nullable(),
 

@@ -2,7 +2,7 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
 import type { Camp } from "@tribal-cities/db/schema";
-import { and, asc, desc, eq, gte, lte } from "@tribal-cities/db";
+import { and, asc, desc, eq, gt, gte, lt, lte } from "@tribal-cities/db";
 import {
   CreateEventSchema,
   Event,
@@ -31,6 +31,7 @@ export const eventRouter = {
           : undefined,
         input.campId ? eq(Event.campId, input.campId) : undefined,
         input.type ? eq(Event.type, input.type as any) : undefined,
+        // lt(Event.createdAt, new Date("2024-10-03 06:00:00 ")), // 2024-10-03 @ 6:00am UTC to timestamp => 1728057600000
       );
 
       const events = await ctx.db.query.Event.findMany({

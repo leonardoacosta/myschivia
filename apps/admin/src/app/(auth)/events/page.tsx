@@ -59,8 +59,6 @@ export default function Page() {
     // export as csv
     const csv = events
       ?.filter((eventsDays) => {
-        console.log(eventsDays);
-        console.log(inFavorites);
         // if we're filtering by favorites, only include days that have events in favorites
         if (inFavorites) {
           return (eventsDays[1] as any).find((e: any) =>

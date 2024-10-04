@@ -11,6 +11,7 @@ const typeBadgeVariants = cva(
       type: {
         Misc: "bg-[#d82bff] text-white hover:bg-opacity-80",
         Class: "bg-[#5B85AA] text-white hover:bg-opacity-80",
+        Interactive: "bg-[#5B85AA] text-white hover:bg-opacity-80",
         Inclusion: "bg-[#414770] text-white hover:bg-opacity-80",
         Fire: "bg-[#ff752b] text-white hover:bg-opacity-80",
         Food: "bg-[#831D2F] text-white hover:bg-opacity-80",

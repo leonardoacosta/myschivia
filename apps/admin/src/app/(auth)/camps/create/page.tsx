@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { CampType, CreateCampSchema } from "@tribal-cities/db/schema";
+import { CreateCampSchema, Tag } from "@tribal-cities/db/schema";
 import { Button } from "@tribal-cities/ui/button";
 import {
   Card,
@@ -39,7 +39,7 @@ export default function CreateCampForm() {
     defaultValues: {
       description: "",
       name: "",
-      type: "Misc",
+      // type: "Misc",
     },
   });
 
@@ -146,9 +146,9 @@ export default function CreateCampForm() {
                   </FormItem>
                 )}
               /> */}
-              <FormField
+              {/* <FormField
                 control={form.control}
-                name="type"
+                // name="type"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Camp Type</FormLabel>
@@ -166,7 +166,7 @@ export default function CreateCampForm() {
                           <SelectValue placeholder="Select an camp type" />
                         </SelectTrigger>
                         <SelectContent>
-                          {CampType.enumValues.map((type) => (
+                          {Tag.enumValues.map((type) => (
                             <SelectItem key={type} value={type}>
                               {type}
                             </SelectItem>
@@ -177,7 +177,7 @@ export default function CreateCampForm() {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               <Button disabled={createCamp.isPending}>
                 {createCamp.isPending ? "Creating..." : "Create"}
               </Button>

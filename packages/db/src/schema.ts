@@ -38,6 +38,7 @@ export const Burn = pgTable("burn", {
 export const Announcement = pgTable("announcement", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   releaseDate: timestamp("release_date").defaultNow().notNull(),
+  title: varchar("title", { length: 256 }).notNull(),
   message: text("message").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   burnYearId: uuid("burn_year_id").references(() => BurnYear.id, {
@@ -464,11 +465,12 @@ export const AccountRelations = relations(Account, ({ one }) => ({
   user: one(User, { fields: [Account.userId], references: [User.id] }),
 }));
 
-// * Schemas ========================
+// ? Schemas ========================
 
 export const CreateAnnouncementSchema = createInsertSchema(Announcement, {
   message: z.string().max(256),
   releaseDate: z.coerce.date(),
+  title: z.string().max(256),
   burnYearId: z.string().max(256).nullable(),
 }).omit({
   id: true,

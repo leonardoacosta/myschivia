@@ -33,7 +33,7 @@ export default function Dashboard() {
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-2">
       <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
-          <Card className="sm:col-span-2" x-chunk="dashboard-05-chunk-0">
+          <Card className="sm:col-span-2">
             <CardHeader className="pb-3">
               <CardTitle>Welcome to Tribal Cities</CardTitle>
               <CardDescription className="max-w-lg text-balance leading-relaxed">
@@ -91,7 +91,7 @@ export default function Dashboard() {
               </Link>
             </CardFooter>
           </Card>
-          <Card x-chunk="dashboard-05-chunk-1">
+          <Card>
             <CardHeader className="pb-2">
               <CardDescription className="text-center">Events</CardDescription>
               <CardTitle className="text-center text-4xl">
@@ -104,7 +104,7 @@ export default function Dashboard() {
               </span>
             </CardDescription>
           </Card>
-          <Card x-chunk="dashboard-05-chunk-2">
+          <Card>
             <CardHeader className="pb-2 text-center">
               <CardDescription className="text-center">Burners</CardDescription>
               <CardTitle className="text-center text-4xl">
@@ -119,6 +119,30 @@ export default function Dashboard() {
             {/* <CardFooter>
               <Progress value={12} aria-label="12% increase" />
             </CardFooter> */}
+          </Card>
+          <Card className="sm:col-span-4" x-chunk="dashboard-05-chunk-0">
+            <CardHeader className="pb-3">
+              <CardTitle>Announcements</CardTitle>
+              <CardDescription className="max-w-lg text-balance leading-relaxed">
+                {announcements?.map((announcement) => (
+                  <div key={announcement.id}>
+                    <Dialog>
+                      <DialogTrigger className="underline">
+                        {announcement.title}
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>{announcement.title}</DialogTitle>
+                          <DialogDescription>
+                            {announcement.message}
+                          </DialogDescription>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                ))}
+              </CardDescription>
+            </CardHeader>
           </Card>
         </div>
         <MainMap />

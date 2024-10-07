@@ -237,7 +237,11 @@ export default function Page() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="secondary" className="px-3 shadow-none">
-                    {mature ?? "Maturity"}
+                    {mature === null
+                      ? "Maturity"
+                      : mature
+                        ? "18+"
+                        : "Kid Friendly"}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>

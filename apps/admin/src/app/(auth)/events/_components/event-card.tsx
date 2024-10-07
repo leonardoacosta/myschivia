@@ -63,7 +63,7 @@ export default function EventCard({ ev }: EventCardProps) {
       title: ev.name,
       description: ev.description,
       location: ev.location,
-      url: `https://tribal.cities/events/view/${ev.id}`,
+      url: `https://tribal.cities/events/${ev.id}`,
     });
 
     if (error) {
@@ -122,9 +122,7 @@ export default function EventCard({ ev }: EventCardProps) {
   return (
     <Card
       onClick={() => {
-        if (auth?.user.id === ev.createdById)
-          router.push(`/events/edit/${ev.id}`);
-        else router.push(`/events/view/${ev.id}`);
+        router.push(`/events/${ev.id}`);
       }}
       className="hover:cursor-pointer hover:bg-muted/50"
     >

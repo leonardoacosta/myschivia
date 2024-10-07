@@ -16,14 +16,9 @@ import { EventTypeBadge } from "@tribal-cities/ui/event-type-badge";
 
 import MapContext, { MapContext as mapContext } from "~/context/map-context";
 import { api } from "~/trpc/react";
-import Map from "../_components/map";
+import Map from "./_components/map";
 
-export default function ViewPost() {
-  const { id } = useParams();
-  const { data: ev } = api.event.byId.useQuery({ id: id as string });
-
-  if (!ev) return <p>Loading...</p>;
-
+export default function ViewPost({ ev }: { ev: any }) {
   const startWithTime = () => {
     const date = ev.startDate; // Example date
     const timeString = ev.startTime; // Time in "HH:MM" format

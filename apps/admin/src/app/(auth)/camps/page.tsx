@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { PlusCircle } from "lucide-react";
 
-import { Badge } from "@tribal-cities/ui/badge";
 import { Button } from "@tribal-cities/ui/button";
 import {
   Card,
@@ -13,21 +11,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@tribal-cities/ui/table";
 
 import { api } from "~/trpc/react";
 import CampCard from "./_components/camp-card";
 
 export default function Page() {
-  const router = useRouter();
-  const { data: auth } = api.auth.getSession.useQuery();
   const [camps] = api.camp.all.useSuspenseQuery();
 
   return (
@@ -49,7 +37,7 @@ export default function Page() {
           <CardTitle>Camps</CardTitle>
           <CardDescription>All the camps that are registered</CardDescription>
         </CardHeader>
-        <CardContent className="flex-row space-y-4">
+        <CardContent className="flex-row gap-2 space-y-4">
           {camps.map((camp) => (
             <CampCard camp={camp} />
           ))}

@@ -294,6 +294,7 @@ export const Event = pgTable("event", {
   image: text("image").notNull(),
 
   mature: boolean("mature").default(false),
+  alcohol: boolean("alcohol").default(false),
 
   startDate: timestamp("start_date").notNull(),
   startTime: varchar("start_time", { length: 20 }).notNull(),

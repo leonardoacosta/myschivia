@@ -19,11 +19,10 @@ export const eventRouter = {
         day: z.date().nullable(),
         campId: z.string().nullable(),
         type: z.string().nullable(),
-        mature: z.boolean().nullable(),
+        mature: z.enum(["21+", "18+", "all"]).nullable(),
       }),
     )
     .query(async ({ ctx, input }) => {
-      // grab just the date
       const day = input.day ? new Date(input.day) : new Date();
 
       const whereFilter = and(
@@ -32,8 +31,16 @@ export const eventRouter = {
           : undefined,
         input.campId ? eq(Event.campId, input.campId) : undefined,
         input.type ? eq(Event.type, input.type as any) : undefined,
-        input.mature ? eq(Event.mature, input.mature) : undefined,
-        // lt(Event.createdAt, new Date("2024-10-03 06:00:00 ")), // 2024-10-03 @ 6:00am UTC to timestamp => 1728057600000
+        input.mature
+          ? input.mature === "all"
+            ? and(eq(Event.mature, false), eq(Event.alcohol, false))
+            : input.mature === "18+"
+              ? and(eq(Event.mature, true), eq(Event.alcohol, false))
+              : input.mature === "21+"
+                ? and(eq(Event.mature, true), eq(Event.alcohol, true))
+                : undefined
+          : undefined,
+        // lt(Event.createdAt, new Date("2024-10-03 06:00:00 ")), // * This was for exporting data for the banner
       );
 
       const events = await ctx.db.query.Event.findMany({

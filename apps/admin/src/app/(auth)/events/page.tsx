@@ -36,7 +36,7 @@ import Tv from "./_components/tv";
 
 export default function Page() {
   const router = useRouter();
-  const [mature, setMature] = useState<boolean | null>(null);
+  const [mature, setMature] = useState<"all" | "18+" | "21+" | null>(null);
   const [date, setDate] = useState<Date | null>(null);
   const [campId, setCampId] = useState<string | null>(null);
   const [type, setType] = useState<string | null>(null);
@@ -237,11 +237,7 @@ export default function Page() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="secondary" className="px-3 shadow-none">
-                    {mature === null
-                      ? "Maturity"
-                      : mature
-                        ? "18+"
-                        : "Kid Friendly"}
+                    {mature ?? "Maturity"}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
@@ -252,16 +248,22 @@ export default function Page() {
                     All
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => setMature(true)}
+                    onClick={() => setMature("all")}
+                    className="hover:bg-muted/50"
+                  >
+                    All Ages
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setMature("18+")}
                     className="hover:bg-muted/50"
                   >
                     18+
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => setMature(false)}
+                    onClick={() => setMature("21+")}
                     className="hover:bg-muted/50"
                   >
-                    Kid Friendly
+                    21+
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

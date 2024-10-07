@@ -3,6 +3,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { PlusCircle } from "lucide-react";
 
@@ -31,10 +32,10 @@ import {
 
 import { api } from "~/trpc/react";
 import EventCard from "./_components/event-card";
-import { FilterByCamp } from "./_components/filter-by-camp";
 import Tv from "./_components/tv";
 
 export default function Page() {
+  const router = useRouter();
   const [date, setDate] = useState<Date | null>(null);
   const [campId, setCampId] = useState<string | null>(null);
   const [type, setType] = useState<string | null>(null);
@@ -112,6 +113,24 @@ export default function Page() {
     link.click(); // This will download the data file named "my_data.csv".
   };
 
+  const surpriseMe = () => {
+    if (events) {
+      const randomDay = Math.floor(Math.random() * events.length);
+      const eventsOfDay = events[randomDay];
+      console.log(randomDay, eventsOfDay);
+
+      const randomEvent = Math.floor(
+        Math.random() * eventsOfDay!.at(1)!.length,
+      );
+      const ev = eventsOfDay![1]![randomEvent];
+      console.log(randomEvent, ev);
+
+      if (ev) {
+        router.push(`/events/${ev.id as string}`);
+      }
+    }
+  };
+
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <div className="flex items-center">
@@ -187,7 +206,6 @@ export default function Page() {
                   })}
                 </DropdownMenuContent>
               </DropdownMenu>
-              {/* <FilterByCamp camps={camps} setValue={setCampId} value={campId} /> */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="secondary" className="px-3 shadow-none">
@@ -214,6 +232,13 @@ export default function Page() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </CardTitle>
+            <Button
+              variant="secondary"
+              className="px-3 shadow-none"
+              onClick={surpriseMe}
+            >
+              Surprise Me
+            </Button>
             <Button
               variant="secondary"
               className="px-3 shadow-none"

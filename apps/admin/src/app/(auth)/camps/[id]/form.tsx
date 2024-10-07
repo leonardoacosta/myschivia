@@ -140,7 +140,11 @@ export default function EditCampForm({
                       Tell us about your event in a few words
                     </FormDescription>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

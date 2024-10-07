@@ -5,10 +5,12 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@tribal-cities/ui/card";
-import { Separator } from "@tribal-cities/ui/separator";
+
+import CampMap from "./_components";
 
 export default function ViewPost({
   camp,
@@ -16,19 +18,21 @@ export default function ViewPost({
   camp: RouterOutputs["camp"]["byId"];
 }) {
   return (
-    <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+    <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
       <Card>
         <CardHeader>
           <CardTitle>{camp?.name}</CardTitle>
         </CardHeader>
         <CardContent>
           <CardDescription>{camp?.description}</CardDescription>
-          <Separator />
+        </CardContent>
+        <CardFooter>
           <CardDescription>
             Managed by: {camp?.createdBy?.email}
           </CardDescription>
-        </CardContent>
+        </CardFooter>
       </Card>
+      <CampMap />
     </main>
   );
 }

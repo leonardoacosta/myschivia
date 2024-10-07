@@ -19,7 +19,7 @@ export default async function HomePage() {
   api.user.getBurners.prefetch();
   api.event.getFavorites.prefetch();
   api.event.count.prefetch();
-  api.event.all.prefetch({ day: null, campId: null, type: null });
+  api.event.all.prefetch({ day: null, campId: null, type: null, mature: null });
   api.camp.all.prefetch();
   api.cityPlanning.getGoogleMaps.prefetch();
   api.cityPlanning.getZones.prefetch();

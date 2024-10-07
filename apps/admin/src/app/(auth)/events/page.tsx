@@ -36,6 +36,7 @@ import Tv from "./_components/tv";
 
 export default function Page() {
   const router = useRouter();
+  const [mature, setMature] = useState<boolean | null>(null);
   const [date, setDate] = useState<Date | null>(null);
   const [campId, setCampId] = useState<string | null>(null);
   const [type, setType] = useState<string | null>(null);
@@ -47,6 +48,7 @@ export default function Page() {
     type: type,
     campId: campId,
     day: date,
+    mature: mature,
   });
 
   const [dates] = api.event.allDates.useSuspenseQuery();
@@ -229,6 +231,34 @@ export default function Page() {
                       </DropdownMenuItem>
                     );
                   })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="secondary" className="px-3 shadow-none">
+                    {mature ?? "Maturity"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    onClick={() => setMature(null)}
+                    className="hover:bg-muted/50"
+                  >
+                    All
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setMature(true)}
+                    className="hover:bg-muted/50"
+                  >
+                    18+
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setMature(false)}
+                    className="hover:bg-muted/50"
+                  >
+                    Kid Friendly
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </CardTitle>

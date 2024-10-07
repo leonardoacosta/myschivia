@@ -21,6 +21,7 @@ export default function AuthShowcase() {
     day: null,
     campId: null,
     type: null,
+    mature: null,
   });
   return (
     <div className="h-screen w-full lg:grid lg:grid-cols-2">

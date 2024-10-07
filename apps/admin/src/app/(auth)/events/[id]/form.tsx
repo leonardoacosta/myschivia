@@ -6,7 +6,6 @@ import { addDays, format } from "date-fns";
 import type { RouterOutputs } from "@tribal-cities/api";
 import { EventType, UpdateEventSchema } from "@tribal-cities/db/schema";
 import { Button } from "@tribal-cities/ui/button";
-import { Calendar } from "@tribal-cities/ui/calendar";
 import {
   Card,
   CardContent,
@@ -59,7 +58,6 @@ export default function EditEventForm({
 
   const { mutate: deleteEvent, isPending: isDeleting } =
     api.event.delete.useMutation();
-  // const reset = utils.event.all.fetch({day: null, type: null, campId: null});
   const updatePost = api.event.update.useMutation({
     onSuccess: async () => {
       await utils.event.invalidate();
@@ -167,7 +165,7 @@ export default function EditEventForm({
                       <FormControl>
                         <Select
                           onValueChange={(value) => {
-                            field.onChange(value);
+                            field.onChange(value === "" ? null : value);
                           }}
                           value={field.value ?? undefined}
                         >
@@ -175,6 +173,7 @@ export default function EditEventForm({
                             <SelectValue placeholder="Select an existing camp" />
                           </SelectTrigger>
                           <SelectContent>
+                            <SelectItem value={""}>None</SelectItem>
                             {camps.map((type) => (
                               <SelectItem key={type.id} value={type.id}>
                                 {type.name}

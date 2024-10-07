@@ -31,6 +31,7 @@ import {
 
 import { api } from "~/trpc/react";
 import EventCard from "./_components/event-card";
+import { FilterByCamp } from "./_components/filter-by-camp";
 import Tv from "./_components/tv";
 
 export default function Page() {
@@ -186,6 +187,7 @@ export default function Page() {
                   })}
                 </DropdownMenuContent>
               </DropdownMenu>
+              {/* <FilterByCamp camps={camps} setValue={setCampId} value={campId} /> */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="secondary" className="px-3 shadow-none">

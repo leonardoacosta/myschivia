@@ -1,5 +1,6 @@
 "use client";
 
+import { useContext } from "react";
 import Link from "next/link";
 import { Calendar, Hand } from "lucide-react";
 
@@ -20,12 +21,13 @@ import {
   DialogTrigger,
 } from "@tribal-cities/ui/dialog";
 
+import { BurnContext } from "~/context/burn-context";
 import { api } from "~/trpc/react";
 import MainMap from "./map";
 
 export default function Dashboard() {
+  const { announcements } = useContext(BurnContext);
   const { data: events } = api.event.count.useQuery();
-  const { data: camps } = api.camp.all.useQuery();
   const { data: burners } = api.user.getBurners.useQuery();
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-2">

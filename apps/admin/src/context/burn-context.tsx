@@ -16,6 +16,7 @@ interface BurnContextType {
   setJoin: (create: boolean | null) => void;
   create: boolean | null;
   setCreate: (create: boolean | null) => void;
+  announcements?: RouterOutputs["announcement"]["all"];
 }
 
 export const BurnContext = createContext<BurnContextType>({
@@ -26,13 +27,18 @@ export const BurnContext = createContext<BurnContextType>({
   setJoin: () => {},
   create: false,
   setCreate: () => {},
+  announcements: [],
 });
 
 export default function Burn({ children }: { children: React.ReactNode }) {
-  const [burnYearsJoined] = api.burn.joined.useSuspenseQuery();
   const [burnYearId, setBurnYearId] = useState<string | null>(null);
   const [join, setJoin] = useState<boolean | null>(false);
   const [create, setCreate] = useState<boolean | null>(false);
+  const [burnYearsJoined] = api.burn.joined.useSuspenseQuery();
+  const { data: announcements, refetch } = api.announcement.all.useQuery(
+    burnYearId!,
+    { enabled: !!burnYearId },
+  );
 
   useEffect(() => {
     if (burnYearId) localStorage.setItem("burnYearId", burnYearId);
@@ -40,7 +46,10 @@ export default function Burn({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const burnYearId = localStorage.getItem("burnYearId");
-    if (burnYearId) setBurnYearId(burnYearId);
+    if (burnYearId) {
+      setBurnYearId(burnYearId);
+      refetch();
+    }
   }, []);
 
   return (
@@ -53,6 +62,7 @@ export default function Burn({ children }: { children: React.ReactNode }) {
         setJoin,
         create,
         setCreate,
+        announcements,
       }}
     >
       {create ? <BurnCreate /> : join ? <BurnSelect /> : children}

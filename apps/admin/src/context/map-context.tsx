@@ -220,6 +220,28 @@ export default function Map({ children }: { children: React.ReactNode }) {
           }
         }
       });
+
+      navigator.geolocation.getCurrentPosition((position) => {
+        if (
+          position.coords.latitude > 32.970934 &&
+          position.coords.latitude < 32.977934 &&
+          position.coords.longitude > -94.610279 &&
+          position.coords.longitude < -94.594279
+        ) {
+          const coords = [
+            position.coords.latitude!,
+            position.coords.longitude!,
+          ];
+          const marker = new L.Marker([coords[0]!, coords[1]!]);
+          pointsRef.current?.addLayer(marker);
+
+          panTo(coords[0]!, coords[1]!);
+        }
+        // panTo(32.977934, -94.594279); //Top right
+        // panTo(32.977934, -94.610279); //Top left
+        // panTo(32.970934, -94.594279); //Bottom right
+        // panTo(32.970934, -94.610279); //Bottom left
+      });
     }
   }, [geojson, campId]);
 

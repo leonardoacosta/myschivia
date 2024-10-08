@@ -165,7 +165,7 @@ export default function EditEventForm({
                       <FormControl>
                         <Select
                           onValueChange={(value) => {
-                            field.onChange(value === "" ? null : value);
+                            field.onChange(value === "null" ? null : value);
                           }}
                           value={field.value ?? undefined}
                         >
@@ -173,7 +173,7 @@ export default function EditEventForm({
                             <SelectValue placeholder="Select an existing camp" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={""}>None</SelectItem>
+                            <SelectItem value={"null"}>None</SelectItem>
                             {camps.map((type) => (
                               <SelectItem key={type.id} value={type.id}>
                                 {type.name}

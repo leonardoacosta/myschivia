@@ -80,18 +80,18 @@ export default function Page() {
           }
 
           return [
-            ev.name.replaceAll(",", "") ?? "",
-            ev.description.replaceAll(",", "") ?? "",
-            ev.location.replaceAll(",", "") ?? "",
+            ev.name.replaceAll(",", "").replaceAll("#", "") ?? "",
+            ev.description.replaceAll(",", "").replaceAll("#", "") ?? "",
+            ev.location.replaceAll(",", "").replaceAll("#", "") ?? "",
             ev.startDate ? format(ev.startDate, "E LLL dd") : "",
             ev.startTime ?? "",
             ev.endDate ? format(ev.endDate, "E LLL dd") : "",
             ev.endTime ?? "",
             ev.type.replaceAll(",", "") ?? "",
-            ev.user?.alias.replaceAll(",", "") ??
-              ev.hostName?.replaceAll(",", "") ??
+            ev.user?.alias.replaceAll(",", "").replaceAll("#", "") ??
+              ev.hostName?.replaceAll(",", "").replaceAll("#", "") ??
               "",
-            ev.campName?.replaceAll(",", "") ?? "",
+            ev.campName?.replaceAll(",", "").replaceAll("#", "") ?? "",
           ];
         });
 

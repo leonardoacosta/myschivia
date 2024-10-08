@@ -20,7 +20,7 @@ export default function Tv() {
     () => schedule?.programming || [],
     [schedule?.programming],
   );
-  const startDate = new Date("2024-10-10T00:00:00");
+  const startDate = new Date("2024-10-10T17:00:00");
 
   const { getEpgProps, getLayoutProps } = useEpg({
     channels: channelsData,

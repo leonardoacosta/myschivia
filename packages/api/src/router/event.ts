@@ -161,12 +161,15 @@ export const eventRouter = {
       endDate.setMinutes(parseInt(endMinutes ?? "0"));
 
       return {
-        title: event.name,
-        description: event.description,
-        uuid: event.id,
+        id: event.id as string,
+        image: event.image ?? "",
+        title: event.name as string,
+        description: event.description as string,
+        uuid: event.id as string,
         logo: "https://www.themoviedb.org/t/p/w1066_and_h600_bestv2/6Ys6koNajP5ld9EIMfOSQrRquki.jpg", //event.image ?? "",
-        channelUuid:
-          event.campId || event.hostName.trim() || event.user?.alias?.trim(),
+        channelUuid: (event.campId ||
+          event.hostName.trim() ||
+          event.user?.alias?.trim())!,
         since: startDate.toISOString(),
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
@@ -209,10 +212,10 @@ export const eventRouter = {
     const campChannels = camps
       .map((channel) => {
         return {
-          uuid: channel ? channel.id : "self",
-          title: channel ? channel.name : "self",
+          uuid: channel ? (channel.id as unknown as string) : "self",
+          title: channel ? (channel.name as unknown as string) : "self",
           type: "camp",
-          logo: channel ? channel.image : "",
+          logo: channel ? (channel.image as unknown as string) : "",
         };
       })
       .filter((channel) => channel.title !== "self")

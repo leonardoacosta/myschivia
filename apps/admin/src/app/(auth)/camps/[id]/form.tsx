@@ -183,7 +183,6 @@ export default function EditCampForm({
                           value={tag}
                           key={tag}
                           onSelect={() => {
-                            console.log("tag", tag);
                             toggleTag(
                               {
                                 campId: camp!.id,

@@ -34,7 +34,7 @@ export const ProgramItem = ({ program, ...rest }: any) => {
   const tillTime = formatTime(till, set12HoursTimeFormat()).toLowerCase();
 
   return (
-    <Link href={`/events/view/${uuid}`}>
+    <Link href={`/events/${uuid}`}>
       <Tooltip>
         <TooltipTrigger asChild>
           <ProgramBox width={styles.width} style={styles.position}>

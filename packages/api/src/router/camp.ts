@@ -74,13 +74,9 @@ export const campRouter = {
           eq(Camp_Tag.tag, input.tag),
         ),
       }).then(async (tag) => {
-        console.log("tag", tag);
-
         if (tag) {
-          console.log("deleting tag");
           await ctx.db.delete(Camp_Tag).where(eq(Camp_Tag.id, tag.id));
         } else {
-          console.log("inserting tag");
           await ctx.db.insert(Camp_Tag).values({
             campId: input.campId,
             tag: input.tag,

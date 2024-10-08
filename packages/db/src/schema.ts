@@ -596,26 +596,13 @@ export const CreateBurnYearSchema = createInsertSchema(BurnYear, {
         const [lat, lng] = value.split(",");
 
         // * Check if lat and lng exist
-        if (!lat) {
-          console.log("lat missing");
-          return false;
-        } else if (!lng) {
-          console.log("lng missing");
-          return false;
-        }
-
-        console.log(lat, parseFloat(lat), isNaN(parseFloat(lat)));
-
-        console.log(lng, parseFloat(lng), isNaN(parseFloat(lng)));
+        if (!lat) return false;
+        else if (!lng) return false;
 
         // * Check if lat and lng are numbers
-        if (isNaN(parseFloat(lat))) {
-          console.log("lat not a number");
-          return false;
-        } else if (isNaN(parseFloat(lng))) {
-          console.log("lng not a number");
-          return false;
-        }
+        if (isNaN(parseFloat(lat))) return false;
+        else if (isNaN(parseFloat(lng))) return false;
+
         return true;
       },
       {
@@ -676,26 +663,13 @@ export const UpdateBurnYearSchema = createInsertSchema(BurnYear, {
         const [lat, lng] = value.split(",");
 
         // * Check if lat and lng exist
-        if (!lat) {
-          console.log("lat missing");
-          return false;
-        } else if (!lng) {
-          console.log("lng missing");
-          return false;
-        }
-
-        console.log(lat, parseFloat(lat), isNaN(parseFloat(lat)));
-
-        console.log(lng, parseFloat(lng), isNaN(parseFloat(lng)));
+        if (!lat) return false;
+        else if (!lng) return false;
 
         // * Check if lat and lng are numbers
-        if (isNaN(parseFloat(lat))) {
-          console.log("lat not a number");
-          return false;
-        } else if (isNaN(parseFloat(lng))) {
-          console.log("lng not a number");
-          return false;
-        }
+        if (isNaN(parseFloat(lat))) return false;
+        else if (isNaN(parseFloat(lng))) return false;
+
         return true;
       },
       {

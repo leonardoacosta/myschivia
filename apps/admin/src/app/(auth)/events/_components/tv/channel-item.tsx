@@ -3,13 +3,13 @@ import { ChannelBox } from "planby";
 import { Avatar, AvatarFallback, AvatarImage } from "@tribal-cities/ui/avatar";
 
 export const ChannelItem = ({ channel }: any) => {
-  const { position, logo, title } = channel;
+  const { position, logo, title, type } = channel;
 
   const acronym = title
     .split(" ")
     .reduce((acc: string, word: string, index: number) => {
       if (index > 1) return acc;
-      return acc + word[0];
+      return acc + word[0]?.toUpperCase();
     }, "");
 
   return (
@@ -21,10 +21,16 @@ export const ChannelItem = ({ channel }: any) => {
         alt="Logo"
         style={{ maxHeight: 52, maxWidth: 52 }}
       /> */}
-      <div className="mb-4 max-w-full flex-row items-center justify-center overflow-hidden whitespace-nowrap text-center align-middle">
-        <Avatar className="mx-auto">
+      <div
+        className={`mb-4 max-w-full flex-row items-center justify-center overflow-hidden whitespace-nowrap text-center align-middle`}
+      >
+        <Avatar className={`mx-auto`}>
           <AvatarImage src={logo} width={52} height={52} />
-          <AvatarFallback>{acronym}</AvatarFallback>
+          <AvatarFallback
+            className={`${type === "self" ? "bg-primary" : "bg-secondary"}`}
+          >
+            {acronym}
+          </AvatarFallback>
         </Avatar>
         <p className="max-w-full text-ellipsis whitespace-nowrap text-xs">
           {title}

@@ -9,8 +9,7 @@ export async function GET(request: NextRequest) {
   const url = request.url.split("/").slice(5);
 
   const [year, fileName] = url;
-  console.log("year:", year);
-  console.log("fileName:", fileName);
+
   if (!year || !fileName) return NextResponse.json({ success: false });
 
   const file = await download(year, fileName);

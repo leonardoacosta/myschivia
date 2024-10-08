@@ -222,7 +222,6 @@ export default function Map({ children }: { children: React.ReactNode }) {
       });
 
       navigator.geolocation.getCurrentPosition((position) => {
-        console.log(position.coords.latitude, position.coords.longitude);
         if (
           32.970934 < position.coords.latitude &&
           position.coords.latitude < 32.977934 &&

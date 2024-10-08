@@ -31,7 +31,6 @@ interface EventCardProps {
 
 export default function EventCard({ ev }: EventCardProps) {
   const router = useRouter();
-  const { data: auth } = api.auth.getSession.useQuery();
 
   const {
     data: favorites,

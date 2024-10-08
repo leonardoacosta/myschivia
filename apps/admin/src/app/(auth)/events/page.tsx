@@ -119,13 +119,10 @@ export default function Page() {
     if (events) {
       const randomDay = Math.floor(Math.random() * events.length);
       const eventsOfDay = events[randomDay];
-      console.log(randomDay, eventsOfDay);
-
       const randomEvent = Math.floor(
         Math.random() * eventsOfDay!.at(1)!.length,
       );
       const ev = eventsOfDay![1]![randomEvent];
-      console.log(randomEvent, ev);
 
       if (ev) {
         router.push(`/events/${ev.id as string}`);

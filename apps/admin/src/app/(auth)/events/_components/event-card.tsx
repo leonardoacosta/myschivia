@@ -117,7 +117,6 @@ export default function EventCard({ ev }: EventCardProps) {
     date.setMinutes(minutes);
     return date;
   };
-  console.log(ev);
 
   return (
     <Card

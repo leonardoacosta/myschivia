@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@tribal-cities/ui/dropdown-menu";
 import { Label } from "@tribal-cities/ui/label";
+import { Separator } from "@tribal-cities/ui/separator";
 import {
   Tabs,
   TabsContent,
@@ -145,7 +146,7 @@ export default function Page() {
         </div>
       </div>
       <Card x-chunk="dashboard-06-chunk-0">
-        <div className="flex justify-between">
+        <div className="justify-between text-center md:flex md:text-left">
           <CardHeader>
             <CardTitle>📅 Events</CardTitle>
             <CardDescription>
@@ -154,117 +155,122 @@ export default function Page() {
           </CardHeader>
           <CardHeader>
             <CardTitle className="flex items-center justify-center gap-2">
-              <Label>Filter by</Label>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="secondary" className="px-3 shadow-none">
-                    {date ? format(date, "E LLL dd") : "Day"}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    onClick={() => setDate(null)}
-                    className="hover:bg-muted/50"
-                  >
-                    All
-                  </DropdownMenuItem>
-                  {dates.map((d) => (
-                    <DropdownMenuItem
-                      onClick={() => setDate(new Date(d))}
-                      className="hover:bg-muted/50"
-                    >
-                      {format(d, "E LLL dd")}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="secondary" className="px-3 shadow-none">
-                    {campId
-                      ? camps.find((c) => c.id === campId)?.name ?? "???"
-                      : "Camp"}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    onClick={() => setCampId(null)}
-                    className="hover:bg-muted/50"
-                  >
-                    All
-                  </DropdownMenuItem>
-                  {camps.map((d) => {
-                    return (
-                      <DropdownMenuItem
-                        onClick={() => setCampId(d.id)}
-                        className="hover:bg-muted/50"
-                      >
-                        {d.name}
-                      </DropdownMenuItem>
-                    );
-                  })}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="secondary" className="px-3 shadow-none">
-                    {type ?? "Type"}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    onClick={() => setType(null)}
-                    className="hover:bg-muted/50"
-                  >
-                    All
-                  </DropdownMenuItem>
-                  {Object.values(EventType.enumValues).map((d) => {
-                    return (
-                      <DropdownMenuItem
-                        onClick={() => setType(d)}
-                        className="hover:bg-muted/50"
-                      >
-                        {d}
-                      </DropdownMenuItem>
-                    );
-                  })}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="items-center justify-center gap-2 md:flex">
+                <Label className="mb-1 block">Filter by</Label>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="secondary" className="px-3 shadow-none">
-                    {mature ?? "Maturity"}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    onClick={() => setMature(null)}
-                    className="hover:bg-muted/50"
-                  >
-                    All
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setMature("all")}
-                    className="hover:bg-muted/50"
-                  >
-                    All Ages
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setMature("18+")}
-                    className="hover:bg-muted/50"
-                  >
-                    18+
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setMature("21+")}
-                    className="hover:bg-muted/50"
-                  >
-                    21+
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                <div className="flex items-center justify-center gap-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="secondary" className="px-3 shadow-none">
+                        {date ? format(date, "E LLL dd") : "Day"}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onClick={() => setDate(null)}
+                        className="hover:bg-muted/50"
+                      >
+                        All
+                      </DropdownMenuItem>
+                      {dates.map((d) => (
+                        <DropdownMenuItem
+                          onClick={() => setDate(new Date(d))}
+                          className="hover:bg-muted/50"
+                        >
+                          {format(d, "E LLL dd")}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="secondary" className="px-3 shadow-none">
+                        {campId
+                          ? camps.find((c) => c.id === campId)?.name ?? "???"
+                          : "Camp"}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onClick={() => setCampId(null)}
+                        className="hover:bg-muted/50"
+                      >
+                        All
+                      </DropdownMenuItem>
+                      {camps.map((d) => {
+                        return (
+                          <DropdownMenuItem
+                            onClick={() => setCampId(d.id)}
+                            className="hover:bg-muted/50"
+                          >
+                            {d.name}
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="secondary" className="px-3 shadow-none">
+                        {type ?? "Type"}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onClick={() => setType(null)}
+                        className="hover:bg-muted/50"
+                      >
+                        All
+                      </DropdownMenuItem>
+                      {Object.values(EventType.enumValues).map((d) => {
+                        return (
+                          <DropdownMenuItem
+                            onClick={() => setType(d)}
+                            className="hover:bg-muted/50"
+                          >
+                            {d}
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="secondary" className="px-3 shadow-none">
+                        {mature ?? "Maturity"}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onClick={() => setMature(null)}
+                        className="hover:bg-muted/50"
+                      >
+                        All
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setMature("all")}
+                        className="hover:bg-muted/50"
+                      >
+                        All Ages
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setMature("18+")}
+                        className="hover:bg-muted/50"
+                      >
+                        18+
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setMature("21+")}
+                        className="hover:bg-muted/50"
+                      >
+                        21+
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
             </CardTitle>
+            <Separator className="md:hidden" />
             <Button
               variant="secondary"
               className="px-3 shadow-none"

@@ -2,8 +2,10 @@
 
 import { useContext } from "react";
 import Link from "next/link";
-import { Calendar, Hand } from "lucide-react";
+import { Calendar, Hand, RocketIcon } from "lucide-react";
 
+import { Alert, AlertDescription, AlertTitle } from "@tribal-cities/ui/alert";
+import { AlertDialogCancel } from "@tribal-cities/ui/alert-dialog";
 import { Button } from "@tribal-cities/ui/button";
 import {
   Card,
@@ -21,19 +23,18 @@ import {
   DialogTrigger,
 } from "@tribal-cities/ui/dialog";
 
-import { BurnContext } from "~/context/burn-context";
 import { api } from "~/trpc/react";
 import MainMap from "./map";
 
 export default function Dashboard() {
-  const { announcements } = useContext(BurnContext);
   const { data: events } = api.event.count.useQuery();
   const { data: burners } = api.user.getBurners.useQuery();
+
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-2">
       <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
-          <Card className="sm:col-span-2">
+          <Card className="col-span-2">
             <CardHeader className="pb-3">
               <CardTitle>Welcome to Tribal Cities</CardTitle>
               <CardDescription className="max-w-lg text-balance leading-relaxed">
@@ -91,6 +92,7 @@ export default function Dashboard() {
               </Link>
             </CardFooter>
           </Card>
+
           <Card>
             <CardHeader className="pb-2">
               <CardDescription className="text-center">Events</CardDescription>
@@ -119,30 +121,6 @@ export default function Dashboard() {
             {/* <CardFooter>
               <Progress value={12} aria-label="12% increase" />
             </CardFooter> */}
-          </Card>
-          <Card className="sm:col-span-4" x-chunk="dashboard-05-chunk-0">
-            <CardHeader className="pb-3">
-              <CardTitle>Announcements</CardTitle>
-              <CardDescription className="max-w-lg text-balance leading-relaxed">
-                {announcements?.map((announcement) => (
-                  <div key={announcement.id}>
-                    <Dialog>
-                      <DialogTrigger className="underline">
-                        {announcement.title}
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>{announcement.title}</DialogTitle>
-                          <DialogDescription>
-                            {announcement.message}
-                          </DialogDescription>
-                        </DialogHeader>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                ))}
-              </CardDescription>
-            </CardHeader>
           </Card>
         </div>
         <MainMap />

@@ -9,15 +9,11 @@ import {
   Hand,
   Home,
   Map,
+  Megaphone,
   Settings,
 } from "lucide-react";
 
 import { Separator } from "@tribal-cities/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@tribal-cities/ui/tooltip";
 
 import { api } from "~/trpc/react";
 import { BurnSwitcher } from "./burn-select/burn-switcher";
@@ -45,6 +41,11 @@ export default function SideNav() {
             <NavItem href="/volunteer" Icon={Hand} name="Volunteer" />
             <NavItem href="/city-planning" Icon={Map} name="City Planning" />
             <NavItem href="/burn-settings" Icon={Cog} name="Settings" />
+            <NavItem
+              href="/announcement"
+              Icon={Megaphone}
+              name="Announcement"
+            />
           </>
         )}
       </nav>

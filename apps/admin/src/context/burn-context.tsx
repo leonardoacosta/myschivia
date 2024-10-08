@@ -3,6 +3,8 @@
 import { createContext, useEffect, useState } from "react";
 
 import type { RouterOutputs } from "@tribal-cities/api";
+import { Label } from "@tribal-cities/ui/label";
+import { toast } from "@tribal-cities/ui/toast";
 
 import BurnCreate from "~/app/_components/burn-select/burn-create";
 import BurnSelect from "~/app/_components/burn-select/burn-join";
@@ -32,6 +34,7 @@ export const BurnContext = createContext<BurnContextType>({
 
 export default function Burn({ children }: { children: React.ReactNode }) {
   const [burnYearId, setBurnYearId] = useState<string | null>(null);
+  // const [dismissed, setDismissed] = useState<string[]>([]);
   const [join, setJoin] = useState<boolean | null>(false);
   const [create, setCreate] = useState<boolean | null>(false);
   const [burnYearsJoined] = api.burn.joined.useSuspenseQuery();
@@ -51,6 +54,47 @@ export default function Burn({ children }: { children: React.ReactNode }) {
       refetch();
     }
   }, []);
+
+  useEffect(() => {
+    if (burnYearId && announcements) {
+      let dismissed = [] as string[];
+      const dismissedJson = localStorage.getItem(
+        `dismissedAnnouncements-${burnYearId}`,
+      );
+
+      if (dismissedJson) dismissed = JSON.parse(dismissedJson) as string[];
+
+      for (const announcement of announcements) {
+        if (!dismissed.includes(announcement.id)) {
+          toast.info(
+            announcement.message,
+            // <div>
+            //   <Label>{announcement.title}</Label>
+            //   <p>{announcement.message}</p>
+            // </div>,
+            {
+              duration: undefined,
+              action: {
+                label: "Dismiss",
+                onClick: () => {
+                  const dismissedJson = localStorage.getItem(
+                    `dismissedAnnouncements-${burnYearId}`,
+                  );
+                  const dismissed = dismissedJson
+                    ? JSON.parse(dismissedJson)
+                    : [];
+                  localStorage.setItem(
+                    `dismissedAnnouncements-${burnYearId}`,
+                    JSON.stringify([...dismissed, announcement.id]),
+                  );
+                },
+              },
+            },
+          );
+        }
+      }
+    }
+  }, [announcements]);
 
   return (
     <BurnContext.Provider

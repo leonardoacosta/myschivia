@@ -18,7 +18,7 @@ export const announcementRouter = {
   all: publicProcedure.input(z.string()).query(({ ctx, input }) =>
     ctx.db.query.Announcement.findMany({
       where: and(
-        eq(Announcement.burnYearId, input),
+        // eq(Announcement.burnYearId, input),
         lte(Announcement.releaseDate, new Date()),
       ),
     }),

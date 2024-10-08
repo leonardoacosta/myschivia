@@ -117,6 +117,7 @@ export default function EventCard({ ev }: EventCardProps) {
     date.setMinutes(minutes);
     return date;
   };
+  console.log(ev);
 
   return (
     <Card
@@ -193,10 +194,10 @@ export default function EventCard({ ev }: EventCardProps) {
             <User className="mr-1 h-3 w-3" />
             {ev.hostName || ev.user.alias}
           </div>
-          {ev.campName && (
+          {ev.camp && (
             <div className="flex items-center">
               <Tent className="mr-1 h-3 w-3" />
-              {ev.campName}
+              {ev.camp.name}
             </div>
           )}
           {/* <div className="flex items-center">

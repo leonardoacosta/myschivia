@@ -79,10 +79,12 @@ const EventCard = ({ ev }: { ev: any }) => {
               <User className="mr-1 h-3 w-3" />
               {ev.hostName || ev.user.alias}
             </div>
-            <div className="flex items-center">
-              <Tent className="mr-1 h-3 w-3" />
-              {ev.campName || "Self"}
-            </div>
+            {ev.camp && (
+              <div className="flex items-center">
+                <Tent className="mr-1 h-3 w-3" />
+                {ev.camp.name}
+              </div>
+            )}
             <div className="flex items-center">
               <Pin className="mr-1 h-3 w-3" />
               {ev.location}
@@ -99,10 +101,12 @@ const EventCard = ({ ev }: { ev: any }) => {
             <User className="mr-1 h-3 w-3" />
             {ev.hostName || ev.user.alias}
           </div>
-          <div className="flex items-center">
-            <Tent className="mr-1 h-3 w-3" />
-            {ev.campName || "Self"}
-          </div>
+          {ev.camp && (
+            <div className="flex items-center">
+              <Tent className="mr-1 h-3 w-3" />
+              {ev.camp.name}
+            </div>
+          )}
           <div className="flex items-center">
             <Pin className="mr-1 h-3 w-3" />
             {ev.location}

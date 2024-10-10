@@ -31,6 +31,13 @@ export const metadata: Metadata = {
     url: "https://www.tribalcities.com",
     siteName: "TribalCities",
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Tribal Cities",
+    // startUpImage: [],
+  },
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
@@ -56,6 +63,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           rel="stylesheet"
           href="//cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"
         />
+        <link rel="manifest" href="/manifest.json" />
 
         {/* Global Site Tag (gtag.js) - Google Analytics */}
         <Script

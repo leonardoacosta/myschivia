@@ -150,9 +150,7 @@ export default function BurnSelect() {
 
       <Dialog>
         <DialogTrigger>
-          <Button className="w-full" onClick={() => setCreate(true)} disabled>
-            Start a Burn 🔥
-          </Button>
+          <Button className="w-full">Start a Burn 🔥</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>

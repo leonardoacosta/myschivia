@@ -3,7 +3,6 @@
 import { createContext, useEffect, useState } from "react";
 
 import type { RouterOutputs } from "@tribal-cities/api";
-import { Label } from "@tribal-cities/ui/label";
 import { toast } from "@tribal-cities/ui/toast";
 
 import BurnCreate from "~/app/_components/burn-select/burn-create";
@@ -52,6 +51,8 @@ export default function Burn({ children }: { children: React.ReactNode }) {
     if (burnYearId) {
       setBurnYearId(burnYearId);
       refetch();
+    } else {
+      setJoin(true);
     }
   }, []);
 

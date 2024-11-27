@@ -20,7 +20,7 @@
   "prettier": "@tribal-cities/prettier-config",
   "dependencies": {
     "@auth/core": "0.32.0",
-    "@auth/drizzle-adapter": "^1.4.1",
+    "@auth/drizzle-adapter": "1.4.1",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tribal-cities/db": "workspace:*",
     "next": "^14.2.4",

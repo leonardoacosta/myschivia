@@ -34,9 +34,11 @@ import { Separator } from "@tribal-cities/ui/separator";
 import { toast } from "@tribal-cities/ui/toast";
 
 import { BurnContext } from "~/context/burn-context";
+import { godMode } from "~/flags";
 import { api } from "~/trpc/react";
 
-export default function BurnCreate() {
+export default async function BurnCreate() {
+  const god = await godMode();
   const ref = useRef<HTMLButtonElement>(null);
   const { setCreate } = useContext(BurnContext);
   const router = useRouter();
@@ -109,6 +111,25 @@ export default function BurnCreate() {
         <span className="text-destructive">*</span> Subject to approval by the
         Tribal Cities team
       </sup>
+
+      <DialogHeader>
+        <DialogTitle>This feature is currently under development.</DialogTitle>
+        <DialogDescription>
+          If you would like to create a burn, please contact the Tribal Cities
+          team.
+        </DialogDescription>
+        <DialogFooter>
+          <a
+            href={`
+            mailto:leo@leonardoacosta.dev?
+            subject=Create a Burn
+            &body=Hello!%0D%0A%0D%0A I love the idea of creating a burn and would like to learn more about how I can get started!%0D%0A%0D%0A Thank you!%0D%0A%0D%0A- [Your Name should go here]
+            `}
+          >
+            <Button>Contact us</Button>
+          </a>
+        </DialogFooter>
+      </DialogHeader>
 
       <Card>
         <Form {...form}>

@@ -34,11 +34,9 @@ import { Separator } from "@tribal-cities/ui/separator";
 import { toast } from "@tribal-cities/ui/toast";
 
 import { BurnContext } from "~/context/burn-context";
-import { godMode } from "~/flags";
 import { api } from "~/trpc/react";
 
-export default async function BurnCreate() {
-  const god = await godMode();
+export default function BurnCreate() {
   const ref = useRef<HTMLButtonElement>(null);
   const { setCreate } = useContext(BurnContext);
   const router = useRouter();
@@ -98,6 +96,9 @@ export default async function BurnCreate() {
       );
     },
   });
+
+  const auth = api.auth.getSession.useQuery();
+  console.log({ auth });
 
   return (
     <div className="flex-row justify-center space-y-4 p-5">

@@ -57,21 +57,7 @@ export default function BurnSelect() {
         Don't see what you're looking for?
       </h1>
 
-      <Dialog>
-        <DialogTrigger>
-          <Button
-            className="w-full"
-            onClick={() => {
-              setCreate(true);
-            }}
-          >
-            Start a Burn 🔥
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <BurnCreate />
-        </DialogContent>
-      </Dialog>
+      <BurnCreate />
     </div>
   );
 }

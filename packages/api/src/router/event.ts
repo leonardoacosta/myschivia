@@ -2,7 +2,7 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
 import type { Camp } from "@tribal-cities/db/schema";
-import { and, asc, desc, eq, gt, gte, lt, lte } from "@tribal-cities/db";
+import { and, asc, eq, gte, lte } from "@tribal-cities/db";
 import {
   CreateEventSchema,
   Event,
@@ -26,6 +26,7 @@ export const eventRouter = {
       const day = input.day ? new Date(input.day) : new Date();
 
       const whereFilter = and(
+        ctx.session ? undefined : eq(Event.burnYearId, ctx.burnYearId!),
         input.day
           ? and(lte(Event.startDate, day), gte(Event.endDate, day))
           : undefined,
@@ -184,7 +185,7 @@ export const eventRouter = {
         const hostName =
           event.hostName !== ""
             ? event.hostName
-            : event.user?.alias ?? "Unknown";
+            : (event.user?.alias ?? "Unknown");
 
         // return only distinct hosts
         if (

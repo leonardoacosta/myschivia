@@ -14,9 +14,6 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// * Roles
-export const Role = pgEnum("role", ["God", "Lead", "Participant"]);
-
 // * Burn ===
 export const Burn = pgTable("burn", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
@@ -149,10 +146,12 @@ export const CampRegistration = pgTable("camp_registration", {
   campId: uuid("camp_id")
     .notNull()
     .references(() => Camp.id, { onDelete: "cascade" }),
+  burnYearId: uuid("burn_year_id")
+    .notNull()
+    .references(() => BurnYear.id, {
+      onDelete: "no action",
+    }),
   approved: boolean("approved").default(false),
-  burnYearId: uuid("burn_year_id").references(() => BurnYear.id, {
-    onDelete: "no action",
-  }),
 });
 
 // * Events ===
@@ -314,13 +313,14 @@ export const UsersToBurnYear = pgTable("user_to_burn_year", {
     .notNull()
     .references(() => BurnYear.id),
 });
-
-export const UserBurnYearRoles = pgTable("user_burn_year_roles", {
+export const UsersToBurnYearRole = pgTable("user_to_burn_year_role", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
-  userBurnYear: uuid("user_burn_year")
+  userToBurnYearId: uuid("user_to_burn_year_id")
     .notNull()
-    .references(() => UsersToBurnYear.id, { onDelete: "cascade" }),
-  role: Role("role").notNull().default("Participant"),
+    .references(() => UsersToBurnYear.id, {
+      onDelete: "cascade",
+    }),
+  role: varchar("role", { length: 255 }),
 });
 
 // * Accounts ===
@@ -381,14 +381,24 @@ export const UsersToBurnYearRelations = relations(
       fields: [UsersToBurnYear.burnYearId],
       references: [BurnYear.id],
     }),
-    roles: many(UserBurnYearRoles),
+    roles: many(UsersToBurnYearRole),
+  }),
+);
+
+export const UsersToBurnYearRoleRelations = relations(
+  UsersToBurnYearRole,
+  ({ one }) => ({
+    userToBurnYear: one(UsersToBurnYear, {
+      fields: [UsersToBurnYearRole.userToBurnYearId],
+      references: [UsersToBurnYear.id],
+    }),
   }),
 );
 
 export const BurnYearRelations = relations(BurnYear, ({ many, one }) => ({
   members: many(UsersToBurnYear),
   events: many(Event),
-  camps: many(Camp),
+  camps: many(CampRegistration),
   burn: one(Burn, { fields: [BurnYear.burnId], references: [Burn.id] }),
   announcements: many(Announcement),
 }));
@@ -405,6 +415,11 @@ export const CampRelations = relations(Camp, ({ one, many }) => ({
   createdBy: one(User, { fields: [Camp.createdById], references: [User.id] }),
   campMembership: many(CampMembership),
   tags: many(Camp_Tag),
+}));
+
+export const CampMembershipRelations = relations(CampMembership, ({ one }) => ({
+  camp: one(Camp, { fields: [CampMembership.campId], references: [Camp.id] }),
+  user: one(User, { fields: [CampMembership.userId], references: [User.id] }),
 }));
 
 export const CampRegistrationRelations = relations(

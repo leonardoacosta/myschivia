@@ -72,9 +72,6 @@ importers:
       '@tribal-cities/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@tribal-cities/validators':
-        specifier: workspace:*
-        version: link:../../packages/validators
       '@trpc/client':
         specifier: 11.0.0-rc.441
         version: 11.0.0-rc.441(@trpc/server@11.0.0-rc.441)
@@ -90,6 +87,9 @@ importers:
       '@vercel/flags':
         specifier: ^2.6.3
         version: 2.6.3(next@14.2.18(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@vercel/speed-insights':
+        specifier: ^1.1.0
+        version: 1.1.0(next@14.2.18(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -360,9 +360,6 @@ importers:
       '@tribal-cities/db':
         specifier: workspace:*
         version: link:../db
-      '@tribal-cities/validators':
-        specifier: workspace:*
-        version: link:../validators
       '@trpc/server':
         specifier: 11.0.0-rc.441
         version: 11.0.0-rc.441
@@ -4017,6 +4014,29 @@ packages:
   '@vercel/postgres@0.9.0':
     resolution: {integrity: sha512-WiI2g3+ce2g1u1gP41MoDj2DsMuQQ+us7vHobysRixKECGaLHpfTI7DuVZmHU087ozRAGr3GocSyqmWLLo+fig==}
     engines: {node: '>=14.6'}
+
+  '@vercel/speed-insights@1.1.0':
+    resolution: {integrity: sha512-rAXxuhhO4mlRGC9noa5F7HLMtGg8YF1zAN6Pjd1Ny4pII4cerhtwSG4vympbCl+pWkH7nBS9kVXRD4FAn54dlg==}
+    peerDependencies:
+      '@sveltejs/kit': ^1 || ^2
+      next: '>= 13'
+      react: ^18 || ^19 || ^19.0.0-rc
+      svelte: '>= 4'
+      vue: ^3
+      vue-router: ^4
+    peerDependenciesMeta:
+      '@sveltejs/kit':
+        optional: true
+      next:
+        optional: true
+      react:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+      vue-router:
+        optional: true
 
   '@web3-storage/multipart-parser@1.0.0':
     resolution: {integrity: sha512-BEO6al7BYqcnfX15W2cnGR+Q566ACXAT9UQykORCWW80lmkpWsnEob6zJS1ZVBKsSJC8+7vJkHwlp+lXG1UCdw==}
@@ -13479,6 +13499,11 @@ snapshots:
       bufferutil: 4.0.8
       utf-8-validate: 6.0.5
       ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.5)
+
+  '@vercel/speed-insights@1.1.0(next@14.2.18(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
+    optionalDependencies:
+      next: 14.2.18(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
 
   '@web3-storage/multipart-parser@1.0.0': {}
 

@@ -1,38 +1,17 @@
-import { useContext } from "react";
-import Image from "next/image";
-import { format } from "date-fns";
+import Link from "next/link";
 
-import type { RouterOutputs } from "@tribal-cities/api";
-import { cn } from "@tribal-cities/ui";
 import { Button } from "@tribal-cities/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@tribal-cities/ui/dialog";
 import { ScrollArea, ScrollBar } from "@tribal-cities/ui/scroll-area";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@tribal-cities/ui/tooltip";
 
-import { BurnContext } from "~/context/burn-context";
 import { api } from "~/trpc/react";
 import { BurnCard } from "./burn-card";
-import BurnCreate from "./burn-create";
 
 export default function BurnSelect() {
-  const { setCreate } = useContext(BurnContext);
   const { data: burns } = api.burn.allYears.useQuery();
   if (!burns) return null;
 
   return (
-    <div className="flex-row justify-center space-y-4 p-5">
+    <div className="flex-row justify-center space-y-4 p-5 sm:gap-4 sm:py-4 sm:pl-14">
       <h1 className="text-2xl font-semibold">Click on a Burn Year to Join</h1>
       {burns.map((burn) => (
         <div>
@@ -56,8 +35,9 @@ export default function BurnSelect() {
       <h1 className="pt-6 text-2xl font-semibold">
         Don't see what you're looking for?
       </h1>
-
-      <BurnCreate />
+      <Link href="/create">
+        <Button className="w-full">Start a Burn 🔥</Button>
+      </Link>
     </div>
   );
 }

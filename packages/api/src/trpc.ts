@@ -42,6 +42,7 @@ export const createTRPCContext = async (opts: {
   session: Session | null;
 }) => {
   const authToken = opts.headers.get("Authorization") ?? null;
+  const burnYearId = opts.headers.get("burn-year-id") ?? null;
   const session = await isomorphicGetSession(opts.headers);
 
   const source = opts.headers.get("x-trpc-source") ?? "unknown";
@@ -51,6 +52,7 @@ export const createTRPCContext = async (opts: {
     session,
     db,
     token: authToken,
+    burnYearId,
   };
 };
 
@@ -113,6 +115,21 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   }
   return next({
     ctx: {
+      // infers the `session` as non-nullable
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});
+
+export const burnYearProcedure = t.procedure.use(({ ctx, next }) => {
+  if (!ctx.session?.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+  if (!ctx.burnYearId)
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "No burn year set" });
+
+  return next({
+    ctx: {
+      burnYearId: ctx.burnYearId,
       // infers the `session` as non-nullable
       session: { ...ctx.session, user: ctx.session.user },
     },

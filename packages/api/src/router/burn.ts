@@ -9,8 +9,8 @@ import {
   CreateBurnWithYearSchema,
   UpdateBurnSchema,
   UpdateBurnYearSchema,
-  UserBurnYearRoles,
   UsersToBurnYear,
+  UsersToBurnYearRole,
 } from "@tribal-cities/db/schema";
 
 import { protectedProcedure, publicProcedure } from "../trpc";
@@ -61,22 +61,21 @@ export const burnRouter = {
 
           if (!year[0]) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
-          const burnYear = await ctx.db
+          const usersToBurnYear = await ctx.db
             .insert(UsersToBurnYear)
             .values({
               userId: ctx.session.user.id,
               burnYearId: year[0].id,
-              // role: "God",
             })
             .returning();
 
-          if (!burnYear[0])
+          if (!usersToBurnYear[0])
             throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
           await ctx.db
-            .insert(UserBurnYearRoles)
+            .insert(UsersToBurnYearRole)
             .values({
-              userBurnYear: year[0].id,
+              userToBurnYearId: usersToBurnYear[0].id,
               role: "God",
             })
             .returning();
@@ -131,6 +130,15 @@ export const burnRouter = {
       },
     }),
   ),
+
+  userRoles: protectedProcedure.query(({ ctx }) => {
+    return ctx.db.query.UsersToBurnYear.findFirst({
+      where: eq(UsersToBurnYear.userId, ctx.session.user.id),
+      with: {
+        roles: true,
+      },
+    });
+  }),
 
   burnYearById: publicProcedure
     .input(z.object({ id: z.string() }))
